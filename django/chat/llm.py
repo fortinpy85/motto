@@ -420,13 +420,12 @@ class OttoLLM:
     def _get_embed_model(self) -> GoogleGenAIEmbedding | MockEmbedding:
         if self.mock_embedding:
             return MockEmbedding(768)
-        # Note: gemini-embedding-001 defaults to 3072 dimensions, but we configure it to use 768
-        # to match our vector store configuration and save storage space (recommended by Google)
+        # Using text-embedding-004 which natively outputs 768 dimensions
+        # This matches our vector store configuration (see embed_dim=768 in get_index)
         return GoogleGenAIEmbedding(
-            model_name="models/gemini-embedding-001",
+            model_name="models/text-embedding-004",
             api_key=settings.GEMINI_API_KEY,
             callback_manager=self._callback_manager,
-            output_dimensionality=768,
         )
 
 
