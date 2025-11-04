@@ -15,7 +15,7 @@ django-cors-headers
 django-htmx-autocomplete
 rules
 django-cleanup
-
+django_structlog
 
 # LLM-related ------------------------------------------------------------------
 llama-index
