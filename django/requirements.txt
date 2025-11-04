@@ -16,6 +16,7 @@ django-htmx-autocomplete
 rules
 django-cleanup
 django_structlog
+django_file_form
 
 # LLM-related ------------------------------------------------------------------
 llama-index
