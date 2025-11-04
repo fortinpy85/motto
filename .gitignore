@@ -28,6 +28,9 @@ liccheck.ini
 licenses_results.txt
 poc/*
 
+CLAUDE.md
+GEMINI.md
+
 # Local Terraform directories
 **/.terraform/*
 
