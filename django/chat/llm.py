@@ -5,6 +5,7 @@ from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
 import google.generativeai as genai
+from google.genai.types import EmbedContentConfig
 from llama_index.core import PromptTemplate, VectorStoreIndex
 from llama_index.core.callbacks import CallbackManager, TokenCountingHandler
 from llama_index.core.embeddings import MockEmbedding
@@ -420,10 +421,13 @@ class OttoLLM:
     def _get_embed_model(self) -> GoogleGenAIEmbedding | MockEmbedding:
         if self.mock_embedding:
             return MockEmbedding(768)
+        # Note: gemini-embedding-001 defaults to 3072 dimensions, but we configure it to use 768
+        # to match our vector store configuration and save storage space (recommended by Google)
         return GoogleGenAIEmbedding(
             model_name="models/gemini-embedding-001",
             api_key=settings.GEMINI_API_KEY,
             callback_manager=self._callback_manager,
+            embedding_config=EmbedContentConfig(output_dimensionality=768),
         )
 
 
