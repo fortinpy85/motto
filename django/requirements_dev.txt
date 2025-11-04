@@ -11,4 +11,4 @@ django-livereload-server==0.5.1
 django_structlog==10.0.0
 pytest-mock==3.14.0
 django-extensions
-matplotlib==3.9.2
+matplotlib==3.10.7
