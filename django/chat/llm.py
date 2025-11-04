@@ -4,7 +4,7 @@ from contextvars import ContextVar
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
-import tiktoken
+import google.generativeai as genai
 from llama_index.core import PromptTemplate, VectorStoreIndex
 from llama_index.core.callbacks import CallbackManager, TokenCountingHandler
 from llama_index.core.embeddings import MockEmbedding
@@ -21,8 +21,8 @@ from llama_index.core.llms import MockLLM
 from llama_index.core.response_synthesizers import CompactAndRefine, TreeSummarize
 from llama_index.core.retrievers import BaseRetriever, QueryFusionRetriever
 from llama_index.core.vector_stores.types import MetadataFilter, MetadataFilters
-from llama_index.embeddings.azure_openai import AzureOpenAIEmbedding
-from llama_index.llms.azure_openai import AzureOpenAI
+from llama_index.embeddings.google_genai import GoogleGenAIEmbedding
+from llama_index.llms.google_genai import GoogleGenAI
 from llama_index.vector_stores.postgres import PGVectorStore
 from retrying import retry
 from sqlalchemy import create_engine
@@ -92,7 +92,7 @@ def chat_history_to_prompt(chat_history: list) -> str:
 class OttoLLM:
     """
     Wrapper around LlamaIndex to assist with cost tracking and reduce boilerplate.
-    "model" must match the name of the LLM deployment in Azure.
+    "model" must match the name of the LLM deployment in Gemini.
     """
 
     def __init__(
@@ -117,8 +117,18 @@ class OttoLLM:
         self.model = self.llm_config.deployment_name
         self.temperature = temperature
         self.reasoning_effort = reasoning_effort
+        # Use gemini-2.0-flash for token counting as it's faster and more reliable
+        # Note: All Gemini models use the same tokenizer, so any model works for counting
+
+        # Wrap Gemini tokenizer to return list instead of CountTokensResponse
+        # LlamaIndex expects tokenizer to return a List (so it can call len()), but Gemini returns CountTokensResponse object
+        def _gemini_token_counter(text):
+            response = genai.GenerativeModel("gemini-2.0-flash").count_tokens(text)
+            # Return a list with total_tokens number of None elements to satisfy len() requirement
+            return [None] * response.total_tokens
+
         self._token_counter = TokenCountingHandler(
-            tokenizer=tiktoken.get_encoding("o200k_base").encode
+            tokenizer=_gemini_token_counter
         )
         self._callback_manager = CallbackManager([self._token_counter])
         self.llm = self._get_llm()
@@ -340,7 +350,7 @@ class OttoLLM:
         vector_store = OttoVectorStore.from_params(
             **connection_params,
             table_name=vector_store_table,
-            embed_dim=1536,  # openai embedding dimension
+            embed_dim=768,  # gemini embedding dimension
             hybrid_search=True,
             text_search_config="english",
             perform_setup=not skip_setup,
@@ -396,32 +406,23 @@ class OttoLLM:
             verbose=True,
         )
 
-    def _get_llm(self) -> AzureOpenAI | MockLLM:
+    def _get_llm(self) -> GoogleGenAI | MockLLM:
         if self.use_mock_llm:
             # Use small max_tokens for efficient load testing - generates short responses instead of echoing prompts
             return MockLLM(max_tokens=50)
-        return AzureOpenAI(
-            azure_endpoint=settings.AZURE_OPENAI_ENDPOINT,
-            api_version=settings.AZURE_OPENAI_VERSION,
-            api_key=settings.AZURE_OPENAI_KEY,
-            deployment_name=self.deployment,
-            model=self.model,
+        return GoogleGenAI(
+            model_name=self.model,
+            api_key=settings.GEMINI_API_KEY,
             temperature=self.temperature,
             callback_manager=self._callback_manager,
-            reasoning_effort=self.reasoning_effort,
         )
 
-    def _get_embed_model(self) -> AzureOpenAIEmbedding | MockEmbedding:
+    def _get_embed_model(self) -> GoogleGenAIEmbedding | MockEmbedding:
         if self.mock_embedding:
-            return MockEmbedding(1536)
-        return AzureOpenAIEmbedding(
-            model="text-embedding-3-large",
-            deployment_name="text-embedding-3-large",
-            dimensions=1536,
-            embed_batch_size=16,
-            api_key=settings.AZURE_OPENAI_KEY,
-            azure_endpoint=settings.AZURE_OPENAI_ENDPOINT,
-            api_version=settings.AZURE_OPENAI_VERSION,
+            return MockEmbedding(768)
+        return GoogleGenAIEmbedding(
+            model_name="models/gemini-embedding-001",
+            api_key=settings.GEMINI_API_KEY,
             callback_manager=self._callback_manager,
         )
 

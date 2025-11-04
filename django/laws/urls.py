@@ -14,7 +14,7 @@ app_name = "laws"
 urlpatterns = [
     path("", index, name="index"),
     path("search/", search, name="search"),
-    path("history/", include("laws.search_history.urls")),
+    path("history/", include("search_history.urls")),
     path("download/<int:search_id>/", download_results, name="download_results"),
     path(
         "answer/get_column/<str:query_uuid>",

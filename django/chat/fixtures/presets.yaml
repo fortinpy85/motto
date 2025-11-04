@@ -126,9 +126,9 @@ default_en:
       Failure to adhere to the context-only rule will result in incorrect answers. Any deviation from the context will be considered a failure to comply with the guidelines.
 
       If the user's query seems incomplete (e.g. "tell me more about THAT", where THAT is not specified), don't answer; instead, remind them that Q&A mode does not have access to the chat history so the user must provide all necessary context in each query. If the context is insufficient, the user can upload relevant files to the chat or a Q&A Library before asking again.
-    chat_model: "gpt-4.1"
-    qa_model: "gpt-4.1-mini"
-    summarize_model: "gpt-4.1-mini"
+    chat_model: "gemini-1.5-flash"
+    qa_model: "gemini-1.5-flash"
+    summarize_model: "gemini-1.5-flash"
     summarize_prompt: |
       Summarize the document above in markdown format with a nice structure for readability.
 
@@ -142,7 +142,7 @@ default_en:
 
       Note:
       You do not have access to the chat history (previous responses or previously uploaded documents) while in "summarize mode". If the user's query seems incomplete, remind them that summarize mode is for answering questions based on specific documents, and they can upload files, paste a long text or enter a URL to summarize. If the users seems to want to change some elements of a previous summary, inform them of the "summarize prompt" in the settings sidebar, which allows them to change the summary style and length, then upload the document/paste the text/enter the URL again. Alternately, the user can switch to Chat mode to refine previous responses.
-    translate_model: "azure"
+    translate_model: "gemini-1.5-flash"
     translate_prompt: |
       You accurately translate documents for the Department of Justice Canada. The provided document will be either in English (to be translated to French), or vice-versa. Use correct Canadian English and Canadian French, translate precisely and refer to the following masterlist of translated terms and acronyms:
 
@@ -1462,8 +1462,8 @@ short_summary_fr:
   based_on: "default_fr"
   name_en: "Short summary (French)"
   name_fr: "Résumé court (français)"
-  description_en: "Summarizes documents in 3-4 sentences max with gpt-4.1-mini"
-  description_fr: "Résume les documents en 3-4 phrases maximum avec gpt-4.1-mini"
+  description_en: "Summarizes documents in 3-4 sentences max with Gemini Flash"
+  description_fr: "Résume les documents en 3-4 phrases maximum avec Gemini Flash"
   options:
     mode: "summarize"
     summarize_prompt: |
@@ -1476,11 +1476,11 @@ medium_summary_en:
   based_on: "default_en"
   name_en: "Medium summary (English)"
   name_fr: "Résumé moyen (anglais)"
-  description_en: "Summarizes documents in 2-3 paragraphs in English with gpt-4.1-mini."
-  description_fr: "Résume les documents en 2-3 paragraphes en anglais avec gpt-4.1-mini."
+  description_en: "Summarizes documents in 2-3 paragraphs in English with Gemini Flash."
+  description_fr: "Résume les documents en 2-3 paragraphes en anglais avec Gemini Flash."
   options:
     mode: "summarize"
-    summarize_model: "gpt-4.1-mini"
+    summarize_model: "gemini-1.5-flash"
     summarize_prompt: |
       Rewrite the text (in English) in a medium sized summary format and make sure the length is around two or three paragraphs. If document is shorter than this, just output the document verbatim.
       Use markdown format for the output.
@@ -1496,7 +1496,7 @@ medium_summary_fr:
   description_fr: "Résume les documents en 2-3 paragraphes en français."
   options:
     mode: "summarize"
-    summarize_model: "gpt-4.1-mini"
+    summarize_model: "gemini-1.5-flash"
     summarize_prompt: |
       Réécrivez le texte (en français) sous forme de résumé moyen et assurez-vous que la longueur est d'environ deux ou trois paragraphes. Si le document est plus court, affichez-le tel quel.
       Utilisez le format markdown pour la sortie.
@@ -1508,11 +1508,11 @@ long_summary_en:
   based_on: "default_en"
   name_en: "Long summary (English)"
   name_fr: "Résumé long (anglais)"
-  description_en: "Summarizes documents in detail using multiple paragraphs in English with gpt-4.1-mini."
-  description_fr: "Résume les documents en détail en utilisant plusieurs paragraphes en anglais avec gpt-4.1-mini."
+  description_en: "Summarizes documents in detail using multiple paragraphs in English with Gemini Flash."
+  description_fr: "Résume les documents en détail en utilisant plusieurs paragraphes en anglais avec Gemini Flash."
   options:
     mode: "summarize"
-    summarize_model: "gpt-4.1-mini"
+    summarize_model: "gemini-1.5-flash"
     summarize_prompt: |
       Rewrite the text (in English) as a detailed summary, using multiple paragraphs if necessary. (If the input is short, output 1 paragraph only)
       Use markdown format for the output.
@@ -1530,11 +1530,11 @@ long_summary_fr:
   based_on: "default_fr"
   name_en: "Long summary (French)"
   name_fr: "Résumé long (français)"
-  description_en: "Summarizes documents in detail using multiple paragraphs in French with gpt-4.1-mini."
-  description_fr: "Résume les documents en détail en utilisant plusieurs paragraphes en français avec gpt-4.1-mini."
+  description_en: "Summarizes documents in detail using multiple paragraphs in French with Gemini Flash."
+  description_fr: "Résume les documents en détail en utilisant plusieurs paragraphes en français avec Gemini Flash."
   options:
     mode: "summarize"
-    summarize_model: "gpt-4.1-mini"
+    summarize_model: "gemini-1.5-flash"
     summarize_prompt: |
       Réécrivez le texte (en français) sous forme de résumé détaillé, en utilisant plusieurs paragraphes si nécessaire. (Si la saisie est courte, affichez 1 seul paragraphe)
       Utilisez le format markdown pour la sortie.

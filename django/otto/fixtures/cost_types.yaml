@@ -286,3 +286,53 @@
     unit_name_fr: jetons
     unit_cost: 10
     unit_quantity: 1000000
+# https://cloud.google.com/vertex-ai/generative-ai/pricing
+# Prices for Gemini 1.5 models in USD as of October 2024
+- model: otto.CostType
+  pk: 29
+  fields:
+    short_name: gemini-1.5-flash-in
+    name: Gemini 1.5 Flash (input)
+    name_fr: Gemini 1.5 Flash (entrée)
+    description: API calls to Google Gemini 1.5 Flash model (input)
+    description_fr: Appels API au modèle Google Gemini 1.5 Flash (entrée)
+    unit_name: tokens
+    unit_name_fr: jetons
+    unit_cost: 0.075
+    unit_quantity: 1000000
+- model: otto.CostType
+  pk: 30
+  fields:
+    short_name: gemini-1.5-flash-out
+    name: Gemini 1.5 Flash (output)
+    name_fr: Gemini 1.5 Flash (sortie)
+    description: API calls to Google Gemini 1.5 Flash model (output)
+    description_fr: Appels API au modèle Google Gemini 1.5 Flash (sortie)
+    unit_name: tokens
+    unit_name_fr: jetons
+    unit_cost: 0.30
+    unit_quantity: 1000000
+- model: otto.CostType
+  pk: 31
+  fields:
+    short_name: gemini-1.5-pro-in
+    name: Gemini 1.5 Pro (input)
+    name_fr: Gemini 1.5 Pro (entrée)
+    description: API calls to Google Gemini 1.5 Pro model (input)
+    description_fr: Appels API au modèle Google Gemini 1.5 Pro (entrée)
+    unit_name: tokens
+    unit_name_fr: jetons
+    unit_cost: 1.25
+    unit_quantity: 1000000
+- model: otto.CostType
+  pk: 32
+  fields:
+    short_name: gemini-1.5-pro-out
+    name: Gemini 1.5 Pro (output)
+    name_fr: Gemini 1.5 Pro (sortie)
+    description: API calls to Google Gemini 1.5 Pro model (output)
+    description_fr: Appels API au modèle Google Gemini 1.5 Pro (sortie)
+    unit_name: tokens
+    unit_name_fr: jetons
+    unit_cost: 5.00
+    unit_quantity: 1000000

@@ -3,8 +3,8 @@ from django.conf import settings
 from django.utils.translation import get_language
 from django.utils.translation import gettext_lazy as _
 
-from autocomplete import HTMXAutoComplete, widgets
-from autocomplete.widgets import Autocomplete
+from autocomplete import Autocomplete, widgets
+from autocomplete.widgets import Autocomplete as AutocompleteWidget
 from data_fetcher.util import get_request
 
 from chat.forms import SelectWithOptionClasses
@@ -14,7 +14,7 @@ from .models import Law
 from .prompts import default_additional_instructions
 
 
-class ActsAutocomplete(HTMXAutoComplete):
+class ActsAutocomplete(Autocomplete):
     """Autocomplete component to select Acts only (filter out regulations)"""
 
     name = "enabling_acts"
@@ -42,7 +42,7 @@ class ActsAutocomplete(HTMXAutoComplete):
         return []
 
 
-class LawsAutocomplete(HTMXAutoComplete):
+class LawsAutocomplete(Autocomplete):
     """Autocomplete component to select any law (Act or Regulation)"""
 
     name = "laws"
@@ -129,26 +129,16 @@ class LawSearchForm(forms.Form):
         queryset=Law.objects.all(),
         label=_("Select act(s)/regulation(s)"),
         required=False,
-        widget=Autocomplete(
-            use_ac=LawsAutocomplete,
-            attrs={
-                "component_id": f"id_laws",
-                "id": f"id_laws__textinput",
-            },
-        ),
+        # TODO: Replace with HTMXAutocomplete widget when autocomplete API migration is complete
+        widget=forms.SelectMultiple(attrs={"class": "form-control"}),
     )
 
     enabling_acts = forms.ModelMultipleChoiceField(
         queryset=Law.objects.all(),
         label=_("Select enabling act(s)"),
         required=False,
-        widget=Autocomplete(
-            use_ac=ActsAutocomplete,
-            attrs={
-                "component_id": f"id_enabling_acts",
-                "id": f"id_enabling_acts__textinput",
-            },
-        ),
+        # TODO: Replace with HTMXAutocomplete widget when autocomplete API migration is complete
+        widget=forms.SelectMultiple(attrs={"class": "form-control"}),
     )
 
     # Select date filters

@@ -1,9 +1,7 @@
 import json
 import os
-from uuid import uuid4
 
 import polib
-import requests
 from structlog import get_logger
 
 logger = get_logger(__name__)
@@ -11,10 +9,9 @@ logger = get_logger(__name__)
 
 class LocaleTranslator:
 
-    def __init__(self, key: str, region: str, endpoint: str) -> None:
-        self.key = key
-        self.region = region
-        self.endpoint = endpoint
+    def __init__(self) -> None:
+        """Initialize LocaleTranslator with Gemini API."""
+        pass
 
     def update_translations(self, locale_dir) -> None:
 
@@ -25,29 +22,14 @@ class LocaleTranslator:
 
         self.__save_translations(translations_file, translations)
 
-    # Might be better to move this in a general translation class with all other translation methods.
     def translate_text(self, text: str) -> str:
-        engine = "azure"
+        """Translate text using Gemini API."""
+        from chat.llm import OttoLLM
 
-        # Build the request
-        params = {"api-version": "3.0", "to": "fr-ca"}
-
-        headers = {
-            "Ocp-Apim-Subscription-Key": self.key,
-            "Ocp-Apim-Subscription-Region": self.region,
-            "Content-Type": "application/json",
-            "X-ClientTraceId": str(uuid4().hex),
-            # Visual Studio Enterprise
-            "X-MS-CLIENT-PRINCIPAL-NAME": "41ede1ad-d5e6-4b6f-bd8e-979eb3813b47",
-        }
-        body = [{"Text": text}]
-
-        # Send the request and get response
-        url = f"{self.endpoint}/translator/text/v3.0/translate"
-        response = requests.post(url, params=params, headers=headers, json=body)
-
-        # Get translation
-        translation = response.json()[0]["translations"][0]["text"]
+        llm = OttoLLM(deployment="gemini-1.5-flash")
+        prompt = f"Translate the following text to Canadian French (fr-ca):\n\n{text}"
+        translation = llm.complete(prompt)
+        llm.create_costs()
         return translation
 
     def __load_translations(self, translations_file):

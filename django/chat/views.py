@@ -206,7 +206,7 @@ def chat(request, chat_id):
         # Check for deprecated models and update them
         ChatOptions.objects.check_and_update_models(chat.options)
     except:
-        chat.options = ChatOptions.objects.from_defaults(user=chat.user, chat=chat)
+        chat.options = ChatOptions.objects.from_defaults(chat=chat)
         chat.save()
     try:
         chat.data_source

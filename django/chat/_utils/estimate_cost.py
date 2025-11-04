@@ -72,19 +72,18 @@ def _estimate_file_tokens(file: Any) -> int:
         return 5000  # Conservative default: 5000 tokens
 
 
-def _get_translate_cost_type(chat: Any, user_message: Any) -> str:
+def _get_translate_cost_type(chat: Any) -> str:
     """Determine the appropriate cost type for translation mode."""
-    if chat.options.translate_model == "gpt":
-        return "gpt-4.1-mini-in"
-    elif chat.options.translate_model == "azure_custom":
-        return "translate-custom"
-    elif chat.options.translate_model == "azure":
-        # Check if user message has files attached
-        if user_message.sorted_files.exists():
-            return "translate-file"
-        else:
-            return "translate-text"
-    return "translate-text"  # fallback
+    model = chat.options.translate_model
+
+    # Map translate model to cost type
+    if model.startswith("gemini"):
+        return model + "-in"
+    elif model.startswith("gpt"):
+        return model + "-in"
+
+    # Fallback to gemini flash
+    return "gemini-1.5-flash-in"
 
 
 def _estimate_qa_documents_cost(chat: Any, model: str) -> Decimal:
@@ -215,40 +214,26 @@ def estimate_cost_of_request(
 
 
 def _estimate_translate_mode_cost(chat: Any, user_message: Any) -> Decimal:
-    """Estimate cost for translate mode (GPT: tokens, Azure: characters)."""
+    """Estimate cost for translate mode using Gemini or GPT models."""
     cost = Decimal("0")
     files = user_message.sorted_files.all()
 
-    if chat.options.translate_model == "gpt":
-        # User message cost (input tokens)
-        input_tokens = _estimate_tokens_from_text(user_message.text)
-        cost += _calculate_cost_for_units("gpt-4.1-mini-in", input_tokens)
-        # Bot response cost (output tokens, same as input)
-        cost += _calculate_cost_for_units("gpt-4.1-mini-out", input_tokens)
+    cost_type_in = _get_translate_cost_type(chat)
+    cost_type_out = cost_type_in.replace("-in", "-out")
 
-        # Files: cost for input and output tokens
-        for file in files:
-            if file.text:
-                file_tokens = _estimate_tokens_from_text(file.text)
-            else:
-                file_tokens = _estimate_file_tokens(file)
-            cost += _calculate_cost_for_units("gpt-4.1-mini-in", file_tokens)
-            cost += _calculate_cost_for_units("gpt-4.1-mini-out", file_tokens)
+    # User message cost (input and output tokens)
+    input_tokens = _estimate_tokens_from_text(user_message.text)
+    cost += _calculate_cost_for_units(cost_type_in, input_tokens)
+    cost += _calculate_cost_for_units(cost_type_out, input_tokens)
 
-    elif "azure" in chat.options.translate_model:
-        # User message cost (input characters)
-        input_chars = len(user_message.text)
-        cost_type = _get_translate_cost_type(chat, user_message)
-        cost += _calculate_cost_for_units(cost_type, input_chars)
-
-        # Files: cost for input characters
-        for file in files:
-            if file.text:
-                file_chars = len(file.text)
-            else:
-                file_tokens = _estimate_file_tokens(file)
-                file_chars = file_tokens * EST_CHARS_PER_TOKEN
-            cost += _calculate_cost_for_units(cost_type, file_chars)
+    # Files: cost for input and output tokens
+    for file in files:
+        if file.text:
+            file_tokens = _estimate_tokens_from_text(file.text)
+        else:
+            file_tokens = _estimate_file_tokens(file)
+        cost += _calculate_cost_for_units(cost_type_in, file_tokens)
+        cost += _calculate_cost_for_units(cost_type_out, file_tokens)
 
     return cost
 

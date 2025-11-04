@@ -14,7 +14,7 @@ from structlog import get_logger
 from chat.utils import wrap_llm_response
 from otto.utils.common import display_cad_cost
 
-from .search_history.models import LawSearch
+from search_history.models import LawSearch
 
 logger = get_logger(__name__)
 

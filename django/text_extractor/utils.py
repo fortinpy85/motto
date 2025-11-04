@@ -9,12 +9,7 @@ from io import BytesIO
 from django.conf import settings
 from django.utils.translation import gettext as _
 
-from azure.ai.documentintelligence import DocumentIntelligenceClient
-from azure.ai.documentintelligence.models import (
-    AnalyzeOutputOption,
-    DocumentContentFormat,
-)
-from azure.core.credentials import AzureKeyCredential
+import google.generativeai as genai
 from PIL import Image
 from PIL.Image import Resampling
 from pypdf import PdfReader
@@ -158,57 +153,48 @@ def dist(p1, p2):
 
 def create_searchable_pdf(input_file):
     try:
-        document_analysis_client = DocumentIntelligenceClient(
-            endpoint=settings.AZURE_COGNITIVE_SERVICE_ENDPOINT,
-            credential=AzureKeyCredential(settings.AZURE_COGNITIVE_SERVICE_KEY),
-            headers={"x-ms-useragent": "searchable-pdf-blog/1.0.0"},
-        )
-        # Prepare file bytes for Azure analysis to avoid serialization of file objects
+        genai.configure(api_key=settings.GEMINI_API_KEY)
+
+        # Prepare file bytes for Gemini analysis
         if hasattr(input_file, "read"):
             input_file.seek(0)
             body_data = input_file.read()
         else:
             with open(input_file, "rb") as f:
                 body_data = f.read()
-        # Call Azure Form Recognizer with raw bytes
-        poller = document_analysis_client.begin_analyze_document(
-            model_id="prebuilt-read",
-            body=body_data,
-            output=[AnalyzeOutputOption.PDF],
-            output_content_format=DocumentContentFormat.MARKDOWN,
-        )
-        start_time_ocr = time.perf_counter()
-        ocr_results = poller.result()
-        elapsed_time_ocr = time.perf_counter() - start_time_ocr
-        logger.info(f"OCR polling took {elapsed_time_ocr:.2f} seconds")
+
+        # Call Gemini API
+        model = genai.GenerativeModel('gemini-1.5-flash')
+        response = model.generate_content(["Extract text from this document.", body_data])
+
+        all_text = response.text
+
+        # Create a searchable PDF from the extracted text
+        pdf_buffer = io.BytesIO()
+        c = canvas.Canvas(pdf_buffer, pagesize=A4)
+        textobject = c.beginText()
+        textobject.setTextOrigin(50, 800)
+        textobject.setFont(default_font, 12)
+        for line in all_text.split('\n'):
+            textobject.textLine(line)
+        c.drawText(textobject)
+        c.save()
+        pdf_content = pdf_buffer.getvalue()
+
+        # Calculate cost
+        cost = Cost.objects.new(cost_type="gemini-ocr", count=len(all_text))
 
     except Exception as e:
         error_id = str(uuid.uuid4())[:7]
-        message = e.message if hasattr(e, "message") else str(e)
+        message = str(e)
         logger.exception(
-            _("Error running Azure's document intelligence API on in {error_id}: {e}")
+            _("Error running Gemini API on in {error_id}: {e}")
         )
         return {
             "error": True,
             "message": _(f"Error ID: {error_id} - {message}"),
             "error_id": error_id,
         }
-
-    page_count = len(ocr_results.pages)
-    logger.debug(
-        _("Azure Form Recognizer finished OCR text. Number of pages:") + str(page_count)
-    )
-    cost = Cost.objects.new(cost_type="doc-ai-read", count=page_count)
-
-    all_text = ocr_results["content"]
-
-    # Get the OCR'd PDF from Azure
-    start_time_pdf = time.perf_counter()
-    pdf_content = document_analysis_client.get_analyze_result_pdf(
-        model_id="prebuilt-read", result_id=poller.details["operation_id"]
-    )
-    elapsed_time_pdf = time.perf_counter() - start_time_pdf
-    logger.info(f"Creating PDF file took {elapsed_time_pdf:.2f} seconds")
 
     return {
         "error": False,

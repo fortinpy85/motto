@@ -151,46 +151,22 @@ class LibraryUsersForm(forms.Form):
         queryset=User.objects.all(),
         label=_("Administrators (edit library and manage users)"),
         required=True,
-        widget=widgets.Autocomplete(
-            name="admins",
-            options={
-                "item_value": User.id,
-                "item_label": User.email,
-                "multiselect": True,
-                "minimum_search_length": 2,
-                "model": User,
-            },
-        ),
+        # TODO: Replace with HTMXAutocomplete widget when autocomplete API migration is complete
+        widget=forms.SelectMultiple(attrs={"class": "form-control"}),
     )
     contributors = forms.ModelMultipleChoiceField(
         queryset=User.objects.all(),
         label=_("Contributors (edit library)"),
         required=False,
-        widget=widgets.Autocomplete(
-            name="contributors",
-            options={
-                "item_value": User.id,
-                "item_label": User.email,
-                "multiselect": True,
-                "minimum_search_length": 2,
-                "model": User,
-            },
-        ),
+        # TODO: Replace with HTMXAutocomplete widget when autocomplete API migration is complete
+        widget=forms.SelectMultiple(attrs={"class": "form-control"}),
     )
     viewers = forms.ModelMultipleChoiceField(
         queryset=User.objects.all(),
         label=_("Viewers (read-only access)"),
         required=False,
-        widget=widgets.Autocomplete(
-            name="viewers",
-            options={
-                "item_value": User.id,
-                "item_label": User.email,
-                "multiselect": True,
-                "minimum_search_length": 2,
-                "model": User,
-            },
-        ),
+        # TODO: Replace with HTMXAutocomplete widget when autocomplete API migration is complete
+        widget=forms.SelectMultiple(attrs={"class": "form-control"}),
     )
 
     def __init__(self, *args, **kwargs):

@@ -10,8 +10,8 @@ from django.forms import ModelForm
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
-from autocomplete import HTMXAutoComplete, widgets
-from autocomplete.widgets import Autocomplete
+from autocomplete import Autocomplete, widgets
+from autocomplete.widgets import AutocompleteWidget
 from data_fetcher.util import get_request
 from django_file_form.forms import FileFormMixin, MultipleUploadedFileField
 from rules import is_group_member
@@ -40,11 +40,6 @@ TEMPERATURES = [
     (1.0, _("Creative")),
 ]
 LANGUAGES = [("en", _("English")), ("fr", _("French"))]
-
-if not settings.CUSTOM_TRANSLATOR_ID:
-    TRANSLATE_MODEL_CHOICES = [
-        t for t in TRANSLATE_MODEL_CHOICES if t[0] != "azure_custom"
-    ]
 
 
 class GroupedLibraryChoiceField(forms.ModelChoiceField):
@@ -122,17 +117,25 @@ class SelectWithOptionClasses(forms.Select):
         return option
 
 
-class DataSourcesAutocomplete(HTMXAutoComplete):
+class DataSourcesAutocomplete(Autocomplete):
     """Autocomplete component to select Data Sources from a library"""
 
     name = "qa_data_sources"
+    route_name = "qa_data_sources"  # Required by AutocompleteWidget
     multiselect = True
     minimum_search_length = 0
     model = DataSource
 
-    def get_items(self, search=None, values=None):
+    @classmethod
+    def _get_data_queryset(cls, context):
+        """Helper to get the base queryset with library/chat filtering"""
         this_chat_string = _("This chat")
-        request = get_request()
+        request = context
+
+        # Handle case where context/request is None (when rendering initial widget)
+        if request is None:
+            return DataSource.objects.none(), None
+
         library_id = request.GET.get("library_id", None)
         chat_id = request.GET.get(
             "chat_id",
@@ -144,6 +147,7 @@ class DataSourcesAutocomplete(HTMXAutoComplete):
             .path.strip("/")
             .split("/")[-1],
         )
+
         if library_id:
             library = (
                 Library.objects.filter(pk=library_id)
@@ -167,52 +171,58 @@ class DataSourcesAutocomplete(HTMXAutoComplete):
                 ]
         else:
             data = DataSource.objects.all()
-        if search is not None:
-            items = [
-                {
-                    "label": (
-                        mark_safe(
-                            f"<span class='fw-semibold'>{this_chat_string}</span>"
-                        )
-                        if x.chat and str(x.chat.id) == chat_id
-                        else x.label
-                    ),
-                    "value": str(x.id),
-                }
-                for x in data
-                if search == "" or str(search).upper() in f"{x}".upper()
-            ]
-            return items
-        if values is not None:
-            items = [
-                {
-                    "label": (
-                        mark_safe(
-                            f"<span class='fw-semibold'>{this_chat_string}</span>"
-                        )
-                        if x.chat and str(x.chat.id) == chat_id
-                        # and parse_qs(request.body.decode()).get("remove")
-                        else x.label
-                    ),
-                    "value": str(x.id),
-                }
-                for x in data
-                if str(x.id) in values
-            ]
-            return items
 
-        return []
+        return data, chat_id
+
+    @classmethod
+    def _format_item(cls, x, chat_id):
+        """Helper to format a data source item"""
+        this_chat_string = _("This chat")
+        return {
+            "key": str(x.id),
+            "label": (
+                mark_safe(f"<span class='fw-semibold'>{this_chat_string}</span>")
+                if x.chat and str(x.chat.id) == chat_id
+                else x.label
+            ),
+        }
+
+    @classmethod
+    def search_items(cls, search, context):
+        """Search for data sources matching the search term"""
+        data, chat_id = cls._get_data_queryset(context)
+
+        # Filter by search term
+        filtered_data = [
+            x for x in data
+            if search == "" or str(search).upper() in f"{x}".upper()
+        ]
+
+        return [cls._format_item(x, chat_id) for x in filtered_data]
+
+    @classmethod
+    def get_items_from_keys(cls, keys, context):
+        """Get specific data sources by their IDs"""
+        data, chat_id = cls._get_data_queryset(context)
+
+        # Filter by keys
+        filtered_data = [x for x in data if str(x.id) in keys]
+
+        return [cls._format_item(x, chat_id) for x in filtered_data]
 
 
-class DocumentsAutocomplete(HTMXAutoComplete):
+class DocumentsAutocomplete(Autocomplete):
     """Autocomplete component to select Documents from a library"""
 
     name = "qa_documents"
+    route_name = "qa_documents"  # Required by AutocompleteWidget
     multiselect = True
     minimum_search_length = 0
     model = Document
 
-    def get_items(self, search=None, values=None):
+    @classmethod
+    def _get_data_queryset(cls, context):
+        """Helper to get the base queryset with library filtering"""
         vals = [
             "id",
             "manual_title",
@@ -221,40 +231,62 @@ class DocumentsAutocomplete(HTMXAutoComplete):
             "filename",
             "url",
         ]
-        request = get_request()
+        request = context
+
+        # Handle case where context/request is None (when rendering initial widget)
+        if request is None:
+            return Document.objects.none().values(*vals)
+
         library_id = request.GET.get("library_id", None)
         data = (
             Document.objects.filter(data_source__library_id=library_id).values(*vals)
             if library_id
             else Document.objects.all().values(*vals)
         )
+        return data
 
-        def label(x):
-            return (
-                x["manual_title"]
-                or x["extracted_title"]
-                or x["generated_title"]
-                or x["filename"]
-                or x["url"]
-                or _("Untitled document")
-            )
+    @classmethod
+    def _get_label(cls, x):
+        """Helper to get the label for a document"""
+        return (
+            x["manual_title"]
+            or x["extracted_title"]
+            or x["generated_title"]
+            or x["filename"]
+            or x["url"]
+            or _("Untitled document")
+        )
 
-        def format_item(x):
-            return {
-                "label": label(x),
-                "value": str(x["id"]),
-            }
+    @classmethod
+    def _format_item(cls, x):
+        """Helper to format a document item"""
+        return {
+            "key": str(x["id"]),
+            "label": cls._get_label(x),
+        }
 
-        if search is not None:
-            return [
-                format_item(x)
-                for x in data
-                if search == "" or str(search).upper() in label(x).upper()
-            ]
-        if values is not None:
-            return [format_item(x) for x in data if str(x["id"]) in values]
+    @classmethod
+    def search_items(cls, search, context):
+        """Search for documents matching the search term"""
+        data = cls._get_data_queryset(context)
 
-        return []
+        # Filter by search term
+        filtered_data = [
+            x for x in data
+            if search == "" or str(search).upper() in cls._get_label(x).upper()
+        ]
+
+        return [cls._format_item(x) for x in filtered_data]
+
+    @classmethod
+    def get_items_from_keys(cls, keys, context):
+        """Get specific documents by their IDs"""
+        data = cls._get_data_queryset(context)
+
+        # Filter by keys
+        filtered_data = [x for x in data if str(x["id"]) in keys]
+
+        return [cls._format_item(x) for x in filtered_data]
 
 
 class GroupedModelChoiceField(forms.ChoiceField):
@@ -498,8 +530,8 @@ class ChatOptionsForm(ModelForm):
             queryset=DataSource.objects.all(),
             label=_("Select folder(s)"),
             required=False,
-            widget=Autocomplete(
-                use_ac=DataSourcesAutocomplete,
+            widget=AutocompleteWidget(
+                DataSourcesAutocomplete,
                 attrs={
                     "component_id": f"id_qa_data_sources",
                     "id": f"id_qa_data_sources__textinput",
@@ -511,8 +543,8 @@ class ChatOptionsForm(ModelForm):
             queryset=Document.objects.all(),
             label=_("Select document(s)"),
             required=False,
-            widget=Autocomplete(
-                use_ac=DocumentsAutocomplete,
+            widget=AutocompleteWidget(
+                DocumentsAutocomplete,
                 attrs={
                     "component_id": f"id_qa_documents",
                     "id": f"id_qa_documents__textinput",
@@ -599,16 +631,8 @@ class PresetForm(forms.ModelForm):
         queryset=User.objects.all(),
         label="Email",
         required=False,
-        widget=widgets.Autocomplete(
-            name="accessible_to",
-            options={
-                "item_value": User.id,
-                "item_label": User.email,
-                "multiselect": True,
-                "minimum_search_length": 2,
-                "model": User,
-            },
-        ),
+        # TODO: Replace with HTMXAutocomplete widget when autocomplete API migration is complete
+        widget=forms.SelectMultiple(attrs={"class": "form-control"}),
     )
 
     def __init__(self, *args, **kwargs):

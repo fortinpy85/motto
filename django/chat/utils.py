@@ -181,30 +181,33 @@ def get_model_name(chat_options):
     Get the model used for the chat message.
     """
     from chat.llm_models import get_chat_model_choices
+    from chat.models import TRANSLATE_MODEL_CHOICES
 
     model_key = ""
     if chat_options.mode == "translate":
-        if "gpt" in chat_options.translate_model:
-            model_key = chat_options.translate_model
-        elif chat_options.translate_model == "azure":
-            return _("Azure Translator")
-        elif chat_options.translate_model == "azure_custom":
-            return _("Azure Translator - JUS custom")
-    if chat_options.mode == "qa":
+        model_key = chat_options.translate_model
+        # Look up translate model name from TRANSLATE_MODEL_CHOICES
+        model_name = [
+            model[1] for model in TRANSLATE_MODEL_CHOICES if model[0] == model_key
+        ]
+        if model_name:
+            return model_name[0].split("(")[0].strip()
+    elif chat_options.mode == "qa":
         model_key = chat_options.qa_model
     elif chat_options.mode == "chat":
         model_key = chat_options.chat_model
     elif chat_options.mode == "summarize":
         model_key = chat_options.summarize_model
-    # chat_model_choices is a list of tuples
-    # (model_key, model_description (including some stuff in parens))
-    model_name = [
-        model[1] for model in get_chat_model_choices() if model[0] == model_key
-    ]
-    if model_name:
-        return model_name[0].split("(")[0].strip()
-    else:
-        return ""
+
+    # For non-translate modes, look up in chat model choices
+    if model_key:
+        model_name = [
+            model[1] for model in get_chat_model_choices() if model[0] == model_key
+        ]
+        if model_name:
+            return model_name[0].split("(")[0].strip()
+
+    return ""
 
 
 async def htmx_stream(
@@ -988,55 +991,19 @@ def chat_to_history(chat):
     return history
 
 
-def translate_text_with_azure(text, target_language, custom_translator_id=None):
+def translate_text_with_gemini(text, target_language, custom_translator_id=None):
     """
-    Translate text using Azure Text Translation service.
+    Translate text using Gemini API.
     Returns the translated text.
     """
-    from azure.ai.translation.text import TextTranslationClient
-    from azure.core.credentials import AzureKeyCredential
-    from azure.core.exceptions import HttpResponseError
-
     try:
-        # Map language codes to Azure Translator format
-        language_mapping = {"en": "en", "fr": "fr-ca"}  # Use Canadian French
-
-        target_lang = language_mapping.get(target_language, target_language)
-
-        # Create translation client
-        credential = AzureKeyCredential(settings.AZURE_COGNITIVE_SERVICE_KEY)
-        text_translator = TextTranslationClient(
-            credential=credential, region=settings.AZURE_COGNITIVE_SERVICE_REGION
-        )
-
-        # Translate the text
-        response = text_translator.translate(
-            body=[text], to_language=[target_lang], category=custom_translator_id
-        )
-
-        if response and len(response) > 0:
-            translation = response[0]
-            if translation.translations and len(translation.translations) > 0:
-                translated_text = translation.translations[0].text
-
-                # Track usage for cost calculation
-                char_count = len(text)
-                cost_type = (
-                    "translate-custom" if custom_translator_id else "translate-text"
-                )
-                Cost.objects.new(cost_type=cost_type, count=char_count)
-
-                return translated_text
-
-        raise Exception("No translation received from Azure Translator")
-
-    except HttpResponseError as exception:
-        logger.exception(f"Azure Translator API error: {exception}")
-        if exception.error is not None:
-            raise Exception(f"Azure Translator Error: {exception.error.message}")
-        raise Exception("Azure Translator API error")
+        llm = OttoLLM(deployment="gemini-1.5-flash")
+        prompt = f"Translate the following text to {target_language}:\n\n{text}"
+        translated_text = llm.complete(prompt)
+        llm.create_costs()
+        return translated_text
     except Exception as e:
-        logger.exception(f"Error translating text with Azure: {e}")
+        logger.exception(f"Error translating text with Gemini: {e}")
         raise Exception(f"Translation failed: {str(e)}")
 
 

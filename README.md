@@ -369,6 +369,15 @@ If things are even more messed up:
 * Ensure you are sync'd with origin.
 * Open the folder in VScode to rebuild the container from scratch.
 
+## AI Assistant Guidance
+
+This repository contains guidance files for AI assistants to help them understand the project and its conventions. 
+
+- `GEMINI.md`: Provides guidance for Google's Gemini model.
+- `CLAUDE.md`: Provides guidance for Anthropic's Claude model.
+
+These files contain information about the project's architecture, development commands, and best practices.
+
 ## License and contact
 
 AGPL license due to PyMuPDF dependency.

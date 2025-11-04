@@ -53,12 +53,15 @@
         <hr class="dropdown-divider">
       </li>
     {% endif %}
+    {# TEMPORARY: Logout disabled for local testing #}
+    {% comment %}
     <li>
       <a href="{% url 'azure_auth:logout' %}" class="dropdown-item">
         <i class="bi bi-box-arrow-right"></i>
         {% trans "Logout" %}
       </a>
     </li>
+    {% endcomment %}
   </ul>
 </li>
 <script>

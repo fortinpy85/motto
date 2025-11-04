@@ -75,11 +75,7 @@ class Command(BaseCommand):
                 self.stderr.write(f"The file at {po_file_path} does not exist.")
                 return
 
-            translator_client = LocaleTranslator(
-                settings.AZURE_COGNITIVE_SERVICE_KEY,
-                settings.AZURE_COGNITIVE_SERVICE_REGION,
-                settings.AZURE_COGNITIVE_SERVICE_ENDPOINT,
-            )
+            translator_client = LocaleTranslator()
             try:
                 translator_client.update_translations(
                     os.path.join(settings.BASE_DIR, "locale"),

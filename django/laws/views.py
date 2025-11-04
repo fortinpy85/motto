@@ -28,7 +28,7 @@ from .prompts import (
     qa_prompt_instruction_tmpl,
     system_prompt_tmpl,
 )
-from .search_history.models import LawSearch
+from search_history.models import LawSearch
 from .utils import (
     get_display_title,
     get_law_url,
@@ -579,7 +579,7 @@ def search(request, law_search=None):
 def download_results(request, search_id):
     """Return a text file attachment containing the query and raw markdown of results."""
     logger.info("download_results called for search_id=%s", search_id)
-    from .search_history.views import view_search
+    from search_history.views import view_search
 
     law_search = get_object_or_404(LawSearch, id=search_id, user=request.user)
     query_uuid = law_search.query_uuid

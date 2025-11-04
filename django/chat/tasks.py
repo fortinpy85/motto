@@ -1,17 +1,13 @@
 import os
 import uuid
 from datetime import datetime
-from threading import Thread
 
-from django.conf import settings
-
-from azure.ai.translation.document import DocumentTranslationClient, TranslationGlossary
-from azure.core.credentials import AzureKeyCredential
 from celery import shared_task
 from celery.exceptions import SoftTimeLimitExceeded
 from structlog import get_logger
 from structlog.contextvars import bind_contextvars, get_contextvars
 
+from chat.llm import OttoLLM
 from chat.utils import swap_glossary_columns
 from otto.models import Cost
 
@@ -61,117 +57,46 @@ def extract_text_task(file_id, pdf_method="default", context_vars=None):
         raise
 
 
-def azure_delete(path):
-    azure_storage = settings.AZURE_STORAGE
-    try:
-        logger.info(f"Deleting {path} from azure storage.")
-        azure_storage.delete(path)
-        # Now delete the parent folder
-        azure_storage.delete(path.rsplit("/", 1)[0])
-    except:
-        logger.error(f"Error deleting {path}")
-        pass
-
-
 @shared_task(soft_time_limit=ten_minutes)
 def translate_file(
     file_path, target_language, custom_translator_id=None, glossary_path=None
 ):
     if target_language == "fr":
         target_language = "fr-ca"
-    input_file_path = None
-    output_file_path = None
-    glossary_file_path = None
     try:
         from chat.models import ChatFile, Message
+        from django.core.files.base import ContentFile
 
-        # Azure translation client
-        translation_client = DocumentTranslationClient(
-            endpoint=settings.AZURE_COGNITIVE_SERVICE_ENDPOINT,
-            credential=AzureKeyCredential(settings.AZURE_COGNITIVE_SERVICE_KEY),
-        )
-        logger.info(f"Processing translation for {file_path} at {datetime.now()}")
+        with open(file_path, "rb") as f:
+            file_content = f.read()
+
+        llm = OttoLLM(deployment="gemini-1.5-flash")
+        prompt = f"Translate the following document to {target_language}:\n\n{file_content.decode('utf-8')}"
+        translated_text = llm.complete(prompt)
+        llm.create_costs()
+
         file_name = file_path.split("/")[-1]
-        input_file_name = file_name.replace(" ", "_")
-        file_extension = os.path.splitext(input_file_name)[1]
-        file_name_without_extension = os.path.splitext(input_file_name)[0]
+        file_extension = os.path.splitext(file_name)[1]
+        file_name_without_extension = os.path.splitext(file_name)[0]
         output_file_name = (
             f"{file_name_without_extension}_{target_language.upper()}{file_extension}"
         )
-        file_uuid = uuid.uuid4()
-        input_file_path = f"{settings.AZURE_STORAGE_TRANSLATION_INPUT_URL_SEGMENT}/{file_uuid}/{input_file_name}"
-        output_file_path = f"{settings.AZURE_STORAGE_TRANSLATION_OUTPUT_URL_SEGMENT}/{file_uuid}/{output_file_name}"
-
-        # Upload input file to Azure Blob Storage
-        azure_storage = settings.AZURE_STORAGE
-        with open(file_path, "rb") as f:
-            azure_storage.save(input_file_path, f)
-
-        # Upload glossary to Azure Blob Storage
-        if glossary_path:
-            glossary_file_path = f"{settings.AZURE_STORAGE_TRANSLATION_INPUT_URL_SEGMENT}/{file_uuid}/glossary/glossary.csv"
-            with open(glossary_path, "rb") as f:
-                # If the target language is not "fr-ca", we need to swap the columns in the glossary file
-                if target_language != "fr-ca":
-                    f = swap_glossary_columns(f)
-                azure_storage.save(glossary_file_path, f)
-
-            glossaries = [
-                TranslationGlossary(
-                    glossary_url=f"https://{settings.AZURE_ACCOUNT_NAME}.blob.core.windows.net/{settings.AZURE_CONTAINER}/{glossary_file_path}",
-                    file_format="CSV",
-                )
-            ]
-        else:
-            glossaries = None
-
-        # Set up translation parameters
-        source_url = f"https://{settings.AZURE_ACCOUNT_NAME}.blob.core.windows.net/{settings.AZURE_CONTAINER}/{input_file_path}"
-        target_url = f"https://{settings.AZURE_ACCOUNT_NAME}.blob.core.windows.net/{settings.AZURE_CONTAINER}/{output_file_path}"
-
-        # Submit the translation job
-        poller = translation_client.begin_translation(
-            source_url,
-            target_url,
-            target_language,
-            storage_type="File",
-            category_id=custom_translator_id,
-            glossaries=glossaries,
-        )
-        result = poller.result()
-
-        usage = poller.details.total_characters_charged
-        cost_type = "translate-custom" if custom_translator_id else "translate-file"
-        Cost.objects.new(cost_type=cost_type, count=usage)
 
         request_context = get_contextvars()
         out_message = Message.objects.get(id=request_context.get("message_id"))
-        for document in result:
 
-            if document.status == "Succeeded":
-                new_file = ChatFile.objects.create(
-                    message=out_message,
-                    filename=output_file_name,
-                    content_type="?",
-                )
-                logger.info(f"Translation succeeded for {new_file.filename}")
-                with azure_storage.open(output_file_path) as f:
-                    new_file.saved_file.file.save(output_file_name, f)
-            else:
-                logger.error("Translation failed: ", error=document.error.message)
-                raise Exception(f"Translation failed:\n{document.error.message}")
+        new_file = ChatFile.objects.create(
+            message=out_message,
+            filename=output_file_name,
+            content_type="text/plain",
+        )
+        new_file.saved_file.file.save(
+            output_file_name, ContentFile(translated_text.encode("utf-8"))
+        )
 
-        logger.info(f"Translation processed for {file_path} at {datetime.now()}")
     except SoftTimeLimitExceeded:
         logger.error(f"Translation task timed out for {file_path}")
         raise Exception(f"Translation task timed out for {file_path}")
     except Exception as e:
         logger.exception(f"Error translating {file_path}: {e}")
         raise Exception(f"Error translating {file_path}")
-    finally:
-        if input_file_path:
-            Thread(target=azure_delete, args=(input_file_path,)).start()
-        if output_file_path:
-            Thread(target=azure_delete, args=(output_file_path,)).start()
-        if glossary_file_path:
-            Thread(target=azure_delete, args=(glossary_file_path,)).start()

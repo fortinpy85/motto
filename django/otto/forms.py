@@ -139,25 +139,15 @@ class UserGroupForm(forms.Form):
         queryset=User.objects.all().order_by("upn"),
         label="UPN",
         required=True,
-        widget=widgets.Autocomplete(
-            name="upn",
-            options={
-                "item_value": User.id,
-                "item_label": User.upn,
-                "multiselect": True,
-                "minimum_search_length": 2,
-                "model": User,
-            },
-        ),
+        # TODO: Replace with HTMXAutocomplete widget when autocomplete API migration is complete
+        widget=forms.SelectMultiple(attrs={"class": "form-control"}),
     )
     group = forms.ModelMultipleChoiceField(
         queryset=Group.objects.all(),
         label="Roles",
         required=False,
-        widget=widgets.Autocomplete(
-            name="group",
-            options={"multiselect": True, "minimum_search_length": 0, "model": Group},
-        ),
+        # TODO: Replace with HTMXAutocomplete widget when autocomplete API migration is complete
+        widget=forms.SelectMultiple(attrs={"class": "form-control"}),
     )
     pilot = forms.ModelChoiceField(
         queryset=Pilot.objects.all(),

@@ -3,8 +3,8 @@ from django.conf.urls.static import static
 from django.urls import include, path, re_path
 from django.views import defaults as default_views
 
-from autocomplete import HTMXAutoComplete
-from azure_auth.views import azure_auth_callback
+from autocomplete import urls as autocomplete_urls
+# from azure_auth.views import azure_auth_callback  # azure_auth module not available
 
 from . import views
 
@@ -15,9 +15,10 @@ urlpatterns = [
     path("welcome/", views.welcome, name="welcome"),
     # AC-2: Entra Integration Helper App Configuration
     # AC-14: Login Page Accessibility
-    path("azure_auth/login", views.login, name="login"),
-    path("azure_auth/", include("azure_auth.urls")),
-    path("accounts/login/callback/", azure_auth_callback, name="callback"),
+    # Azure auth URLs commented out - azure_auth module not available
+    # path("azure_auth/login", views.login, name="login"),
+    # path("azure_auth/", include("azure_auth.urls")),
+    # path("accounts/login/callback/", azure_auth_callback, name="callback"),
     # path("admin/", admin.site.urls), # Do not expose the admin site in production
     path("librarian/", include("librarian.urls")),
     path("laws/", include("laws.urls")),
@@ -108,7 +109,7 @@ urlpatterns = [
     path("chat/", include("chat.urls")),
     # exposes /metrics endpoint, accessible by anonymous users, restricted by ip addresses. See metrics/web.config and IIS's IP Address and Domain Restrictions
     path("", include("django_prometheus.urls")),
-    *HTMXAutoComplete.url_dispatcher("ac"),
+    path("", include((autocomplete_urls[0], autocomplete_urls[1]), namespace=autocomplete_urls[2])),  # Include URL patterns with namespace
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 if settings.DEBUG_TOOLBAR:

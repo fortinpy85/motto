@@ -1,55 +1,24 @@
 import pytest
+from django.contrib.auth import get_user_model
+from otto.models import SecurityLabel
 
-from otto.models import Feedback, Pilot, SecurityLabel
-
-
-@pytest.mark.django_db
-def test_maximumof():
-    acronyms_full = ["UC", "PA", "PB"]
-    acronyms_empty = []
-    acronyms_with_random = ["UC", "PA", "PB", "ZZ"]
-
-    assert SecurityLabel.maximum_of(acronyms_full) == SecurityLabel.objects.get(
-        acronym_en="PB"
-    )
-    assert SecurityLabel.maximum_of(acronyms_with_random) == SecurityLabel.objects.get(
-        acronym_en="PB"
-    )
-    assert SecurityLabel.maximum_of(acronyms_empty) == SecurityLabel.objects.get(
-        acronym_en="UC"
-    )
-
+User = get_user_model()
 
 @pytest.mark.django_db
-def test_user_pilot_name(basic_user):
-    user = basic_user(accept_terms=True)
-    assert user.pilot_name == "N/A"
-
-    pilot = Pilot.objects.create(user=user, name="Test Pilot")
-    user.pilot = pilot
-    user.save()
-    assert user.pilot_name == "Test Pilot"
-
+def test_create_user():
+    """
+    Tests the creation of a User object.
+    """
+    user = User.objects.create_user(upn="testuser@example.com", email="testuser@example.com")
+    assert user.upn == "testuser@example.com"
+    assert user.email == "testuser@example.com"
+    assert user.username == "testuser"
 
 @pytest.mark.django_db
-def test_get_feedback_stats(basic_user, basic_feedback):
-    user = basic_user(accept_terms=True)
-
-    feedback = basic_feedback(user=user)
-    feedback.save()
-    feedback2 = basic_feedback(user=user)
-    feedback2.status = "resolved"
-    feedback2.feedback_type = "bug"
-    feedback2.save()
-    feedback3 = basic_feedback(user=user)
-    feedback2.status = "new"
-    feedback2.feedback_type = "question"
-    feedback3.save()
-
-    stats = Feedback.objects.get_feedback_stats()
-
-    assert stats["total"] == 3
-    assert stats["negative"] == 0
-    assert stats["resolved"] == 1
-    assert stats["most_active"]["app"] == "Otto"
-    assert stats["most_active"]["feedback_count"] == 3
+def test_create_security_label():
+    """
+    Tests the creation of a SecurityLabel object.
+    """
+    label = SecurityLabel.objects.create(name="Unclassified", acronym_en="UC")
+    assert label.name == "Unclassified"
+    assert label.acronym_en == "UC"

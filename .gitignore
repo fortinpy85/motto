@@ -16,6 +16,7 @@ media
 .coverage
 */htmlcov/*
 media/*
+claudedocs/*
 *.prof
 otto_test
 otto_test-journal

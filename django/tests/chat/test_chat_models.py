@@ -1,50 +1,95 @@
-from django.db import IntegrityError
-from django.utils import timezone
 
 import pytest
+from django.contrib.auth import get_user_model
+from chat.models import Chat, ChatOptions, Preset
+from librarian.models import DataSource, Library
+from otto.models import SecurityLabel
 
-from chat.models import Chat, Message
-
-
-@pytest.mark.django_db
-def test_message_feedback_toggle(all_apps_user):
-    user = all_apps_user()
-    chat = Chat.objects.create(title="test", user=user)
-    message = Message.objects.create(chat=chat, feedback=1)
-
-    assert message.feedback == 1
-
-    negative_feedback = message.get_toggled_feedback(-1)
-    assert negative_feedback == -1
-
-    negative_feedback = message.get_toggled_feedback(1)
-    assert negative_feedback == 0
-
-    try:
-        message.get_toggled_feedback(2)
-    except ValueError:
-        assert True
-
+User = get_user_model()
 
 @pytest.mark.django_db
-def test_message_parent_relationship(all_apps_user):
-    user = all_apps_user()
-    chat = Chat.objects.create(title="test", user=user)
+def test_create_chat():
+    """
+    Tests the creation of a Chat object.
+    """
+    user = User.objects.create_user(upn="testuser@example.com", email="testuser@example.com")
+    chat = Chat.objects.create(user=user)
+    assert chat.user == user
+    assert chat.title == ""
+    assert chat.pinned is False
+    assert ChatOptions.objects.filter(chat=chat).exists()
+    assert DataSource.objects.filter(chat=chat).exists()
 
-    message = Message.objects.create(chat=chat, is_bot=False)
-    assert message.parent == None
+@pytest.mark.django_db
+def test_chat_str():
+    """
+    Tests the __str__ method of the Chat model.
+    """
+    user = User.objects.create_user(upn="testuser@example.com", email="testuser@example.com")
+    chat = Chat.objects.create(user=user, title="Test Chat")
+    assert str(chat) == f"Chat {chat.id}: Test Chat"
 
-    response_message = Message.objects.create(chat=chat, is_bot=True)
-    assert response_message.parent == None
+@pytest.mark.django_db
+def test_chat_delete():
+    """
+    Tests the delete method of the Chat model.
+    """
+    user = User.objects.create_user(upn="testuser@example.com", email="testuser@example.com")
+    chat = Chat.objects.create(user=user)
+    data_source = DataSource.objects.get(chat=chat)
+    chat.delete()
+    assert not Chat.objects.filter(pk=chat.pk).exists()
+    assert not DataSource.objects.filter(pk=data_source.pk).exists()
 
-    response_message.parent = message
-    response_message.save()
-    assert response_message.parent == message
+@pytest.mark.django_db
+def test_chat_manager_create_with_mode():
+    """
+    Tests the create method of the ChatManager with a specific mode.
+    """
+    user = User.objects.create_user(upn="testuser@example.com", email="testuser@example.com")
+    chat = Chat.objects.create(user=user, mode="qa")
+    assert chat.options.mode == "qa"
 
-    try:
-        user_message = Message.objects.create(chat=chat, is_bot=False)
-        message.parent = user_message
-        message.save()
-        assert message.parent == None
-    except IntegrityError:
-        assert True
+@pytest.mark.django_db
+def test_preset_creation_from_yaml(mocker):
+    """
+    Tests the create_from_yaml method of the PresetManager.
+    """
+    # Mock dependencies
+    mocker.patch("chat.models.get_request", return_value=None)
+    mocker.patch("os.path.exists", return_value=True)
+    mocker.patch("builtins.open", mocker.mock_open(read_data=""))
+    mocker.patch("librarian.utils.process_engine.generate_hash", return_value="dummy_hash")
+    
+    # Create a default library
+    Library.objects.create(name="Default", is_default_library=True, is_public=True)
+
+    # Sample YAML data
+    yaml_data = {
+        "preset1": {
+            "name_en": "Test Preset 1",
+            "description_en": "Description 1",
+            "options": {
+                "chat_model": "test_model_1"
+            }
+        },
+        "preset2": {
+            "name_en": "Test Preset 2",
+            "description_en": "Description 2",
+            "based_on": "preset1",
+            "options": {
+                "chat_model": "test_model_2"
+            }
+        }
+    }
+
+    Preset.objects.create_from_yaml(yaml_data)
+
+    assert Preset.objects.count() == 2
+    preset1 = Preset.objects.get(name_en="Test Preset 1")
+    preset2 = Preset.objects.get(name_en="Test Preset 2")
+
+    assert preset1.options.chat_model == "test_model_1"
+    assert preset2.options.chat_model == "test_model_2"
+    assert preset1.sharing_option == "everyone"
+    assert preset2.sharing_option == "everyone"

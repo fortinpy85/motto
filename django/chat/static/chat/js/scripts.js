@@ -505,29 +505,51 @@ function copyPromptToTextInput(btn, messageMode) {
 }
 
 function closeSidebar(sidebarID, resizePrompt = true) {
-  document.querySelector("#" + sidebarID).classList.add("hidden");
-  document.querySelector("#" + sidebarID + "-toggle").classList.remove("hidden");
+  const sidebar = document.querySelector("#" + sidebarID);
+  const sidebarToggle = document.querySelector("#" + sidebarID + "-toggle");
+
+  if (sidebar) {
+    sidebar.classList.add("hidden");
+  }
+  if (sidebarToggle) {
+    sidebarToggle.classList.remove("hidden");
+  }
   if (resizePrompt) {
     resizePromptContainer();
   }
 }
 
 function openSidebar(sidebarID, resizePrompt = true) {
-  document.querySelector("#" + sidebarID).classList.remove("hidden");
-  document.querySelector("#" + sidebarID + "-toggle").classList.add("hidden");
+  const sidebar = document.querySelector("#" + sidebarID);
+  const sidebarToggle = document.querySelector("#" + sidebarID + "-toggle");
+
+  if (sidebar) {
+    sidebar.classList.remove("hidden");
+  }
+  if (sidebarToggle) {
+    sidebarToggle.classList.add("hidden");
+  }
   if (resizePrompt) {
     resizePromptContainer();
   }
 }
 
-document.querySelector("#close-right-sidebar")
-  .addEventListener("click", function () {closeSidebar("right-sidebar");});
-document.querySelector("#right-sidebar-toggle")
-  .addEventListener("click", function () {openSidebar("right-sidebar");});
-document.querySelector("#close-left-sidebar")
-  .addEventListener("click", function () {closeSidebar("left-sidebar");});
-document.querySelector("#left-sidebar-toggle")
-  .addEventListener("click", function () {openSidebar("left-sidebar");});
+const closeRightSidebar = document.querySelector("#close-right-sidebar");
+if (closeRightSidebar) {
+  closeRightSidebar.addEventListener("click", function () {closeSidebar("right-sidebar");});
+}
+const rightSidebarToggle = document.querySelector("#right-sidebar-toggle");
+if (rightSidebarToggle) {
+  rightSidebarToggle.addEventListener("click", function () {openSidebar("right-sidebar");});
+}
+const closeLeftSidebar = document.querySelector("#close-left-sidebar");
+if (closeLeftSidebar) {
+  closeLeftSidebar.addEventListener("click", function () {closeSidebar("left-sidebar");});
+}
+const leftSidebarToggle = document.querySelector("#left-sidebar-toggle");
+if (leftSidebarToggle) {
+  leftSidebarToggle.addEventListener("click", function () {openSidebar("left-sidebar");});
+}
 
 // Reload the page if navigated to with browser back / forward buttons
 // This addresses a bug where the chat does not include all messages

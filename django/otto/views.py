@@ -25,7 +25,7 @@ from django.utils.translation import gettext_lazy as _
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
-from azure_auth.views import azure_auth_login as azure_auth_login
+# from azure_auth.views import azure_auth_login as azure_auth_login  # azure_auth not available
 from structlog import get_logger
 from structlog.contextvars import bind_contextvars
 
@@ -67,9 +67,10 @@ def welcome(request):
 
 
 def login(request: HttpRequest):
-    # Wraps azure_auth login to allow for language selection
+    # Azure auth not available - redirect to index
+    # TODO: Implement alternative authentication when azure_auth module is unavailable
     lang_code = request.GET.get("lang")
-    response = azure_auth_login(request)
+    response = redirect('index')
     # See django.views.i18n.set_language for the source of this code
     if lang_code and check_for_language(lang_code):
         response.set_cookie(
@@ -112,8 +113,9 @@ def get_categorized_features(user):
 
 def index(request):
     # Determine if the tour should be forced
-    force_tour = not request.user.homepage_tour_completed
-    tour_skippable = request.user.is_admin or request.user.homepage_tour_completed
+    # Anonymous users should see the tour, authenticated users only if they haven't completed it
+    force_tour = not request.user.homepage_tour_completed if request.user.is_authenticated else True
+    tour_skippable = (request.user.is_admin or request.user.homepage_tour_completed) if request.user.is_authenticated else False
 
     # If an existing user is logging in and doesn't need the tour, redirect to the AI assistant
     if request.session.pop("from_welcome", False) and not force_tour:

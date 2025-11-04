@@ -27,7 +27,9 @@ let librarianModalCloseHandler = event => {
   });
 };
 const modalEl = document.getElementById('editLibrariesModal');
-modalEl.addEventListener('hidden.bs.modal', librarianModalCloseHandler);
+if (modalEl) {
+  modalEl.addEventListener('hidden.bs.modal', librarianModalCloseHandler);
+}
 
 function emailLibraryAdmins(url) {
   const library_id = document.getElementById("id_qa_library").value;

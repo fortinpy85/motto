@@ -1,3 +1,5 @@
+
+
 import io
 import os
 import shutil
@@ -5,6 +7,8 @@ import uuid
 from datetime import datetime
 from unittest.mock import MagicMock
 
+import sys
+print(sys.path)
 from django.conf import settings
 from django.contrib.auth.models import Group
 from django.core.files.base import ContentFile
@@ -21,11 +25,24 @@ from pptx import Presentation
 from reportlab.pdfgen import canvas
 
 from text_extractor.models import OutputFile
+from chat.llm_models import LLM
 
 pytest_plugins = ("pytest_asyncio",)
 
 this_dir = os.path.dirname(os.path.abspath(__file__))
 
+@pytest.fixture(scope="function")
+def mock_models(mocker):
+    """
+    Fixture to mock the MODELS_BY_ID dictionary.
+    """
+    models = {
+        "test_model_1": LLM(model_id="test_model_1", deployment_name="test_model_1", description_en="Test Model 1", max_tokens_in=8000, max_tokens_out=2000),
+        "test_model_2": LLM(model_id="test_model_2", deployment_name="test_model_2", description_en="Test Model 2", max_tokens_in=8000, max_tokens_out=2000),
+        "gemini-1.5-flash": LLM(model_id="gemini-1.5-flash", deployment_name="gemini-1.5-flash", description_en="Gemini 1.5 Flash", max_tokens_in=8000, max_tokens_out=2000),
+    }
+    mocker.patch("chat.models.MODELS_BY_ID", models)
+    mocker.patch("chat.llm_models.MODELS_BY_ID", models)
 
 @pytest.fixture(scope="function", autouse=True)
 def set_test_media():
@@ -48,8 +65,27 @@ def set_test_media():
     shutil.rmtree(test_media_dir)
 
 
-@pytest_asyncio.fixture(scope="session")
-async def django_db_setup(django_db_setup, django_db_blocker):
+import pytest
+import pytest_asyncio
+from django.core.management import call_command
+from asgiref.sync import sync_to_async
+from chat.llm_models import LLM
+
+@pytest.fixture(scope="function")
+def mock_models(mocker):
+    """
+    Fixture to mock the MODELS_BY_ID dictionary.
+    """
+    models = {
+        "test_model_1": LLM(model_id="test_model_1", deployment_name="test_model_1", description_en="Test Model 1", max_tokens_in=8000, max_tokens_out=2000),
+        "test_model_2": LLM(model_id="test_model_2", deployment_name="test_model_2", description_en="Test Model 2", max_tokens_in=8000, max_tokens_out=2000),
+        "gemini-1.5-flash": LLM(model_id="gemini-1.5-flash", deployment_name="gemini-1.5-flash", description_en="Gemini 1.5 Flash", max_tokens_in=8000, max_tokens_out=2000),
+    }
+    mocker.patch("chat.models.MODELS_BY_ID", models)
+    mocker.patch("chat.llm_models.MODELS_BY_ID", models)
+
+@pytest_asyncio.fixture(scope="function")
+async def django_db_setup(django_db_setup, django_db_blocker, mock_models):
     def _inner():
         with django_db_blocker.unblock():
             call_command(

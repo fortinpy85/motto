@@ -67,12 +67,12 @@ REASONING_EFFORT_CHOICES = [
 ]
 
 TRANSLATE_MODEL_CHOICES = [
-    ("azure", _("Azure Translator (best for files, 15x cost)")),
-    ("gpt-5", _("GPT-5 (best for text, 1.5x cost)")),
-    ("gpt-4.1", _("GPT-4.1 (good for text, 1x cost)")),
+    ("gemini-1.5-flash", _("Gemini 1.5 Flash (recommended, balanced speed and quality)")),
+    ("gemini-1.5-pro", _("Gemini 1.5 Pro (highest quality, slower)")),
+    ("gpt-5", _("GPT-5 (alternative, 1.5x cost)")),
+    ("gpt-4.1", _("GPT-4.1 (alternative, 1x cost)")),
     ("gpt-4.1-mini", _("GPT-4.1-mini (faster, 0.2x cost)")),
     ("gpt-4.1-nano", _("GPT-4.1-nano (fastest, < 0.1x cost)")),
-    ("azure_custom", _("Azure Translator - JUS Custom")),
 ]
 
 
@@ -183,7 +183,12 @@ class ChatOptionsManager(models.Manager):
             new_model, was_updated = get_updated_model_id(old_model)
             if was_updated:
                 setattr(options, field, new_model)
-                old_model = MODELS_BY_ID.get(old_model).description
+                # Check if old model exists in MODELS_BY_ID before accessing description
+                old_model_obj = MODELS_BY_ID.get(old_model)
+                if old_model_obj is None:
+                    logger.warning(f"Model {old_model} not found in MODELS_BY_ID, skipping update message")
+                    continue
+                old_model = old_model_obj.description
                 new_model = get_model(new_model).description
                 update_messages.append(f"{msg_from} {old_model} {_('to')} {new_model}.")
                 changed = True
@@ -232,7 +237,7 @@ class ChatOptions(models.Model):
 
     # Translate-specific options
     translate_language = models.CharField(max_length=255, default="fr")
-    translate_model = models.CharField(max_length=20, default="azure_custom")
+    translate_model = models.CharField(max_length=20, default="gemini-1.5-flash")
     translate_glossary = models.ForeignKey(
         "librarian.SavedFile",
         on_delete=models.SET_NULL,
