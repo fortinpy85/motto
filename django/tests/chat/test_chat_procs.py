@@ -123,7 +123,7 @@ def test_fix_source_links():
 @pytest.mark.django_db
 @pytest.mark.asyncio
 async def test_htmx_stream_response_stream(all_apps_user):
-    llm = OttoLLM()
+    llm = OttoLLM(mock_embedding=True)
 
     async def stream_generator():
         for char in "Hi!":
@@ -159,7 +159,7 @@ async def test_htmx_stream_response_stream(all_apps_user):
 @pytest.mark.asyncio
 @pytest.mark.django_db()
 async def test_htmx_stream_response_str(all_apps_user):
-    llm = OttoLLM()
+    llm = OttoLLM(mock_embedding=True)
     # We first need an empty chat and a message
     user = await sync_to_async(all_apps_user)("test_user_2")
     chat = await sync_to_async(Chat.objects.create)(user=user)
@@ -189,7 +189,7 @@ async def test_htmx_stream_response_str(all_apps_user):
 @pytest.mark.asyncio
 @pytest.mark.django_db()
 async def test_htmx_stream_response_generator(all_apps_user):
-    llm = OttoLLM()
+    llm = OttoLLM(mock_embedding=True)
 
     class FakeFile:
         def __init__(self, name, text):
@@ -239,7 +239,7 @@ async def test_htmx_stream_response_generator(all_apps_user):
 @pytest.mark.asyncio
 @pytest.mark.django_db()
 async def test_htmx_stream_response_replacer(basic_user):
-    llm = OttoLLM()
+    llm = OttoLLM(mock_embedding=True)
 
     async def stream_generator():
         yield "first thing"
@@ -283,7 +283,7 @@ async def test_htmx_stream_response_replacer(basic_user):
 async def test_combine_response_generators():
     from chat.utils import combine_response_generators
 
-    llm = OttoLLM()
+    llm = OttoLLM(mock_embedding=True)
 
     # The function should take a list of (sync) generators and a list of titles
     # and combine the output of the generators into a single stream
