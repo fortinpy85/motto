@@ -8,6 +8,7 @@ djlint==1.36.4
 watchdog==6.0.0
 rich==14.0.0
 django-livereload-server==0.5.1
+django_structlog==10.0.0
 pytest-mock==3.14.0
 django-extensions
 matplotlib==3.9.2
