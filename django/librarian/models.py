@@ -541,7 +541,27 @@ class SavedFile(models.Model):
             logger.info(f"File {self.file.name} has associated objects; not deleting")
             return
         if self.file:
-            self.file.delete(True)
+            import time
+            import gc
+            # Force garbage collection to release any file handles
+            gc.collect()
+
+            # Retry logic for Windows file locking issues
+            max_retries = 3
+            retry_delay = 0.1
+
+            for attempt in range(max_retries):
+                try:
+                    self.file.delete(True)
+                    break
+                except (PermissionError, OSError) as e:
+                    if attempt < max_retries - 1:
+                        logger.debug(f"File deletion attempt {attempt + 1} failed, retrying: {e}")
+                        time.sleep(retry_delay)
+                        retry_delay *= 2  # Exponential backoff
+                    else:
+                        logger.error(f"Failed to delete file after {max_retries} attempts: {e}")
+                        raise
         self.delete()
 
 
