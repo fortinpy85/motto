@@ -60,9 +60,14 @@ def test_preset_creation_from_yaml(mocker):
     mocker.patch("os.path.exists", return_value=True)
     mocker.patch("builtins.open", mocker.mock_open(read_data=""))
     mocker.patch("librarian.utils.process_engine.generate_hash", return_value="dummy_hash")
-    
+
+    # Ensure no existing default libraries before creating a new one
+    Library.objects.filter(is_default_library=True).delete()
     # Create a default library
     Library.objects.create(name="Default", is_default_library=True, is_public=True)
+
+    # Clear fixture presets loaded during setup to ensure test isolation
+    Preset.objects.all().delete()
 
     # Sample YAML data
     yaml_data = {

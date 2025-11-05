@@ -22,7 +22,6 @@ from otto.models import SecurityLabel, User
 from otto.utils.common import display_cad_cost, set_costs
 
 logger = get_logger(__name__)
-llm = OttoLLM()
 
 STATUS_CHOICES = [
     ("PENDING", "Not started"),
@@ -186,7 +185,7 @@ class Library(models.Model):
         session.close()
         if recreate:
             # This will create the vector store table - use get_index with skip_setup=False
-            llm.get_index(self.uuid_hex, skip_setup=False)
+            OttoLLM().get_index(self.uuid_hex, skip_setup=False)
 
     @property
     def sorted_data_sources(self):

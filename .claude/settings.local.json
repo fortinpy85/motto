@@ -61,7 +61,15 @@
       "WebFetch(domain:developers.googleblog.com)",
       "Bash(export GEMINI_API_KEY=\"AIzaSyD-DFB7pvYfDVIwdV1DBoXQTCbOnDaxzeU\")",
       "Bash(tee:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git remote rename:*)",
+      "Bash(git remote add:*)",
+      "Bash(git push:*)",
+      "Bash(git check-ignore:*)",
+      "Bash(echo $GEMINI_API_KEY)",
+      "Bash(unset:*)",
+      "Bash(source .env)"
     ],
     "deny": [],
     "ask": []

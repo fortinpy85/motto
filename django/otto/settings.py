@@ -32,7 +32,8 @@ if os.path.exists(version_file_path):
         OTTO_BUILD_DATE = data.get("build_date", "")
 
 # Load environment variables from .env file
-load_dotenv(os.path.join(BASE_DIR, ".env"))
+# Use override=True to ensure .env file values take precedence over system environment variables
+load_dotenv(os.path.join(BASE_DIR, ".env"), override=True)
 # Check for a variable we only set in the .env file to see if it exists
 if os.environ.get("DJANGODB_NAME") is None:
     try:

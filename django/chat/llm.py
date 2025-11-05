@@ -410,6 +410,10 @@ class OttoLLM:
         if self.use_mock_llm:
             # Use small max_tokens for efficient load testing - generates short responses instead of echoing prompts
             return MockLLM(max_tokens=50)
+        # If no API key is available (e.g., in tests), use mock LLM
+        if not settings.GEMINI_API_KEY:
+            logger.warning("GEMINI_API_KEY not set, using MockLLM")
+            return MockLLM(max_tokens=50)
         return GoogleGenAI(
             model_name=self.model,
             api_key=settings.GEMINI_API_KEY,

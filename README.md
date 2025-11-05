@@ -1,6 +1,10 @@
-# Otto
+# motto
 
-Otto is a platform designed to host a wide range of AI tools, data visualizations, and interactive solutions that address various efficiency needs across Justice Canada. Developed by data specialists, Otto streamlines processes, makes delivering valuable solutions easier, and enhances overall productivity for legal professionals.
+> **Note**: This repository ("motto") is a fork of [Justice Canada's Otto project](https://github.com/justicecanada/Otto), originally developed by data specialists at Justice Canada. All credit for the original codebase, architecture, and design goes to the Justice Canada team. This fork includes modifications to migrate from Azure OpenAI to Google Gemini for LLM operations.
+
+## About
+
+motto (originally Otto) is a platform designed to host a wide range of AI tools, data visualizations, and interactive solutions that address various efficiency needs across Justice Canada. Developed by data specialists, Otto streamlines processes, makes delivering valuable solutions easier, and enhances overall productivity for legal professionals.
 
 Born out of the need to tackle data challenges that didn't fit neatly into existing corporate systems, Otto serves as a flexible hosting environment for:
 

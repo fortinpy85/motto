@@ -422,10 +422,11 @@ class PresetManager(models.Manager):
 
             based_on = item.pop("based_on", None)
             # Prevent creation of multiple default presets
+            # Note: english_default and french_default belong to Preset, not ChatOptions
             if self.filter(english_default=True).exists():
-                options_dict["english_default"] = False
+                item["english_default"] = False
             if self.filter(french_default=True).exists():
-                options_dict["french_default"] = False
+                item["french_default"] = False
             # Case 1: Completely new options, not based on another
             if not based_on:
                 # Create the ChatOptions object
