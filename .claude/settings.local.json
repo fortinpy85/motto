@@ -59,7 +59,6 @@
       "WebFetch(domain:ai.google.dev)",
       "WebSearch",
       "WebFetch(domain:developers.googleblog.com)",
-      "Bash(export GEMINI_API_KEY=\"AIzaSyD-DFB7pvYfDVIwdV1DBoXQTCbOnDaxzeU\")",
       "Bash(tee:*)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
@@ -69,7 +68,11 @@
       "Bash(git check-ignore:*)",
       "Bash(echo $GEMINI_API_KEY)",
       "Bash(unset:*)",
-      "Bash(source .env)"
+      "Bash(source .env)",
+      "Bash(test_failures_errors.txt)",
+      "Bash(test_failures_and_errors.txt)",
+      "Bash(gh run:*)",
+      "Bash(gh api:*)"
     ],
     "deny": [],
     "ask": []
