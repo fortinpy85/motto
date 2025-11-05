@@ -32,7 +32,7 @@ from otto.forms import FeedbackForm, UserGroupForm, PilotForm
 from chat.models import Chat, Message, Preset
 from chat.forms import PresetForm
 from librarian.models import Library, DataSource, Document
-from librarian.forms import LibraryDetailForm, DataSourceDetailForm, DocumentURLForm
+from librarian.forms import LibraryDetailForm, DataSourceDetailForm, DocumentDetailForm
 
 
 # ==================== Form Validation Tests ====================
@@ -97,7 +97,7 @@ class TestFormValidationFailures:
         assert not form.is_valid()
 
     def test_document_url_form_invalid_url(self, basic_user):
-        """Test DocumentURLForm rejects invalid URLs"""
+        """Test DocumentDetailForm rejects invalid URLs"""
         user = basic_user()
         library = Library.objects.create(
             name_en="Test Library",
@@ -113,7 +113,7 @@ class TestFormValidationFailures:
             'data_source': datasource.id,
         }
 
-        form = DocumentURLForm(user=user, library_id=library.id, data=form_data)
+        form = DocumentDetailForm(data_source_id=datasource.id, data=form_data)
 
         assert not form.is_valid()
 

@@ -23,7 +23,7 @@ from django.core.cache import cache
 from django.db import connection
 from django.test.utils import override_settings
 
-from chat.models import Chat, Message, ChatOptions, Conversation
+from chat.models import Chat, Message, ChatOptions
 from chat.llm import OttoLLM
 from librarian.models import Document, DataSource, Library
 from otto.secure_models import AccessKey
