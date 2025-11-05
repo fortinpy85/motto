@@ -37,7 +37,7 @@ def final_response(stream):
 
 @pytest.mark.django_db
 def test_title_chat(client, all_apps_user):
-    llm = OttoLLM()
+    llm = OttoLLM(mock_embedding=True)
     user = all_apps_user()
     client.force_login(user)
     chat = Chat.objects.create(user=user)
@@ -255,7 +255,7 @@ def test_cost_warning(mock_estimate_cost, client, all_apps_user):
 @pytest_asyncio.fixture(scope="session")
 @pytest.mark.django_db(transaction=True)
 async def test_htmx_stream_stop(client, all_apps_user):
-    llm = OttoLLM()
+    llm = OttoLLM(mock_embedding=True)
 
     async def stream_generator():
         yield "first thing"

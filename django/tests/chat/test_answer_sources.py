@@ -37,7 +37,7 @@ def test_answer_sources(client, all_apps_user, load_example_pdf):
     from llama_index.core.vector_stores.types import MetadataFilter, MetadataFilters
 
     user = all_apps_user()
-    llm = OttoLLM()
+    llm = OttoLLM(mock_embedding=True)
     chat = Chat.objects.create(user=user)
     query = "In example.pdf, what headings are there?"
     message = Message.objects.create(chat=chat, text=query)
