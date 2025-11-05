@@ -27,7 +27,7 @@ tmp_text
 liccheck.ini
 licenses_results.txt
 poc/*
-
+.claude/
 CLAUDE.md
 GEMINI.md
 
