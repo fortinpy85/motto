@@ -27,10 +27,15 @@ def extract_msg(content, root_document_id):
     document = Document.objects.get(id=root_document_id)
     root_file_path = document.file_path
 
-    directory = f"{cwd}/media/{root_document_id}/email"
-    with tempfile.NamedTemporaryFile(suffix=".msg") as temp_file:
+    directory = str(cwd / "media" / str(root_document_id) / "email")
+    # Create the directory if it doesn't exist
+    os.makedirs(directory, exist_ok=True)
+
+    with tempfile.NamedTemporaryFile(suffix=".msg", delete=False) as temp_file:
         temp_file.write(content)
         temp_file_path = temp_file.name
+
+    try:
         try:
             subprocess.run(
                 [
@@ -43,16 +48,21 @@ def extract_msg(content, root_document_id):
                     "--extract-embedded",
                     "--out",
                     directory,
-                ]
+                ],
+                check=True,
+                capture_output=True,
+                text=True,
             )
             if os.path.isdir(directory):
                 email = {}
+                found_json = False
                 for root, dirs, files in os.walk(directory):
                     for file in files:
                         if file.endswith(".json"):
+                            found_json = True
                             with open(os.path.join(root, file)) as f:
                                 data = json.load(f)
-                                attachments = data.get("attachments")
+                                attachments = data.get("attachments", [])
                                 email_attachments = []
                                 for path in attachments:
                                     if os.path.isfile(path):
@@ -80,6 +90,18 @@ def extract_msg(content, root_document_id):
                                     data.get("date"), "%a, %d %b %Y %H:%M:%S %z"
                                 )
                                 email["body"] = data.get("body")
+
+                if not found_json:
+                    logger.error(f"No JSON file found in {directory} after extract_msg")
+                    md = ""
+                    shutil.rmtree(directory, ignore_errors=True)
+                    return md
+            else:
+                logger.error(f"Directory {directory} was not created by extract_msg")
+                md = ""
+                shutil.rmtree(directory, ignore_errors=True)
+                return md
+
             combined_email = f"From: {email.get('from')}\n" f"To: {email.get('to')}\n"
             if email.get("cc"):
                 combined_email += f"Cc: {email.get('cc')}\n"
@@ -93,14 +115,30 @@ def extract_msg(content, root_document_id):
             )
             md = combined_email
         except subprocess.CalledProcessError as e:
-            logger.error(f"Command failed with exit code {e.returncode}")
-            logger.error(f"Output: {e.output.decode('utf-8')}")
+            logger.error(
+                f"extract_msg command failed",
+                exit_code=e.returncode,
+                stdout=e.stdout,
+                stderr=e.stderr,
+            )
             md = ""
         except Exception as e:
             logger.error(f"Failed to extract Outlook email: {e}")
             md = ""
+        finally:
+            # Clean up temp file
+            try:
+                if os.path.exists(temp_file_path):
+                    os.unlink(temp_file_path)
+            except Exception:
+                pass
+
         shutil.rmtree(directory, ignore_errors=True)
         return md
+    except Exception as e:
+        logger.error(f"Unexpected error in extract_msg: {e}")
+        shutil.rmtree(directory, ignore_errors=True)
+        return ""
 
 
 def extract_eml(content, root_document_id):

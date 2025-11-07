@@ -35,8 +35,8 @@ STATUS_CHOICES = [
 PDF_EXTRACTION_CHOICES = [
     ("default", _("text only")),
     ("layout", _("text & layout")),
-    ("azure_read", _("OCR")),
-    ("azure_layout", _("OCR & layout")),
+    ("gemini_read", _("OCR")),
+    ("gemini_layout", _("OCR & layout")),
 ]
 
 
@@ -149,8 +149,13 @@ class Library(models.Model):
             )
 
     def save(self, *args, **kwargs):
+        is_new = self.pk is None  # Detect if this is a new library being created
         self.clean()
         super().save(*args, **kwargs)
+        if is_new:
+            # Initialize vector store for newly created libraries
+            # This ensures personal libraries (and all libraries) get proper vector store setup
+            self.reset(recreate=True)
 
     def access(self):
         self.accessed_at = timezone.now()
@@ -533,22 +538,40 @@ class SavedFile(models.Model):
         return self.sha256_hash
 
     def safe_delete(self):
-        if (
-            self.chat_files.exists()
-            or self.documents.exists()
-            or self.glossary_options.exists()
-        ):
-            logger.info(f"File {self.file.name} has associated objects; not deleting")
+        has_chat_files = self.chat_files.exists()
+        has_documents = self.documents.exists()
+        has_glossary = self.glossary_options.exists()
+
+        if has_chat_files or has_documents or has_glossary:
+            logger.info(
+                f"File {self.file.name} has associated objects; not deleting",
+                chat_files=has_chat_files,
+                chat_files_count=self.chat_files.count(),
+                documents=has_documents,
+                documents_count=self.documents.count(),
+                glossary=has_glossary,
+            )
             return
         if self.file:
             import time
             import gc
+
+            # Close the file if it's open
+            try:
+                if hasattr(self.file, 'close') and hasattr(self.file, 'closed'):
+                    if not self.file.closed:
+                        self.file.close()
+            except Exception:
+                pass  # Ignore errors when trying to close
+
             # Force garbage collection to release any file handles
             gc.collect()
+            time.sleep(0.1)  # Brief delay after GC
+            gc.collect()  # Second GC pass
 
             # Retry logic for Windows file locking issues
-            max_retries = 3
-            retry_delay = 0.1
+            max_retries = 10
+            retry_delay = 0.5
 
             for attempt in range(max_retries):
                 try:
@@ -557,8 +580,9 @@ class SavedFile(models.Model):
                 except (PermissionError, OSError) as e:
                     if attempt < max_retries - 1:
                         logger.debug(f"File deletion attempt {attempt + 1} failed, retrying: {e}")
+                        gc.collect()  # Additional GC between retries
                         time.sleep(retry_delay)
-                        retry_delay *= 2  # Exponential backoff
+                        retry_delay = min(retry_delay * 1.5, 2.0)  # Exponential backoff with cap
                     else:
                         logger.error(f"Failed to delete file after {max_retries} attempts: {e}")
                         raise

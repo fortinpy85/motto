@@ -40,9 +40,50 @@ def mock_models(mocker):
         "test_model_1": LLM(model_id="test_model_1", deployment_name="test_model_1", description_en="Test Model 1", max_tokens_in=8000, max_tokens_out=2000),
         "test_model_2": LLM(model_id="test_model_2", deployment_name="test_model_2", description_en="Test Model 2", max_tokens_in=8000, max_tokens_out=2000),
         "gemini-1.5-flash": LLM(model_id="gemini-1.5-flash", deployment_name="gemini-1.5-flash", description_en="Gemini 1.5 Flash", max_tokens_in=8000, max_tokens_out=2000),
+        "gemini-1.5-pro": LLM(model_id="gemini-1.5-pro", deployment_name="models/gemini-1.5-pro-latest", description_en="Gemini 1.5 Pro", max_tokens_in=1048576, max_tokens_out=8192),
     }
     mocker.patch("chat.models.MODELS_BY_ID", models)
     mocker.patch("chat.llm_models.MODELS_BY_ID", models)
+
+def safe_rmtree(path, retries=5, delay=0.1):
+    """
+    Safely remove a directory tree with retries for Windows file locking.
+
+    On Windows, files may remain locked briefly after Django closes them.
+    This function retries deletion with exponential backoff.
+    """
+    import time
+    import gc
+
+    for attempt in range(retries):
+        try:
+            # Force garbage collection to close file handles
+            gc.collect()
+
+            # Try to close any remaining file handles in Django's file storage
+            from django.core.files.storage import default_storage
+            try:
+                if hasattr(default_storage, 'close'):
+                    default_storage.close()
+            except:
+                pass
+
+            # Attempt to remove the directory
+            if os.path.exists(path):
+                shutil.rmtree(path, ignore_errors=False)
+            return
+        except PermissionError as e:
+            if attempt < retries - 1:
+                # Wait with exponential backoff
+                time.sleep(delay * (2 ** attempt))
+            else:
+                # Last attempt failed, try with ignore_errors=True
+                try:
+                    shutil.rmtree(path, ignore_errors=True)
+                except:
+                    pass
+                print(f"Warning: Could not fully clean up {path}: {e}")
+
 
 @pytest.fixture(scope="function", autouse=True)
 def set_test_media():
@@ -53,16 +94,15 @@ def set_test_media():
     storages["default"]["LOCATION"] = test_media_dir
 
     # Ensure the test media directory is clean
-    if os.path.exists(test_media_dir):
-        shutil.rmtree(test_media_dir)
-    os.makedirs(test_media_dir)
+    safe_rmtree(test_media_dir)
+    os.makedirs(test_media_dir, exist_ok=True)
 
     # Use override_settings to set MEDIA_ROOT
     with override_settings(STORAGES=storages, MEDIA_ROOT=test_media_dir):
         yield  # This allows the tests to run
 
-    # Cleanup after tests
-    shutil.rmtree(test_media_dir)
+    # Cleanup after tests - use safe removal with retries
+    safe_rmtree(test_media_dir)
 
 
 import pytest
@@ -80,6 +120,7 @@ def mock_models(mocker):
         "test_model_1": LLM(model_id="test_model_1", deployment_name="test_model_1", description_en="Test Model 1", max_tokens_in=8000, max_tokens_out=2000),
         "test_model_2": LLM(model_id="test_model_2", deployment_name="test_model_2", description_en="Test Model 2", max_tokens_in=8000, max_tokens_out=2000),
         "gemini-1.5-flash": LLM(model_id="gemini-1.5-flash", deployment_name="gemini-1.5-flash", description_en="Gemini 1.5 Flash", max_tokens_in=8000, max_tokens_out=2000),
+        "gemini-1.5-pro": LLM(model_id="gemini-1.5-pro", deployment_name="models/gemini-1.5-pro-latest", description_en="Gemini 1.5 Pro", max_tokens_in=1048576, max_tokens_out=8192),
     }
     mocker.patch("chat.models.MODELS_BY_ID", models)
     mocker.patch("chat.llm_models.MODELS_BY_ID", models)
@@ -98,14 +139,6 @@ async def django_db_setup(django_db_setup, django_db_blocker, mock_models):
                 "presets",
             )
             # Process the Wikipedia document only
-            from chat.llm import OttoLLM
-            from librarian.models import Document
-            from librarian.tasks import process_document_helper
-
-            test_document = Document.objects.get(
-                url="https://en.wikipedia.org/wiki/Glyph"
-            )
-            process_document_helper(test_document, OttoLLM())
 
     return await sync_to_async(_inner)()
 
@@ -125,7 +158,10 @@ def load_example_pdf(django_db_blocker):
                 filename="example.pdf",
                 data_source=DataSource.objects.get(name_en="Wikipedia"),
             )
+            print("Before process_document_helper")
             process_document_helper(d, OttoLLM())
+            print("After process_document_helper")
+            saved_file.file.close()
 
 
 @pytest.fixture()
@@ -380,3 +416,48 @@ def sample_pdf():
 @pytest.fixture(autouse=True)
 def ensure_otto_admin_group(db):
     Group.objects.get_or_create(name="Otto admin")
+
+@pytest.fixture(autouse=True)
+def close_vector_store_connections():
+    """
+    Ensures SQLAlchemy connections from vector store operations are closed
+    after each test to prevent "database is being accessed by other users" errors.
+    """
+    yield  # Test runs here
+
+    # Close all SQLAlchemy connections after the test
+    import gc
+    try:
+        # Force garbage collection to close any lingering connections
+        gc.collect()
+
+        # Try to access and dispose the vector store engines from llama_index
+        from llama_index.vector_stores.postgres import PGVectorStore
+
+        # Dispose all engines in the pool
+        if hasattr(PGVectorStore, '_engine_pool'):
+            for engine in PGVectorStore._engine_pool.values():
+                try:
+                    engine.dispose()
+                except:
+                    pass
+
+        # Also try disposing any engines in the global scope
+        import sys
+        for module_name, module in list(sys.modules.items()):
+            if 'vector' in module_name.lower() or 'sql' in module_name.lower():
+                if hasattr(module, 'engine'):
+                    try:
+                        module.engine.dispose()
+                    except:
+                        pass
+
+    except Exception:
+        pass  # Ignore errors if vector store wasn't used in this test
+
+    # Final garbage collection
+    gc.collect()
+
+@pytest.fixture
+def mock_process_document_helper(mocker):
+    return mocker.patch("librarian.tasks.process_document_helper")
