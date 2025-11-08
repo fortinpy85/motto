@@ -34,7 +34,7 @@ from otto.rules import (
     can_view_library,
     can_edit_library,
     can_delete_library,
-    can_manage_library_users,
+    can_manage_library_users
 )
 from otto.utils.decorators import permission_required, app_access_required, budget_required
 from chat.models import Chat, Preset
@@ -145,7 +145,7 @@ class TestGroupBasedAuthorization:
 
         # Add to admin group
         user.groups.add(admin_group)
-        user.save()
+        user.refresh_from_db()
 
         assert user.is_admin
         assert is_admin(user)
@@ -160,7 +160,7 @@ class TestGroupBasedAuthorization:
 
         # Add to operations admin group
         user.groups.add(ops_group)
-        user.save()
+        user.refresh_from_db()
 
         assert user.is_operations_admin
 
@@ -174,7 +174,7 @@ class TestGroupBasedAuthorization:
 
         # Add to data steward group
         user.groups.add(steward_group)
-        user.save()
+        user.refresh_from_db()
 
         assert user.has_perm("librarian.manage_public_libraries")
 
@@ -282,9 +282,11 @@ class TestChatAccessAuthorization:
         owner = basic_user(username="owner", accept_terms=True)
         other_user = basic_user(username="other", accept_terms=True)
 
+        options = ChatOptions.objects.create()
         preset = Preset.objects.create(
             owner=owner,
             name="Public Preset",
+            options=options,
             sharing_option="everyone"
         )
 
@@ -297,9 +299,11 @@ class TestChatAccessAuthorization:
         allowed_user = basic_user(username="allowed", accept_terms=True)
         blocked_user = basic_user(username="blocked", accept_terms=True)
 
+        options = ChatOptions.objects.create()
         preset = Preset.objects.create(
             owner=owner,
             name="Shared Preset",
+            options=options,
             sharing_option="specific"
         )
         preset.accessible_to.add(allowed_user)
@@ -314,9 +318,11 @@ class TestChatAccessAuthorization:
         other_user = basic_user(username="other", accept_terms=True)
         admin = all_apps_user()
 
+        options = ChatOptions.objects.create()
         preset = Preset.objects.create(
             owner=owner,
-            name="User Preset"
+            name="User Preset",
+            options=options
         )
 
         # Owner can edit
@@ -333,10 +339,12 @@ class TestChatAccessAuthorization:
         admin = all_apps_user()
         user = basic_user(accept_terms=True)
 
+        options = ChatOptions.objects.create()
         global_preset = Preset.objects.create(
             owner=None,
             name="Global Default",
-            global_default=True
+            options=options,
+            english_default=True
         )
 
         # Admin can edit system preset
@@ -359,8 +367,7 @@ class TestLibraryAccessAuthorization:
         """Test that public libraries are viewable by all"""
         user = basic_user()
         public_library = Library.objects.create(
-            name_en="Public Library",
-            name_fr="Bibliothèque publique",
+            name="Public Library",
             is_public=True,
             created_by=user
         )
@@ -374,8 +381,7 @@ class TestLibraryAccessAuthorization:
         outsider = basic_user(username="outsider")
 
         private_library = Library.objects.create(
-            name_en="Private Library",
-            name_fr="Bibliothèque privée",
+            name="Private Library",
             is_public=False,
             created_by=owner
         )
@@ -397,8 +403,7 @@ class TestLibraryAccessAuthorization:
         viewer = basic_user(username="viewer")
 
         library = Library.objects.create(
-            name_en="Test Library",
-            name_fr="Bibliothèque test",
+            name="Test Library",
             is_public=False,
             created_by=admin_user
         )
@@ -420,8 +425,7 @@ class TestLibraryAccessAuthorization:
         contributor = basic_user(username="contributor")
 
         library = Library.objects.create(
-            name_en="Deletable Library",
-            name_fr="Bibliothèque supprimable",
+            name="Deletable Library",
             is_public=False,
             created_by=admin_user
         )
@@ -451,8 +455,7 @@ class TestLibraryAccessAuthorization:
         otto_admin = all_apps_user()
 
         library = Library.objects.create(
-            name_en="Managed Library",
-            name_fr="Bibliothèque gérée",
+            name="Managed Library",
             is_public=False,
             created_by=library_admin
         )
@@ -583,8 +586,7 @@ class TestMultiUserScenarios:
         outsider = basic_user(username="outsider")
 
         library = Library.objects.create(
-            name_en="Collaborative Library",
-            name_fr="Bibliothèque collaborative",
+            name="Collaborative Library",
             is_public=False,
             created_by=admin
         )
@@ -665,8 +667,7 @@ class TestAuthorizationEdgeCases:
 
         user = basic_user()
         library = Library.objects.create(
-            name_en="Test Library",
-            name_fr="Bibliothèque test",
+            name="Test Library",
             created_by=user
         )
 

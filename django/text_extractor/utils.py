@@ -164,7 +164,7 @@ def create_searchable_pdf(input_file):
                 body_data = f.read()
 
         # Call Gemini API
-        model = genai.GenerativeModel('gemini-1.5-flash')
+        model = genai.GenerativeModel('gemini-2.0-flash')
         response = model.generate_content(["Extract text from this document.", body_data])
 
         all_text = response.text

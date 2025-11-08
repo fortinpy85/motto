@@ -19,7 +19,8 @@ def test_create_data_source():
     """
     Tests the creation of a DataSource object.
     """
-    SecurityLabel.objects.create(name="Unclassified", acronym_en="UC")
+    # Use get_or_create to avoid duplicate key errors with fixtures
+    SecurityLabel.objects.get_or_create(name="Unclassified", defaults={"acronym_en": "UC"})
     user = User.objects.create_user(upn="testuser@example.com", email="testuser@example.com")
     options = ChatOptions.objects.create()
     Preset.objects.create(name_en="Default", options=options, english_default=True)

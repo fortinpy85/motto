@@ -36,7 +36,7 @@ class TestUserOnboardingWorkflow:
         """Test end-to-end new user onboarding workflow"""
         # Step 1: User is created (SSO authentication)
         user = basic_user(username="newuser", accept_terms=False)
-        assert user.upn == "newuser.lastname@justice.gc.ca"
+        assert user.upn == "newuser.lastname@example.com"
         assert not user.accepted_terms
 
         # Step 2: User tries to access Otto (should be blocked)
@@ -55,7 +55,6 @@ class TestUserOnboardingWorkflow:
         chat = Chat.objects.create(
             title="My First Chat",
             user=user,
-            created_by=user,
             options=ChatOptions.objects.create(mode="chat")
         )
         assert chat.title == "My First Chat"
@@ -90,10 +89,8 @@ class TestUserOnboardingWorkflow:
         assert admin_user.has_perm("otto.manage_users")
 
         # Step 4: Admin can create public libraries
-        access_key = AccessKey(user=admin_user)
         library = Library.objects.create(
-            access_key=access_key,
-            name_en="Public Library",
+            name="Public Library",
             is_public=True,
             created_by=admin_user
         )
@@ -123,7 +120,6 @@ class TestChatConversationWorkflow:
         chat = Chat.objects.create(
             title="Technical Discussion",
             user=user,
-            created_by=user,
             options=ChatOptions.objects.create(
                 mode="chat",
                 model_id="gemini-1.5-flash"
@@ -189,12 +185,15 @@ class TestChatConversationWorkflow:
         assert chat.pinned
 
         # Step 8: Cost tracking
+        cost_type = CostType.objects.get_or_create(
+            name="LLM",
+            defaults={"unit_name": "tokens", "unit_cost": 0.00001, "unit_quantity": 1000}
+        )[0]
         Cost.objects.create(
             user=user,
-            cost_type="LLM",
-            input_tokens=500,
-            output_tokens=300,
-            cost_cad=0.05
+            cost_type=cost_type,
+            count=800,
+            usd_cost=0.05
         )
         user_costs = Cost.objects.get_user_cost_this_month(user)
         assert user_costs > 0
@@ -207,7 +206,7 @@ class TestDocumentRAGWorkflow:
     """Test complete document upload and RAG query workflow"""
 
     @patch('librarian.utils.process_document.fetch_from_url')
-    @patch('librarian.utils.process_document.extract_markdown')
+    @patch('librarian.utils.process_engine.extract_markdown')
     @patch('chat.llm.genai.GenerativeModel')
     def test_complete_document_rag_workflow(
         self, mock_genai, mock_extract, mock_fetch, basic_user
@@ -228,27 +227,21 @@ class TestDocumentRAGWorkflow:
         )
 
         # Step 1: User creates private library
-        library = Library.objects.create(
-            access_key=access_key,
-            name_en="My Research Library",
+        library = Library.objects.create(name="My Research Library",
             is_public=False,
             created_by=user
         )
-        assert library.name_en == "My Research Library"
+        assert library.name == "My Research Library"
 
         # Step 2: User creates datasource in library
-        datasource = DataSource.objects.create(
-            access_key=access_key,
-            library=library,
-            name_en="Research Papers",
+        datasource = DataSource.objects.create(library=library,
+            name="Research Papers",
             created_by=user
         )
-        assert datasource.name_en == "Research Papers"
+        assert datasource.name == "Research Papers"
 
         # Step 3: User uploads document
-        document = Document.objects.create(
-            access_key=access_key,
-            data_source=datasource,
+        document = Document.objects.create(data_source=datasource,
             url="https://example.com/research-paper.pdf",
             title="Research Paper",
             created_by=user
@@ -265,7 +258,6 @@ class TestDocumentRAGWorkflow:
         chat = Chat.objects.create(
             title="Research Questions",
             user=user,
-            created_by=user,
             options=ChatOptions.objects.create(
                 mode="qa",
                 qa_mode="rag",
@@ -314,7 +306,7 @@ class TestLibraryManagementWorkflow:
         # Step 1: Owner creates library
         library = Library.objects.create(
             access_key=owner_key,
-            name_en="Team Library",
+            name="Team Library",
             is_public=False,
             created_by=owner
         )
@@ -336,7 +328,7 @@ class TestLibraryManagementWorkflow:
         datasource = DataSource.objects.create(
             access_key=owner_key,
             library=library,
-            name_en="Shared Documents",
+            name="Shared Documents",
             created_by=owner
         )
 
@@ -380,7 +372,7 @@ class TestLibraryManagementWorkflow:
         # Step 1: Admin creates private library
         library = Library.objects.create(
             access_key=admin_key,
-            name_en="Internal Library",
+            name="Internal Library",
             is_public=False,
             created_by=admin
         )
@@ -388,7 +380,7 @@ class TestLibraryManagementWorkflow:
 
         # Step 2: Regular user cannot access
         regular_key = AccessKey(user=regular_user)
-        accessible_libs = Library.objects.all(access_key=regular_key)
+        accessible_libs = Library.objects.all()
         assert library not in accessible_libs
 
         # Step 3: Admin makes library public
@@ -396,7 +388,7 @@ class TestLibraryManagementWorkflow:
         library.save(access_key=admin_key)
 
         # Step 4: Now regular user can view (but not edit)
-        accessible_libs = Library.objects.all(access_key=regular_key)
+        accessible_libs = Library.objects.all()
         # Note: SecureModel filtering might still apply
         # In production, public libraries visible to all
 
@@ -414,10 +406,10 @@ class TestPresetSharingWorkflow:
 
         # Step 1: Creator creates custom preset
         preset = Preset.objects.create(
-            name="Custom Research Preset",
-            description="Optimized for research tasks",
-            created_by=creator,
-            is_public=False,
+            name_en="Custom Research Preset",
+            description_en="Optimized for research tasks",
+            owner=creator,
+            sharing_option="everyone" if is_public else "private",False,
             data={
                 "mode": "qa",
                 "model_id": "gemini-1.5-pro",
@@ -438,7 +430,6 @@ class TestPresetSharingWorkflow:
         chat = Chat.objects.create(
             title="Using Shared Preset",
             user=recipient,
-            created_by=recipient,
             options=ChatOptions.objects.create(
                 mode="qa",
                 model_id="gemini-1.5-pro"
@@ -473,7 +464,6 @@ class TestCostBudgetWorkflow:
         chat = Chat.objects.create(
             title="Cost Test Chat",
             user=user,
-            created_by=user,
             options=ChatOptions.objects.create(mode="chat")
         )
 
@@ -487,12 +477,15 @@ class TestCostBudgetWorkflow:
             )
 
             # System response creates cost
+            cost_type = CostType.objects.get_or_create(
+                name="LLM",
+                defaults={"unit_name": "tokens", "unit_cost": 0.00001, "unit_quantity": 1000}
+            )[0]
             Cost.objects.create(
                 user=user,
-                cost_type="LLM",
-                input_tokens=100 + i * 10,
-                output_tokens=50 + i * 5,
-                cost_cad=0.01 * (i + 1)
+                cost_type=cost_type,
+                count=150 + i * 15,
+                usd_cost=0.01 * (i + 1)
             )
 
         # Step 4: Check accumulated costs
@@ -517,16 +510,20 @@ class TestCostBudgetWorkflow:
         user = basic_user()
 
         # Set low budget for testing
-        user.this_month_max = 1.0  # $1 CAD
+        user.monthly_max = 1.0  # $1 CAD
+        user.monthly_bonus = 0.0
         user.save()
 
         # Step 1: User incurs costs
+        cost_type = CostType.objects.get_or_create(
+            name="LLM",
+            defaults={"unit_name": "tokens", "unit_cost": 0.00001, "unit_quantity": 1000}
+        )[0]
         Cost.objects.create(
             user=user,
-            cost_type="LLM",
-            input_tokens=10000,
-            output_tokens=5000,
-            cost_cad=0.90  # Close to limit
+            cost_type=cost_type,
+            count=15000,
+            usd_cost=0.90  # Close to limit
         )
 
         # Step 2: Check if user is over budget
@@ -538,10 +535,9 @@ class TestCostBudgetWorkflow:
         # Step 3: User exceeds budget
         Cost.objects.create(
             user=user,
-            cost_type="LLM",
-            input_tokens=5000,
-            output_tokens=2500,
-            cost_cad=0.20  # Pushes over $1
+            cost_type=cost_type,
+            count=7500,
+            usd_cost=0.20  # Pushes over $1
         )
 
         # Step 4: Verify over budget
@@ -559,7 +555,7 @@ class TestCostBudgetWorkflow:
 class TestFileUploadWorkflow:
     """Test file upload and processing workflow"""
 
-    @patch('chat.tasks.extract_markdown')
+    @patch('librarian.utils.process_engine.extract_markdown')
     def test_chat_file_upload_workflow(self, mock_extract, basic_user):
         """Test end-to-end file upload in chat"""
         user = basic_user()
@@ -573,7 +569,6 @@ class TestFileUploadWorkflow:
         chat = Chat.objects.create(
             title="File Discussion",
             user=user,
-            created_by=user,
             options=ChatOptions.objects.create(mode="chat")
         )
 
@@ -617,23 +612,17 @@ class TestErrorRecoveryWorkflows:
         user = basic_user()
         access_key = AccessKey(user=user)
 
-        library = Library.objects.create(
-            access_key=access_key,
-            name_en="Error Test Library",
+        library = Library.objects.create(name="Error Test Library",
             created_by=user
         )
 
-        datasource = DataSource.objects.create(
-            access_key=access_key,
-            library=library,
-            name_en="Error Test Source",
+        datasource = DataSource.objects.create(library=library,
+            name="Error Test Source",
             created_by=user
         )
 
         # Step 1: Document processing fails
-        document = Document.objects.create(
-            access_key=access_key,
-            data_source=datasource,
+        document = Document.objects.create(data_source=datasource,
             url="https://example.com/broken.pdf",
             created_by=user
         )
@@ -670,7 +659,6 @@ class TestErrorRecoveryWorkflows:
         chat = Chat.objects.create(
             title="Error Recovery Test",
             user=user,
-            created_by=user,
             options=ChatOptions.objects.create(mode="chat")
         )
 
@@ -704,7 +692,7 @@ class TestMultiUserCollaboration:
         # Step 1: Team lead creates shared library
         library = Library.objects.create(
             access_key=lead_key,
-            name_en="Team Project Library",
+            name="Team Project Library",
             is_public=False,
             created_by=team_lead
         )
@@ -726,7 +714,7 @@ class TestMultiUserCollaboration:
         datasource = DataSource.objects.create(
             access_key=lead_key,
             library=library,
-            name_en="Project Documents",
+            name="Project Documents",
             created_by=team_lead
         )
 
@@ -771,7 +759,6 @@ class TestFeedbackWorkflow:
         chat = Chat.objects.create(
             title="Problematic Chat",
             user=user,
-            created_by=user,
             options=ChatOptions.objects.create(mode="chat")
         )
 
@@ -825,7 +812,6 @@ class TestSessionManagementWorkflow:
             chat = Chat.objects.create(
                 title=f"Session Chat {i}",
                 user=user,
-                created_by=user,
                 options=ChatOptions.objects.create(mode="chat")
             )
             chats.append(chat)

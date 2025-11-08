@@ -631,10 +631,10 @@ def _pdf_to_html_gemini_layout(content):
     try:
         # Upload the file to Gemini
         uploaded_file = genai.upload_file(temp_path)
-        
+
         # Use Gemini to extract structured content from PDF
-        model = genai.GenerativeModel('gemini-1.5-flash')
-        
+        model = genai.GenerativeModel('gemini-2.0-flash')
+
         prompt = """Extract all text, tables, and structure from this PDF document. 
         For tables, output them in HTML table format with <table>, <tr>, <td> tags.
         For paragraphs, wrap them in <p> tags.
@@ -675,10 +675,10 @@ def pdf_to_text_gemini_read(content: bytes) -> str:
     try:
         # Upload the file to Gemini
         uploaded_file = genai.upload_file(temp_path)
-        
+
         # Use Gemini to extract text from PDF
-        model = genai.GenerativeModel('gemini-1.5-flash')
-        
+        model = genai.GenerativeModel('gemini-2.0-flash')
+
         prompt = """Extract all text from this PDF document.
         Preserve the page structure and ordering.
         Use <page_N> and </page_N> tags to denote page boundaries where N is the page number.

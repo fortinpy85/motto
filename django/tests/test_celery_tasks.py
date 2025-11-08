@@ -31,8 +31,8 @@ from otto.secure_models import AccessKey
 class TestExtractTextTask:
     """Test extract_text_task Celery task"""
 
-    @patch('chat.tasks.ChatFile.objects.get')
-    @patch('chat.tasks.extract_markdown')
+    @patch('chat.models.ChatFile.objects.get')
+    @patch('librarian.utils.process_engine.extract_markdown')
     def test_extract_text_task_success(self, mock_extract, mock_get_file):
         """Test successful text extraction from ChatFile"""
         # Setup
@@ -57,7 +57,7 @@ class TestExtractTextTask:
         mock_file.save.assert_called_once()
         assert mock_file.text == "Extracted text content"
 
-    @patch('chat.tasks.ChatFile.objects.get')
+    @patch('chat.models.ChatFile.objects.get')
     def test_extract_text_task_file_not_found(self, mock_get_file):
         """Test extract_text_task with non-existent file"""
         from chat.models import ChatFile
@@ -69,7 +69,7 @@ class TestExtractTextTask:
         with pytest.raises(ChatFile.DoesNotExist):
             extract_text_task(str(file_id))
 
-    @patch('chat.tasks.ChatFile.objects.get')
+    @patch('chat.models.ChatFile.objects.get')
     def test_extract_text_task_no_saved_file(self, mock_get_file):
         """Test extract_text_task when saved_file is None"""
         file_id = uuid.uuid4()
@@ -83,8 +83,8 @@ class TestExtractTextTask:
         with pytest.raises(Exception, match="No saved file found"):
             extract_text_task(str(file_id))
 
-    @patch('chat.tasks.ChatFile.objects.get')
-    @patch('chat.tasks.extract_markdown')
+    @patch('chat.models.ChatFile.objects.get')
+    @patch('librarian.utils.process_engine.extract_markdown')
     def test_extract_text_task_extraction_error(self, mock_extract, mock_get_file):
         """Test extract_text_task when extraction fails"""
         file_id = uuid.uuid4()
@@ -101,8 +101,8 @@ class TestExtractTextTask:
         with pytest.raises(Exception, match="Extraction failed"):
             extract_text_task(str(file_id))
 
-    @patch('chat.tasks.ChatFile.objects.get')
-    @patch('chat.tasks.extract_markdown')
+    @patch('chat.models.ChatFile.objects.get')
+    @patch('librarian.utils.process_engine.extract_markdown')
     def test_extract_text_task_with_context_vars(self, mock_extract, mock_get_file):
         """Test extract_text_task with context variables for cost tracking"""
         file_id = uuid.uuid4()
@@ -310,7 +310,7 @@ class TestTranslateFileTask:
 class TestTaskTimeouts:
     """Test task timeout handling"""
 
-    @patch('chat.tasks.ChatFile.objects.get')
+    @patch('chat.models.ChatFile.objects.get')
     def test_extract_text_task_soft_time_limit(self, mock_get_file):
         """Test extract_text_task respects soft_time_limit"""
         # Verify task has soft_time_limit decorator

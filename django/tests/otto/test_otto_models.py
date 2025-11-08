@@ -19,6 +19,6 @@ def test_create_security_label():
     """
     Tests the creation of a SecurityLabel object.
     """
-    label = SecurityLabel.objects.create(name="Unclassified", acronym_en="UC")
-    assert label.name == "Unclassified"
-    assert label.acronym_en == "UC"
+    label = SecurityLabel.objects.create(name="Test Label", acronym_en="TL")
+    assert label.name == "Test Label"
+    assert label.acronym_en == "TL"

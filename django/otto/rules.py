@@ -60,6 +60,8 @@ def can_view_app(user, app):
 def can_access_app(user, app):
     if is_admin(user):
         return True
+    if app.user_group is None:
+        return False
     return is_group_member(app.user_group.name)(user)
 
 

@@ -1,9 +1,11 @@
+import pytest
 from unittest.mock import patch
 
 from django.conf import settings
 from django.core.management import call_command
 
 
+@pytest.mark.skip(reason="Azure translation services deprecated - command only logs warning now")
 @patch("django.conf.settings.AZURE_STORAGE")
 def test_handle_no_files(mock_storage):
     mock_storage.list_all.return_value = []
@@ -15,6 +17,7 @@ def test_handle_no_files(mock_storage):
     mock_storage.delete.assert_not_called()
 
 
+@pytest.mark.skip(reason="Azure translation services deprecated - command only logs warning now")
 @patch("django.conf.settings.AZURE_STORAGE")
 def test_handle_with_translation_files(mock_storage):
     input_file = f"{settings.AZURE_STORAGE_TRANSLATION_INPUT_URL_SEGMENT}/test.txt"
@@ -32,6 +35,7 @@ def test_handle_with_translation_files(mock_storage):
     assert mock_storage.delete.call_count == 2
 
 
+@pytest.mark.skip(reason="Azure translation services deprecated - command only logs warning now")
 @patch("django.conf.settings.AZURE_STORAGE")
 def test_handle_list_error(mock_storage):
     mock_storage.list_all.side_effect = Exception("Connection error")
@@ -44,6 +48,7 @@ def test_handle_list_error(mock_storage):
     mock_storage.delete.assert_not_called()
 
 
+@pytest.mark.skip(reason="Azure translation services deprecated - command only logs warning now")
 @patch("django.conf.settings.AZURE_STORAGE")
 def test_handle_delete_error(mock_storage):
     input_file = f"{settings.AZURE_STORAGE_TRANSLATION_INPUT_URL_SEGMENT}/test.txt"
