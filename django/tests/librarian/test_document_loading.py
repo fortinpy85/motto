@@ -67,24 +67,24 @@ def test_extract_pdf():
 
 
 @pytest.mark.django_db
-def test_extract_pdf_azure_read():
-    # Load a PDF file in "slow" mode (Azure Form Recognizer)
+def test_extract_pdf_gemini_read():
+    # Load a PDF file using Gemini OCR
     cost_count = Cost.objects.count()
     with open(os.path.join(this_dir, "test_files/example.pdf"), "rb") as f:
         content = f.read()
-        extraction_result = extract_markdown(content, "PDF", pdf_method="azure_read")
+        extraction_result = extract_markdown(content, "PDF", pdf_method="gemini_read")
         md, md_chunks = extraction_result.markdown, extraction_result.chunks
         check_page_numbers_for_example(md, md_chunks)
     assert Cost.objects.count() == cost_count + 1
 
 
 @pytest.mark.django_db
-def test_extract_pdf_azure_layout():
-    # Load a PDF file in "slow" mode (Azure Form Recognizer)
+def test_extract_pdf_gemini_layout():
+    # Load a PDF file using Gemini OCR with layout
     cost_count = Cost.objects.count()
     with open(os.path.join(this_dir, "test_files/example.pdf"), "rb") as f:
         content = f.read()
-        extraction_result = extract_markdown(content, "PDF", pdf_method="azure_layout")
+        extraction_result = extract_markdown(content, "PDF", pdf_method="gemini_layout")
         md, md_chunks = extraction_result.markdown, extraction_result.chunks
         check_page_numbers_for_example(md, md_chunks)
     assert Cost.objects.count() == cost_count + 1
@@ -269,7 +269,7 @@ def test_extract_zip(client, all_apps_user):
         assert "example.pptx" in md_chunks[0]
 
 
-def test_resize_to_azure_requirements():
+def test_resize_image_for_ocr():
     import io
 
     from PIL import Image

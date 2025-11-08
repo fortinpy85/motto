@@ -17,8 +17,6 @@ import yaml
 from django_extensions.management.utils import signalcommand
 from llama_index.core import ChatPromptTemplate, PromptTemplate, Settings
 from llama_index.core.llms import ChatMessage, MessageRole
-from llama_index.embeddings.azure_openai import AzureOpenAIEmbedding
-from llama_index.llms.azure_openai import AzureOpenAI
 from structlog import get_logger
 
 from chat.models import Chat, ChatOptions, Message
@@ -29,21 +27,17 @@ logger = get_logger(__name__)
 
 UserModel = get_user_model()
 
-llm = AzureOpenAI(
-    azure_endpoint=settings.AZURE_OPENAI_ENDPOINT,
-    azure_deployment="gpt-4o",
-    api_key=settings.AZURE_OPENAI_KEY,
-    api_version=settings.AZURE_OPENAI_VERSION,
+from llama_index.llms.google_genai import GoogleGenAI
+from llama_index.embeddings.google_genai import GoogleGenAIEmbedding
+
+llm = GoogleGenAI(
+    model="gemini-1.5-flash",
+    api_key=settings.GEMINI_API_KEY,
 )
 
-embed_model = AzureOpenAIEmbedding(
-    model="text-embedding-3-large",
-    deployment_name="text-embedding-3-large",
-    dimensions=1536,
-    embed_batch_size=16,
-    api_key=settings.AZURE_OPENAI_KEY,
-    azure_endpoint=settings.AZURE_OPENAI_ENDPOINT,
-    api_version=settings.AZURE_OPENAI_VERSION,
+embed_model = GoogleGenAIEmbedding(
+    model="models/text-embedding-004",
+    api_key=settings.GEMINI_API_KEY,
 )
 
 Settings.llm = llm

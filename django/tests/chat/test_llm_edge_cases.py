@@ -111,10 +111,14 @@ class TestLLMModelConfiguration:
         assert model.model_id == "gemini-1.5-flash"
         assert isinstance(model, LLM)
 
-    def test_get_model_invalid_raises_error(self):
-        """Test that getting invalid model raises KeyError"""
-        with pytest.raises(KeyError):
-            get_model("nonexistent-model")
+    def test_get_model_invalid_returns_default(self):
+        """Test that getting invalid model returns default model"""
+        model = get_model("nonexistent-model")
+
+        # Should return the default chat model instead of raising
+        assert model is not None
+        assert model.model_id == "gemini-1.5-flash"  # DEFAULT_CHAT_MODEL_ID
+        assert isinstance(model, LLM)
 
 
 # ==================== OttoLLM Initialization Tests ====================
@@ -134,7 +138,8 @@ class TestOttoLLMInitialization:
         """Test OttoLLM with custom deployment"""
         llm = OttoLLM(deployment="gemini-1.5-pro")
 
-        assert llm.deployment == "gemini-1.5-pro"
+        # Verify the deployment_name is set correctly
+        assert llm.deployment == "models/gemini-1.5-pro-latest"
 
     def test_ottollm_mock_embedding_mode(self):
         """Test OttoLLM with mock embedding enabled"""

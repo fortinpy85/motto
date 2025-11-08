@@ -511,7 +511,7 @@ def search(request, law_search=None):
             # Create the LawSearch object
             from django.apps import apps
 
-            LawSearch = apps.get_model("laws", "LawSearch")
+            LawSearch = apps.get_model("search_history", "LawSearch")
             law_search = LawSearch.objects.create(
                 user=request.user, query=query, search_parameters=search_parameters
             )

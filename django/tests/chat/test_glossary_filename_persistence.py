@@ -81,4 +81,5 @@ def test_translate_glossary_filename_persists_on_refresh(client, all_apps_user):
     chat.refresh_from_db()
     assert chat.options.translate_glossary is not None
     assert chat.options.translate_glossary_filename == "test_glossary.csv"
-    print(f"✅ Filename preserved: {chat.options.translate_glossary_filename}")
+    # Note: Removed emoji to avoid UnicodeEncodeError on Windows
+    print(f"Filename preserved: {chat.options.translate_glossary_filename}")

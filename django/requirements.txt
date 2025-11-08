@@ -23,11 +23,9 @@ llama-index
 llama-index-cli
 llama-index-core
 llama-index-embeddings-google-genai
-llama-index-embeddings-openai
 llama-index-indices-managed-llama-cloud
 llama-index-instrumentation
 llama-index-llms-google-genai
-llama-index-llms-openai
 google-generativeai
 llama-index-readers-file
 llama-index-readers-llama-parse

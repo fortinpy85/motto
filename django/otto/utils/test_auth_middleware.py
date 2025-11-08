@@ -34,6 +34,25 @@ class AutoLoginMiddleware(MiddlewareMixin):
                     },
                 )
 
+                # Add testuser to groups for full access in debug mode
+                if created:
+                    from django.contrib.auth.models import Group
+
+                    # Add to Otto admin group for admin permissions
+                    admin_group, _ = Group.objects.get_or_create(name="Otto admin")
+                    test_user.groups.add(admin_group)
+
+                    # Add to AI Assistant user group for chat access
+                    ai_group, _ = Group.objects.get_or_create(name="AI Assistant user")
+                    test_user.groups.add(ai_group)
+
+                    # Add to other app user groups
+                    laws_group, _ = Group.objects.get_or_create(name="Legislation Search user")
+                    test_user.groups.add(laws_group)
+
+                    text_extractor_group, _ = Group.objects.get_or_create(name="Text Extractor user")
+                    test_user.groups.add(text_extractor_group)
+
                 # Log in the test user
                 login(request, test_user, backend="django.contrib.auth.backends.ModelBackend")
 

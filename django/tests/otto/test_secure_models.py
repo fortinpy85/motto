@@ -17,7 +17,7 @@ from django.core.exceptions import PermissionDenied
 from django.db import IntegrityError
 
 from otto.secure_models import AccessControl, AccessControlLog, AccessKey
-from librarian.models import Library  # Using Library as example SecureModel
+from text_extractor.models import UserRequest  # Using UserRequest as example SecureModel
 
 User = get_user_model()
 
@@ -61,14 +61,14 @@ class TestAccessControl:
     def test_grant_view_permission(self, basic_user):
         """Test granting view permission to a user"""
         user = basic_user()
-        library = Library.objects.create(
+        request = UserRequest.objects.create(
             access_key=AccessKey(bypass=True),
-            name_en="Test Library"
+            name="Test Library"
         )
 
         AccessControl.grant_permissions(
             user=user,
-            content_object=library,
+            content_object=request,
             required_permissions=[AccessControl.CAN_VIEW],
             reason="Test grant view"
         )
@@ -76,21 +76,21 @@ class TestAccessControl:
         # Verify permission was granted
         assert AccessControl.check_permissions(
             user=user,
-            content_object=library,
+            content_object=request,
             required_permissions=[AccessControl.CAN_VIEW]
         )
 
     def test_grant_multiple_permissions(self, basic_user):
         """Test granting multiple permissions at once"""
         user = basic_user()
-        library = Library.objects.create(
+        request = UserRequest.objects.create(
             access_key=AccessKey(bypass=True),
-            name_en="Test Library"
+            name="Test Library"
         )
 
         AccessControl.grant_permissions(
             user=user,
-            content_object=library,
+            content_object=request,
             required_permissions=[
                 AccessControl.CAN_VIEW,
                 AccessControl.CAN_CHANGE,
@@ -102,7 +102,7 @@ class TestAccessControl:
         # Verify all permissions were granted
         assert AccessControl.check_permissions(
             user=user,
-            content_object=library,
+            content_object=request,
             required_permissions=[
                 AccessControl.CAN_VIEW,
                 AccessControl.CAN_CHANGE,
@@ -113,15 +113,15 @@ class TestAccessControl:
     def test_grant_empty_permissions_raises_error(self, basic_user):
         """Test that granting empty permissions list raises ValueError"""
         user = basic_user()
-        library = Library.objects.create(
+        request = UserRequest.objects.create(
             access_key=AccessKey(bypass=True),
-            name_en="Test Library"
+            name="Test Library"
         )
 
         with pytest.raises(ValueError, match="At least one permission should be granted"):
             AccessControl.grant_permissions(
                 user=user,
-                content_object=library,
+                content_object=request,
                 required_permissions=[],
                 reason="Test invalid"
             )
@@ -129,15 +129,15 @@ class TestAccessControl:
     def test_grant_invalid_permission_raises_error(self, basic_user):
         """Test that granting invalid permission raises ValueError"""
         user = basic_user()
-        library = Library.objects.create(
+        request = UserRequest.objects.create(
             access_key=AccessKey(bypass=True),
-            name_en="Test Library"
+            name="Test Library"
         )
 
         with pytest.raises(ValueError, match="Invalid permissions specified"):
             AccessControl.grant_permissions(
                 user=user,
-                content_object=library,
+                content_object=request,
                 required_permissions=["invalid_permission"],
                 reason="Test invalid"
             )
@@ -145,15 +145,15 @@ class TestAccessControl:
     def test_revoke_specific_permission(self, basic_user):
         """Test revoking a specific permission"""
         user = basic_user()
-        library = Library.objects.create(
+        request = UserRequest.objects.create(
             access_key=AccessKey(bypass=True),
-            name_en="Test Library"
+            name="Test Library"
         )
 
         # Grant all permissions
         AccessControl.grant_permissions(
             user=user,
-            content_object=library,
+            content_object=request,
             required_permissions=[
                 AccessControl.CAN_VIEW,
                 AccessControl.CAN_CHANGE,
@@ -164,7 +164,7 @@ class TestAccessControl:
         # Revoke delete permission
         AccessControl.revoke_permissions(
             user=user,
-            content_object=library,
+            content_object=request,
             revoked_permissions=[AccessControl.CAN_DELETE],
             reason="Test revoke delete"
         )
@@ -172,87 +172,87 @@ class TestAccessControl:
         # Verify view and change remain, delete is gone
         assert AccessControl.check_permissions(
             user=user,
-            content_object=library,
+            content_object=request,
             required_permissions=[AccessControl.CAN_VIEW, AccessControl.CAN_CHANGE]
         )
         assert not AccessControl.check_permissions(
             user=user,
-            content_object=library,
+            content_object=request,
             required_permissions=[AccessControl.CAN_DELETE]
         )
 
     def test_revoke_all_permissions(self, basic_user):
         """Test revoking all permissions (no params)"""
         user = basic_user()
-        library = Library.objects.create(
+        request = UserRequest.objects.create(
             access_key=AccessKey(bypass=True),
-            name_en="Test Library"
+            name="Test Library"
         )
 
         # Grant permissions
         AccessControl.grant_permissions(
             user=user,
-            content_object=library,
+            content_object=request,
             required_permissions=[AccessControl.CAN_VIEW]
         )
 
         # Revoke all permissions
         AccessControl.revoke_permissions(
             user=user,
-            content_object=library,
+            content_object=request,
             reason="Test revoke all"
         )
 
         # Verify no permissions remain
         assert not AccessControl.check_permissions(
             user=user,
-            content_object=library,
+            content_object=request,
             required_permissions=[AccessControl.CAN_VIEW]
         )
 
     def test_revoke_invalid_permission_raises_error(self, basic_user):
         """Test that revoking invalid permission raises ValueError"""
         user = basic_user()
-        library = Library.objects.create(
+        request = UserRequest.objects.create(
             access_key=AccessKey(bypass=True),
-            name_en="Test Library"
+            name="Test Library"
         )
 
         with pytest.raises(ValueError, match="Invalid permissions specified"):
             AccessControl.revoke_permissions(
                 user=user,
-                content_object=library,
+                content_object=request,
                 revoked_permissions=["invalid_permission"]
             )
 
     def test_check_permissions_no_access_control(self, basic_user):
         """Test checking permissions when no AccessControl exists returns False"""
         user = basic_user()
-        library = Library.objects.create(
+        request = UserRequest.objects.create(
             access_key=AccessKey(bypass=True),
-            name_en="Test Library"
+            name="Test Library"
         )
 
         # Check permissions without granting any
         assert not AccessControl.check_permissions(
             user=user,
-            content_object=library,
+            content_object=request,
             required_permissions=[AccessControl.CAN_VIEW]
         )
 
     def test_access_control_logging_on_create(self, basic_user):
         """Test that AccessControlLog entry is created on permission grant"""
         user = basic_user()
-        library = Library.objects.create(
+        request = UserRequest.objects.create(
             access_key=AccessKey(bypass=True),
-            name_en="Test Library"
+            name="Test Library"
         )
 
         initial_log_count = AccessControlLog.objects.count()
 
         AccessControl.grant_permissions(
             user=user,
-            content_object=library,
+            content_object=request,
             required_permissions=[AccessControl.CAN_VIEW],
             reason="Test logging"
         )
@@ -269,24 +269,24 @@ class TestAccessControl:
     def test_access_control_unique_constraint(self, basic_user):
         """Test that unique constraint prevents duplicate AccessControl entries"""
         user = basic_user()
-        library = Library.objects.create(
+        request = UserRequest.objects.create(
             access_key=AccessKey(bypass=True),
-            name_en="Test Library"
+            name="Test Library"
         )
-        content_type = ContentType.objects.get_for_model(library)
+        content_type = ContentType.objects.get_for_model(request)
 
         # Create first AccessControl
         AccessControl.objects.create(
             user=user,
             content_type=content_type,
-            object_id=library.id,
+            object_id=request.id,
             can_view=True
         )
 
         # Attempt to create duplicate should update existing
         AccessControl.grant_permissions(
             user=user,
-            content_object=library,
+            content_object=request,
             required_permissions=[AccessControl.CAN_VIEW, AccessControl.CAN_CHANGE],
             reason="Update existing"
         )
@@ -295,7 +295,7 @@ class TestAccessControl:
         assert AccessControl.objects.filter(
             user=user,
             content_type=content_type,
-            object_id=library.id
+            object_id=request.id
         ).count() == 1
 
 
@@ -308,18 +308,18 @@ class TestSecureManager:
     def test_all_with_bypass_returns_all_objects(self):
         """Test that all() with bypass returns all objects"""
         # Create multiple libraries
-        Library.objects.create(
+        UserRequest.objects.create(
             access_key=AccessKey(bypass=True),
-            name_en="Library 1"
+            name="Library 1"
         )
-        Library.objects.create(
+        UserRequest.objects.create(
             access_key=AccessKey(bypass=True),
-            name_en="Library 2"
+            name="Library 2"
         )
 
         # Query with bypass
         access_key = AccessKey(bypass=True)
-        libraries = Library.objects.all(access_key=access_key)
+        libraries = UserRequest.objects.all(access_key=access_key)
 
         assert libraries.count() >= 2
 
@@ -328,13 +328,13 @@ class TestSecureManager:
         user = basic_user()
 
         # Create libraries
-        lib1 = Library.objects.create(
+        lib1 = UserRequest.objects.create(
             access_key=AccessKey(bypass=True),
-            name_en="Library 1"
+            name="Library 1"
         )
-        lib2 = Library.objects.create(
+        lib2 = UserRequest.objects.create(
             access_key=AccessKey(bypass=True),
-            name_en="Library 2"
+            name="Library 2"
         )
 
         # Grant access to lib1 only
@@ -346,7 +346,7 @@ class TestSecureManager:
 
         # Query with user access key
         access_key = AccessKey(user=user)
-        libraries = Library.objects.all(access_key=access_key)
+        libraries = UserRequest.objects.all(access_key=access_key)
 
         # Should only see lib1
         assert libraries.count() == 1
@@ -356,9 +356,9 @@ class TestSecureManager:
         """Test get() with proper permissions"""
         user = basic_user()
 
-        lib = Library.objects.create(
+        lib = UserRequest.objects.create(
             access_key=AccessKey(bypass=True),
-            name_en="Test Library"
+            name="Test Library"
         )
 
         # Grant access
@@ -370,7 +370,7 @@ class TestSecureManager:
 
         # Get with user access key
         access_key = AccessKey(user=user)
-        result = Library.objects.get(access_key=access_key, id=lib.id)
+        result = UserRequest.objects.get(access_key=access_key, id=lib.id)
 
         assert result.id == lib.id
 
@@ -378,33 +378,33 @@ class TestSecureManager:
         """Test get() without permissions raises DoesNotExist"""
         user = basic_user()
 
-        lib = Library.objects.create(
+        lib = UserRequest.objects.create(
             access_key=AccessKey(bypass=True),
-            name_en="Test Library"
+            name="Test Library"
         )
 
         # Don't grant access
 
         # Get with user access key should fail
         access_key = AccessKey(user=user)
-        with pytest.raises(Library.DoesNotExist):
-            Library.objects.get(access_key=access_key, id=lib.id)
+        with pytest.raises(UserRequest.DoesNotExist):
+            UserRequest.objects.get(access_key=access_key, id=lib.id)
 
     def test_filter_with_permissions(self, basic_user):
         """Test filter() respects permissions"""
         user = basic_user()
 
-        lib1 = Library.objects.create(
+        lib1 = UserRequest.objects.create(
             access_key=AccessKey(bypass=True),
-            name_en="Library 1"
+            name="Library 1"
         )
-        lib2 = Library.objects.create(
+        lib2 = UserRequest.objects.create(
             access_key=AccessKey(bypass=True),
-            name_en="Library 2"
+            name="Library 2"
         )
-        lib3 = Library.objects.create(
+        lib3 = UserRequest.objects.create(
             access_key=AccessKey(bypass=True),
-            name_en="Library 3"
+            name="Library 3"
         )
 
         # Grant access to lib1 and lib2 only
@@ -417,7 +417,7 @@ class TestSecureManager:
 
         # Filter with user access key
         access_key = AccessKey(user=user)
-        libraries = Library.objects.filter(access_key=access_key)
+        libraries = UserRequest.objects.filter(access_key=access_key)
 
         assert libraries.count() == 2
         assert set(libraries.values_list('id', flat=True)) == {lib1.id, lib2.id}
@@ -432,22 +432,22 @@ class TestSecureModelCRUD:
     def test_create_with_bypass(self):
         """Test creating object with bypass grants full permissions"""
         access_key = AccessKey(bypass=True)
-        lib = Library.objects.create(
+        lib = UserRequest.objects.create(
             access_key=access_key,
-            name_en="Test Library"
+            name="Test Library"
         )
 
         assert lib.id is not None
-        assert lib.name_en == "Test Library"
+        assert lib.name == "Test Library"
 
     def test_create_with_user_grants_permissions(self, basic_user):
         """Test creating object with user access_key grants permissions to user"""
         user = basic_user()
         access_key = AccessKey(user=user)
 
-        lib = Library.objects.create(
+        lib = UserRequest.objects.create(
             access_key=access_key,
-            name_en="Test Library"
+            name="Test Library"
         )
 
         # Verify user has full permissions
@@ -463,24 +463,24 @@ class TestSecureModelCRUD:
 
     def test_save_with_bypass(self):
         """Test saving object with bypass"""
-        lib = Library.objects.create(
+        lib = UserRequest.objects.create(
             access_key=AccessKey(bypass=True),
-            name_en="Original Name"
+            name="Original Name"
         )
 
-        lib.name_en = "Updated Name"
+        lib.name = "Updated Name"
         lib.save(access_key=AccessKey(bypass=True))
 
         lib.refresh_from_db()
-        assert lib.name_en == "Updated Name"
+        assert lib.name == "Updated Name"
 
     def test_save_with_change_permission(self, basic_user):
         """Test saving object with change permission"""
         user = basic_user()
 
-        lib = Library.objects.create(
+        lib = UserRequest.objects.create(
             access_key=AccessKey(bypass=True),
-            name_en="Original Name"
+            name="Original Name"
         )
 
         # Grant change permission
@@ -491,19 +491,19 @@ class TestSecureModelCRUD:
         )
 
         # Update with user access key
-        lib.name_en = "Updated Name"
+        lib.name = "Updated Name"
         lib.save(access_key=AccessKey(user=user))
 
         lib.refresh_from_db()
-        assert lib.name_en == "Updated Name"
+        assert lib.name == "Updated Name"
 
     def test_save_without_change_permission_raises_error(self, basic_user):
         """Test saving without change permission raises PermissionDenied"""
         user = basic_user()
 
-        lib = Library.objects.create(
+        lib = UserRequest.objects.create(
             access_key=AccessKey(bypass=True),
-            name_en="Original Name"
+            name="Original Name"
         )
 
         # Grant only view permission
@@ -514,29 +514,29 @@ class TestSecureModelCRUD:
         )
 
         # Attempt to update should fail
-        lib.name_en = "Updated Name"
+        lib.name = "Updated Name"
         with pytest.raises(PermissionDenied):
             lib.save(access_key=AccessKey(user=user))
 
     def test_delete_with_bypass(self):
         """Test deleting object with bypass"""
-        lib = Library.objects.create(
+        lib = UserRequest.objects.create(
             access_key=AccessKey(bypass=True),
-            name_en="Test Library"
+            name="Test Library"
         )
         lib_id = lib.id
 
         lib.delete(access_key=AccessKey(bypass=True))
 
-        assert not Library.objects.filter(id=lib_id).exists()
+        assert not UserRequest.objects.filter(access_key=AccessKey(bypass=True), id=lib_id).exists()
 
     def test_delete_with_delete_permission(self, basic_user):
         """Test deleting object with delete permission"""
         user = basic_user()
 
-        lib = Library.objects.create(
+        lib = UserRequest.objects.create(
             access_key=AccessKey(bypass=True),
-            name_en="Test Library"
+            name="Test Library"
         )
 
         # Grant delete permission
@@ -549,15 +549,15 @@ class TestSecureModelCRUD:
         lib_id = lib.id
         lib.delete(access_key=AccessKey(user=user))
 
-        assert not Library.objects.filter(id=lib_id).exists()
+        assert not UserRequest.objects.filter(access_key=AccessKey(bypass=True), id=lib_id).exists()
 
     def test_delete_without_delete_permission_raises_error(self, basic_user):
         """Test deleting without delete permission raises PermissionDenied"""
         user = basic_user()
 
-        lib = Library.objects.create(
+        lib = UserRequest.objects.create(
             access_key=AccessKey(bypass=True),
-            name_en="Test Library"
+            name="Test Library"
         )
 
         # Grant only view permission
@@ -583,9 +583,9 @@ class TestEdgeCases:
         user1 = basic_user(username="user1")
         user2 = basic_user(username="user2")
 
-        lib = Library.objects.create(
+        lib = UserRequest.objects.create(
             access_key=AccessKey(bypass=True),
-            name_en="Shared Library"
+            name="Shared Library"
         )
 
         # Grant view to user1, full permissions to user2
@@ -631,9 +631,9 @@ class TestEdgeCases:
         """Test that permissions are not inherited (e.g., from groups)"""
         user = basic_user()
 
-        lib = Library.objects.create(
+        lib = UserRequest.objects.create(
             access_key=AccessKey(bypass=True),
-            name_en="Test Library"
+            name="Test Library"
         )
 
         # Don't grant permissions
@@ -649,9 +649,9 @@ class TestEdgeCases:
         """Test that deleting an object cascades to AccessControl entries"""
         user = basic_user()
 
-        lib = Library.objects.create(
+        lib = UserRequest.objects.create(
             access_key=AccessKey(bypass=True),
-            name_en="Test Library"
+            name="Test Library"
         )
 
         AccessControl.grant_permissions(
@@ -660,14 +660,14 @@ class TestEdgeCases:
             required_permissions=[AccessControl.CAN_VIEW]
         )
 
-        content_type = ContentType.objects.get_for_model(Library)
+        content_type = ContentType.objects.get_for_model(UserRequest)
         assert AccessControl.objects.filter(
             user=user,
             content_type=content_type,
             object_id=lib.id
         ).exists()
 
-        # Delete the library
+        # Delete the request
         lib.delete(access_key=AccessKey(bypass=True))
 
         # AccessControl entries should be removed
@@ -681,9 +681,9 @@ class TestEdgeCases:
         """Test that deleting a user cascades to their AccessControl entries"""
         user = basic_user()
 
-        lib = Library.objects.create(
+        lib = UserRequest.objects.create(
             access_key=AccessKey(bypass=True),
-            name_en="Test Library"
+            name="Test Library"
         )
 
         AccessControl.grant_permissions(
@@ -694,19 +694,22 @@ class TestEdgeCases:
 
         assert AccessControl.objects.filter(user=user).exists()
 
+        # Save user ID before deletion
+        user_id = user.id
+
         # Delete the user
         user.delete()
 
         # AccessControl entries should be removed
-        assert not AccessControl.objects.filter(user=user).exists()
+        assert not AccessControl.objects.filter(user_id=user_id).exists()
 
     def test_update_permissions_replaces_existing(self, basic_user):
         """Test that updating permissions replaces existing ones"""
         user = basic_user()
 
-        lib = Library.objects.create(
+        lib = UserRequest.objects.create(
             access_key=AccessKey(bypass=True),
-            name_en="Test Library"
+            name="Test Library"
         )
 
         # Grant view permission

@@ -44,25 +44,59 @@ class Command(BaseCommand):
 
         if settings.ENVIRONMENT == "LOCAL":
             try:
-                # Create the vector database (local only)
-                subprocess.run(
+                # Check if the vector database already exists
+                check_result = subprocess.run(
                     [
                         "psql",
                         "-U",
                         vector_db_user,
                         "-h",
-                        vector_db_host,
+                        "127.0.0.1",  # Use IPv4 to avoid connection issues
+                        "-p",
+                        str(vector_db_port),
                         "-d",
                         "postgres",
-                        "-c",
-                        f"CREATE DATABASE {vector_db_name}",
+                        "-tAc",
+                        f"SELECT 1 FROM pg_database WHERE datname='{vector_db_name}'",
                     ],
+                    capture_output=True,
+                    text=True,
                     check=True,
                 )
-            except subprocess.CalledProcessError:
+
+                # If database doesn't exist, create it
+                if check_result.stdout.strip() != "1":
+                    subprocess.run(
+                        [
+                            "psql",
+                            "-U",
+                            vector_db_user,
+                            "-h",
+                            "127.0.0.1",  # Use IPv4 to avoid connection issues
+                            "-p",
+                            str(vector_db_port),
+                            "-d",
+                            "postgres",
+                            "-c",
+                            f"CREATE DATABASE {vector_db_name}",
+                        ],
+                        check=True,
+                    )
+                    self.stdout.write(
+                        self.style.SUCCESS(
+                            f"Database {vector_db_name} created successfully."
+                        )
+                    )
+                else:
+                    self.stdout.write(
+                        self.style.SUCCESS(
+                            f"Database {vector_db_name} already exists. Skipping creation."
+                        )
+                    )
+            except subprocess.CalledProcessError as e:
                 self.stdout.write(
-                    self.style.WARNING(
-                        f"Database {vector_db_name} already exists. Skipping creation."
+                    self.style.ERROR(
+                        f"Failed to check or create database {vector_db_name}: {e}"
                     )
                 )
 

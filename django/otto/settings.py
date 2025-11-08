@@ -235,6 +235,9 @@ if os.environ.get("DJANGODB_ENGINE") is not None:
         "PASSWORD": os.environ.get("DJANGODB_PASSWORD", ""),
         "HOST": os.environ.get("DJANGODB_HOST"),
         "PORT": os.environ.get("DJANGODB_PORT", "5432"),
+        "TEST": {
+            "NAME": "test_otto",
+        },
     }
     if DJANGODB_PGBOUNCER:
         DATABASES["default"].update(pgbouncer_options)
@@ -248,6 +251,9 @@ if os.environ.get("VECTORDB_ENGINE") is not None:
         "PASSWORD": os.environ.get("VECTORDB_PASSWORD", ""),
         "HOST": os.environ.get("VECTORDB_HOST"),
         "PORT": os.environ.get("VECTORDB_PORT", "5432"),
+        "TEST": {
+            "NAME": "test_vector_db",
+        },
     }
     if VECTORDB_PGBOUNCER:
         DATABASES["vector_db"].update(pgbouncer_options)
@@ -369,6 +375,9 @@ CELERY_ACCEPT_CONTENT = ["application/json"]
 CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
 CELERY_TIMEZONE = "UTC"
+
+if IS_RUNNING_TESTS:
+    CELERY_TASK_ALWAYS_EAGER = True
 
 CACHES = {
     "default": {

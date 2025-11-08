@@ -17,11 +17,6 @@ app.config_from_object("django.conf:settings", namespace="CELERY")
 app.autodiscover_tasks()
 
 app.conf.beat_schedule = {
-    # Sync entra users every day at 1 am UTC
-    "sync-entra-users-every-morning": {
-        "task": "otto.tasks.sync_users",
-        "schedule": crontab(hour=1, minute=0),
-    },
     # NOTE: This is now handled by kubernetes CronJob instead
     # "update-laws-every-week": {
     #     "task": "laws.tasks.update_laws",

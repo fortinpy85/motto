@@ -83,15 +83,16 @@ class AccessControl(models.Model):
     @transaction.atomic
     def delete(self, reason, *args, **kwargs):
         # Log deletion before actual deletion
+        # Given self.content_type and object_id, get the content_object
+        content_object = self.content_type.get_object_for_this_type(pk=self.object_id)
+
         AccessControlLog.objects.create(
             upn=self.user.upn,
             action="D",
             can_view=self.can_view,
             can_change=self.can_change,
             can_delete=self.can_delete,
-            content_type=self.content_type,
-            object_id=self.object_id,
-            content_object=str(self.content_object),
+            content_object=str(content_object),
             reason=reason,
             modified_by=self.modified_by.upn if self.modified_by else None,
             modified_at=timezone.now(),
@@ -139,9 +140,11 @@ class AccessControl(models.Model):
             user=user,
             content_type=ContentType.objects.get_for_model(content_object),
             object_id=content_object.pk,
-            defaults={permission: True for permission in required_permissions},
-            modified_by=modified_by,
-            reason=reason,
+            defaults={
+                **{permission: True for permission in required_permissions},
+                "modified_by": modified_by,
+                "reason": reason,
+            },
         )
 
         if not created:
@@ -200,13 +203,8 @@ class AccessControl(models.Model):
             for permission in revoked_permissions:
                 setattr(access_control, permission, False)
 
-                # Dynamically generate the permission string for the revoked permission
-                permission_string = f"{content_object._meta.app_label}.{permission}_{content_object._meta.model_name}"
-
-                # Remove the permission from the user
-                user.user_permissions.remove(
-                    Permission.objects.get(codename=permission_string)
-                )
+                # Note: We don't remove Django Permission objects because SecureModel
+                # uses AccessControl records exclusively for permission management
 
             # Set modified_by and reason if provided
             access_control.modified_by = modified_by
@@ -221,7 +219,7 @@ class AccessControl(models.Model):
                 not getattr(access_control, permission)
                 for permission in valid_permissions
             ):
-                access_control.delete()
+                access_control.delete(reason or "All permissions revoked")
 
     @classmethod
     def check_permissions(cls, user, content_object, required_permissions):
@@ -296,21 +294,12 @@ class SecureManager(models.Manager):
         return super().filter(query)
 
     def create(self, access_key: AccessKey, **kwargs):
-        if not access_key.bypass:
-
-            permission = Permission.objects.get(
-                content_type=ContentType.objects.get_for_model(self.model),
-                codename=f"add_{self.model._meta.model_name}",
-            )
-
-            if permission not in access_key.user.user_permissions.all():
-                raise PermissionError(
-                    "You do not have permission to create this object."
-                )
-
+        # Create the instance with a new UUID
         kwargs["id"] = uuid.uuid4()
         instance = self.model(**kwargs)
         instance.save(AccessKey(bypass=True))
+
+        # Grant ownership permissions to the creating user (unless bypassing)
         if not access_key.bypass:
             instance.grant_ownership_to(
                 access_key,
@@ -334,7 +323,7 @@ class SecureModel(models.Model):
             return
 
         if not AccessControl.check_permissions(access_key.user, self, [permission]):
-            raise PermissionError(
+            raise PermissionDenied(
                 f"You do not have permission to {permission.lower()} this object."
             )
 
@@ -382,9 +371,10 @@ class SecureModel(models.Model):
     @classmethod
     def grant_create_to(cls, access_key: AccessKey):
         user = access_key.user
-        permission = Permission.objects.get(
+        permission, _ = Permission.objects.get_or_create(
             content_type=ContentType.objects.get_for_model(cls),
             codename=f"add_{cls._meta.model_name}",
+            defaults={"name": f"Can add {cls._meta.model_name}"},
         )
         user.user_permissions.add(permission)
         user.refresh_from_db()
@@ -407,9 +397,10 @@ class SecureModel(models.Model):
     @classmethod
     def revoke_create_from(cls, access_key: AccessKey):
         user = access_key.user
-        permission = Permission.objects.get(
+        permission, _ = Permission.objects.get_or_create(
             content_type=ContentType.objects.get_for_model(cls),
             codename=f"add_{cls._meta.model_name}",
+            defaults={"name": f"Can add {cls._meta.model_name}"},
         )
         user.user_permissions.remove(permission)
         user.refresh_from_db()
@@ -427,9 +418,10 @@ class SecureModel(models.Model):
     @classmethod
     def can_be_created_by(cls, access_key: AccessKey):
         user = access_key.user
-        permission = Permission.objects.get(
+        permission, _ = Permission.objects.get_or_create(
             content_type=ContentType.objects.get_for_model(cls),
             codename=f"add_{cls._meta.model_name}",
+            defaults={"name": f"Can add {cls._meta.model_name}"},
         )
         return permission in user.user_permissions.all()
 

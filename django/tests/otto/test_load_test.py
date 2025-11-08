@@ -59,7 +59,7 @@ def test_load_tests(client, all_apps_user):
     response = client.get(reverse("load_test"), {"llm_call": ""})
     assert response.status_code == 200
     # Should add 2 cost objects
-    response = client.get(reverse("load_test"), {"llm_call": "gpt-4o"})
+    response = client.get(reverse("load_test"), {"llm_call": "gemini-1.5-flash"})
     assert response.status_code == 200
     # Should add 1 cost object
     response = client.get(reverse("load_test"), {"embed_text": ""})

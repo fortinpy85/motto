@@ -425,6 +425,10 @@ def close_vector_store_connections():
     """
     yield  # Test runs here
 
+    # Close Django database connections first
+    from django import db
+    db.connections.close_all()
+
     # Close all SQLAlchemy connections after the test
     import gc
     try:

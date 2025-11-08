@@ -69,10 +69,7 @@ REASONING_EFFORT_CHOICES = [
 TRANSLATE_MODEL_CHOICES = [
     ("gemini-1.5-flash", _("Gemini 1.5 Flash (recommended, balanced speed and quality)")),
     ("gemini-1.5-pro", _("Gemini 1.5 Pro (highest quality, slower)")),
-    ("gpt-5", _("GPT-5 (alternative, 1.5x cost)")),
-    ("gpt-4.1", _("GPT-4.1 (alternative, 1x cost)")),
-    ("gpt-4.1-mini", _("GPT-4.1-mini (faster, 0.2x cost)")),
-    ("gpt-4.1-nano", _("GPT-4.1-nano (fastest, < 0.1x cost)")),
+    ("gemini-2.0-flash", _("Gemini 2.0 Flash (latest, faster)")),
 ]
 
 
@@ -748,7 +745,41 @@ def delete_saved_file(sender, instance, **kwargs):
     # NOTE: If file was uploaded to chat in Q&A mode, this won't delete unless
     # document is also deleted from librarian modal (or entire chat is deleted)
     try:
-        instance.saved_file.safe_delete()
+        if instance.saved_file:
+            # Check if this was the last ChatFile referencing this SavedFile
+            # Since we're in post_delete, this ChatFile is already gone from the database
+            if not instance.saved_file.chat_files.exists():
+                # Also check if there are no documents or glossary options referencing it
+                if (
+                    not instance.saved_file.documents.exists()
+                    and not instance.saved_file.glossary_options.exists()
+                ):
+                    # Safe to delete the saved file and its physical file
+                    if instance.saved_file.file:
+                        import time
+                        import gc
+
+                        gc.collect()
+                        max_retries = 3
+                        retry_delay = 0.1
+
+                        for attempt in range(max_retries):
+                            try:
+                                instance.saved_file.file.delete(True)
+                                break
+                            except (PermissionError, OSError) as e:
+                                if attempt < max_retries - 1:
+                                    logger.debug(
+                                        f"File deletion attempt {attempt + 1} failed, retrying: {e}"
+                                    )
+                                    time.sleep(retry_delay)
+                                    retry_delay *= 2
+                                else:
+                                    # Log error but continue - delete the DB record even if file can't be deleted
+                                    logger.warning(
+                                        f"Failed to delete file after {max_retries} attempts, will delete DB record: {e}"
+                                    )
+                    instance.saved_file.delete()
     except Exception as e:
         logger.error(f"Failed to delete saved file: {e}")
 

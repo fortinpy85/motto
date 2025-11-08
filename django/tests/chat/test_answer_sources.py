@@ -33,7 +33,7 @@ This should return HTML that includes all the sources.
 
 
 @pytest.mark.django_db(databases=["default", "vector_db"])
-def test_answer_sources(client, all_apps_user, load_example_pdf):
+def test_answer_sources(client, all_apps_user, load_example_pdf, mock_process_document_helper):
     from llama_index.core.vector_stores.types import MetadataFilter, MetadataFilters
 
     user = all_apps_user()

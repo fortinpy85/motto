@@ -115,10 +115,11 @@ def get_tld_extractor():
     """
     Returns a tldextract.TLDExtract instance with the default suffix list
     """
+    from pathlib import Path
+
+    suffix_list_path = Path(settings.BASE_DIR) / "effective_tld_names.dat"
     return tldextract.TLDExtract(
-        suffix_list_urls=[
-            "file://" + os.path.join(settings.BASE_DIR, "effective_tld_names.dat")
-        ],
+        suffix_list_urls=[suffix_list_path.as_uri()],
         cache_dir=os.path.join(settings.BASE_DIR, "tld_cache"),
     )
 

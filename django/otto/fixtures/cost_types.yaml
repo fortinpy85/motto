@@ -336,3 +336,27 @@
     unit_name_fr: jetons
     unit_cost: 5.00
     unit_quantity: 1000000
+- model: otto.CostType
+  pk: 33
+  fields:
+    short_name: gemini-2.0-flash-in
+    name: Gemini 2.0 Flash (input)
+    name_fr: Gemini 2.0 Flash (entrée)
+    description: API calls to Google Gemini 2.0 Flash model (input)
+    description_fr: Appels API au modèle Google Gemini 2.0 Flash (entrée)
+    unit_name: tokens
+    unit_name_fr: jetons
+    unit_cost: 0.10
+    unit_quantity: 1000000
+- model: otto.CostType
+  pk: 34
+  fields:
+    short_name: gemini-2.0-flash-out
+    name: Gemini 2.0 Flash (output)
+    name_fr: Gemini 2.0 Flash (sortie)
+    description: API calls to Google Gemini 2.0 Flash model (output)
+    description_fr: Appels API au modèle Google Gemini 2.0 Flash (sortie)
+    unit_name: tokens
+    unit_name_fr: jetons
+    unit_cost: 0.40
+    unit_quantity: 1000000

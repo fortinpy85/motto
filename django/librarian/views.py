@@ -530,8 +530,16 @@ def modal_create_library(request):
     return modal_view(request, item_type="library")
 
 
-@permission_required("librarian.view_library", objectgetter(Library, "library_id"))
 def modal_view_library(request, library_id):
+    # Check if user has permission to view this library
+    library = get_object_or_404(Library, id=library_id)
+    if not request.user.has_perm("librarian.view_library", library):
+        messages.error(
+            request,
+            _("You do not have permission to access this library."),
+        )
+        return redirect("index")
+    
     if request.method == "POST":
         is_public = "is_public" in request.POST
         if is_public and not request.user.has_perm("librarian.manage_public_libraries"):

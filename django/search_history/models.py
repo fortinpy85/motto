@@ -28,6 +28,7 @@ class LawSearch(models.Model):
     )  # UUID in cache for quick access to sources
 
     class Meta:
+        db_table = "laws_lawsearch"  # Keep original table name for backward compatibility
         ordering = ["-created_at"]
         indexes = [
             models.Index(fields=["user", "-created_at"]),

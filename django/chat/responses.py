@@ -427,7 +427,9 @@ def summarize_response(chat, response_message):
                 error_str += _(
                     "_(The extracted text was very short. If this isn't correct, try copy & pasting the webpage here.)_"
                 )
-        except ValidationError:
+        except (ValidationError, ValueError):
+            # ValidationError: invalid URL format
+            # ValueError: URL format issues (e.g., file: URLs with hostname)
             text_to_summarize = user_message.text
 
     if error_str:

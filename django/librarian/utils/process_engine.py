@@ -290,24 +290,23 @@ def extract_markdown(
     try:
         enable_markdown = True
         if process_engine == "IMAGE":
-            content = resize_to_azure_requirements(content)
             enable_markdown = False
-            md = pdf_to_text_azure_read(content)
+            md = pdf_to_text_gemini_read(content)
         elif process_engine == "PDF":
             if pdf_method == "default":
                 enable_markdown = False
                 md = pdf_to_text_pymupdf(content)
                 if is_mostly_empty(md):
-                    pdf_method = "azure_read"
+                    pdf_method = "gemini_read"
             if pdf_method == "layout":
                 md = pdf_to_markdown_pymupdf4llm(content)
                 if is_mostly_empty(md):
-                    pdf_method = "azure_read"
-            if pdf_method == "azure_read":
+                    pdf_method = "gemini_read"
+            if pdf_method == "gemini_read":
                 enable_markdown = False
-                md = pdf_to_text_azure_read(content)
-            if pdf_method == "azure_layout":
-                md = pdf_to_markdown_via_html_azure_layout(content)
+                md = pdf_to_text_gemini_read(content)
+            if pdf_method == "gemini_layout":
+                md = pdf_to_markdown_via_html_gemini_layout(content)
         elif process_engine == "WORD":
             md = docx_to_markdown(content)
         elif process_engine == "POWERPOINT":
@@ -422,8 +421,8 @@ def pdf_to_markdown_pymupdf4llm(content):
     return md
 
 
-def pdf_to_markdown_via_html_azure_layout(content):
-    html = _pdf_to_html_azure_layout(content)
+def pdf_to_markdown_via_html_gemini_layout(content):
+    html = _pdf_to_html_gemini_layout(content)
     md = _convert_html_to_markdown(html)
     return md
 
@@ -615,169 +614,91 @@ def _convert_html_to_markdown(
     return markdown
 
 
-def _pdf_to_html_azure_layout(content):
-    from azure.ai.documentintelligence import DocumentIntelligenceClient
-    from azure.core.credentials import AzureKeyCredential
-    from shapely.geometry import Polygon
+def _pdf_to_html_gemini_layout(content):
+    import google.generativeai as genai
+    from google.generativeai.types import File
+    import tempfile
+    import os
 
-    # Note: This method handles scanned PDFs, images, and handwritten text but is $$$
-
-    document_analysis_client = DocumentIntelligenceClient(
-        endpoint=settings.AZURE_COGNITIVE_SERVICE_ENDPOINT,
-        credential=AzureKeyCredential(settings.AZURE_COGNITIVE_SERVICE_KEY),
-    )
-
-    poller = document_analysis_client.begin_analyze_document("prebuilt-layout", content)
-    result = poller.result()
-
-    num_pages = len(result.pages)
-    cost = Cost.objects.new(cost_type="doc-ai-prebuilt", count=num_pages)
-
-    # Extract table bounding regions
-    table_bounding_regions = []
-    for table in result.tables:
-        for cell in table.cells:
-            table_bounding_regions.append(cell.bounding_regions[0])
-
-    table_chunks = []
-    for _, table in enumerate(result.tables):
-        page_number = table.bounding_regions[0].page_number
-
-        # Generate table HTML syntax
-        table_html = "<table>"
-        for row in range(table.row_count):
-            table_html += "<tr>"
-            for col in range(table.column_count):
-                try:
-                    cell = next(
-                        cell
-                        for cell in table.cells
-                        if cell.row_index == row and cell.column_index == col
-                    )
-                    table_html += "<td>{}</td>".format(cell.content)
-                except StopIteration:
-                    table_html += "<td></td>"
-            table_html += "</tr>"
-        table_html += "</table>"
-
-        # Polygon is a flat list of coordinates [x1, y1, x2, y2, ...]
-        polygon = table.bounding_regions[0].polygon
-        points = [(polygon[i], polygon[i + 1]) for i in range(0, len(polygon), 2)]
-        table_polygon = Polygon(points)
-
-        chunk = {
-            "page_number": page_number,
-            "x": table_polygon.bounds[0],
-            "y": table_polygon.bounds[1],
-            "text": table_html,
-        }
-        table_chunks.append(chunk)
-
-    p_chunks = []
-    for paragraph in result.paragraphs:
-        paragraph_page_number = paragraph.bounding_regions[0].page_number
-
-        # Polygon is a flat list of coordinates [x1, y1, x2, y2, ...]
-        polygon = paragraph.bounding_regions[0].polygon
-        points = [(polygon[i], polygon[i + 1]) for i in range(0, len(polygon), 2)]
-        paragraph_polygon = Polygon(points)
-
-        # Check intersection between paragraph and table cells
-        table_intersections = []
-        for bounding_region in table_bounding_regions:
-            if bounding_region.page_number == paragraph_page_number:
-                # Polygon is a flat list of coordinates [x1, y1, x2, y2, ...]
-                polygon = bounding_region.polygon
-                points = [
-                    (polygon[i], polygon[i + 1]) for i in range(0, len(polygon), 2)
-                ]
-                table_poly = Polygon(points)
-                table_intersections.append(paragraph_polygon.intersects(table_poly))
-
-        if any(table_intersections):
-            continue
-
-        # If text contains words like :selected:, :checked:, or :unchecked:, then skip it
-        if any(
-            word in paragraph.content
-            for word in [":selected:", ":checked:", ":unchecked:"]
-        ):
-            continue
-
-        # Create Chunk object and append to chunks list
-        chunk = {
-            "page_number": paragraph_page_number,
-            "x": paragraph_polygon.bounds[0],
-            "y": paragraph_polygon.bounds[1],
-            "text": "<p>" + paragraph.content + "</p>",
-        }
-        p_chunks.append(chunk)
-
-    chunks = table_chunks + p_chunks
-
-    # Sort chunks by page number, then by y coordinate, then by x coordinate
-    chunks = sorted(
-        chunks, key=lambda item: (item.get("page_number"), item.get("y"), item.get("x"))
-    )
-    html = ""
-    cur_page = None
-    for _, chunk in enumerate(chunks, 1):
-        page_start_tag = f"\n<page_{chunk.get('page_number')}>\n"
-        page_end_tag = f"\n</page_{chunk.get('page_number')}>\n"
-        prev_end_tag = f"\n</page_{cur_page}>\n" if cur_page is not None else ""
-        if chunk.get("page_number") != cur_page:
-            if cur_page is not None:
-                html += prev_end_tag
-            cur_page = chunk.get("page_number")
-            html += page_start_tag
-        html += chunk.get("text")
-
-    if cur_page is not None and chunks:
-        html += page_end_tag
-
+    # Configure Gemini API
+    genai.configure(api_key=settings.GEMINI_API_KEY)
+    
+    # Write content to temporary file for Gemini upload
+    with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as temp_file:
+        temp_file.write(content)
+        temp_path = temp_file.name
+    
+    try:
+        # Upload the file to Gemini
+        uploaded_file = genai.upload_file(temp_path)
+        
+        # Use Gemini to extract structured content from PDF
+        model = genai.GenerativeModel('gemini-1.5-flash')
+        
+        prompt = """Extract all text, tables, and structure from this PDF document. 
+        For tables, output them in HTML table format with <table>, <tr>, <td> tags.
+        For paragraphs, wrap them in <p> tags.
+        Preserve the page structure and ordering.
+        Use <page_N> and </page_N> tags to denote page boundaries where N is the page number."""
+        
+        response = model.generate_content([prompt, uploaded_file])
+        html = response.text
+        
+        # Count pages for cost tracking (estimate from response or default to 1)
+        num_pages = html.count('<page_')
+        if num_pages == 0:
+            num_pages = 1
+        
+        cost = Cost.objects.new(cost_type="gemini-ocr", count=len(html))
+        
+    finally:
+        # Clean up temporary file
+        if os.path.exists(temp_path):
+            os.unlink(temp_path)
+    
     return html
 
 
-def pdf_to_text_azure_read(content: bytes) -> str:
-    from azure.ai.documentintelligence import DocumentIntelligenceClient
-    from azure.core.credentials import AzureKeyCredential
+def pdf_to_text_gemini_read(content: bytes) -> str:
+    import google.generativeai as genai
+    import tempfile
+    import os
 
-    document_analysis_client = DocumentIntelligenceClient(
-        endpoint=settings.AZURE_COGNITIVE_SERVICE_ENDPOINT,
-        credential=AzureKeyCredential(settings.AZURE_COGNITIVE_SERVICE_KEY),
-    )
-
-    poller = document_analysis_client.begin_analyze_document("prebuilt-read", content)
-    result = poller.result()
-
-    num_pages = len(result.pages)
-    cost = Cost.objects.new(cost_type="doc-ai-read", count=num_pages)
-
-    p_chunks = []
-    for page in result.pages:
-        for line in page.lines:
-            chunk = {
-                "page_number": page.page_number,
-                "text": line.content + "\n",
-            }
-            p_chunks.append(chunk)
-
-    text = ""
-    cur_page = None
-    for _, chunk in enumerate(p_chunks, 1):
-        page_start_tag = f"\n<page_{chunk.get('page_number')}>\n"
-        page_end_tag = f"\n</page_{chunk.get('page_number')}>\n"
-        prev_end_tag = f"\n</page_{cur_page}>\n" if cur_page is not None else ""
-        if chunk.get("page_number") != cur_page:
-            if cur_page is not None:
-                text = text.strip() + prev_end_tag
-            cur_page = chunk.get("page_number")
-            text = text.strip() + page_start_tag
-        text += chunk.get("text")
-
-    if cur_page is not None and p_chunks:
-        text = text.strip() + page_end_tag
-
+    # Configure Gemini API
+    genai.configure(api_key=settings.GEMINI_API_KEY)
+    
+    # Write content to temporary file for Gemini upload
+    with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as temp_file:
+        temp_file.write(content)
+        temp_path = temp_file.name
+    
+    try:
+        # Upload the file to Gemini
+        uploaded_file = genai.upload_file(temp_path)
+        
+        # Use Gemini to extract text from PDF
+        model = genai.GenerativeModel('gemini-1.5-flash')
+        
+        prompt = """Extract all text from this PDF document.
+        Preserve the page structure and ordering.
+        Use <page_N> and </page_N> tags to denote page boundaries where N is the page number.
+        Keep the original formatting and line breaks."""
+        
+        response = model.generate_content([prompt, uploaded_file])
+        text = response.text
+        
+        # Count pages for cost tracking
+        num_pages = text.count('<page_')
+        if num_pages == 0:
+            num_pages = 1
+        
+        cost = Cost.objects.new(cost_type="gemini-ocr", count=len(text))
+        
+    finally:
+        # Clean up temporary file
+        if os.path.exists(temp_path):
+            os.unlink(temp_path)
+    
     return text
 
 

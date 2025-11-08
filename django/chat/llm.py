@@ -77,9 +77,18 @@ def chat_history_to_prompt(chat_history: list) -> str:
 
     lines = []
     for msg in chat_history:
-        # If msg is a dict, convert to ChatMessage
+        # Skip None or invalid entries
+        if msg is None:
+            continue
+
+        # If msg is a dict, try to convert to ChatMessage
         if not isinstance(msg, ChatMessage) and hasattr(ChatMessage, "model_validate"):
-            msg = ChatMessage.model_validate(msg)
+            try:
+                msg = ChatMessage.model_validate(msg)
+            except Exception:
+                # Skip invalid entries that can't be validated
+                continue
+
         role = getattr(msg, "role", None)
         content = getattr(msg, "content", None)
         if role and content:

@@ -7,11 +7,6 @@ from celery import shared_task
 
 
 @shared_task
-def sync_users():
-    call_command("sync_users")
-
-
-@shared_task
 def reset_monthly_bonus():
     from otto.models import User
 

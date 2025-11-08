@@ -89,7 +89,7 @@ def new_chat(request, mode=None):
         empty_chat.loaded_preset = preset
         empty_chat.save()
         # Update the chat options with the preset options
-        copy_options(preset.options, empty_chat.options)
+        copy_options(preset.options, empty_chat.options, user=request.user)
         redirect_url += "?start_tour=true"
 
     return redirect(redirect_url)
@@ -99,10 +99,13 @@ def new_chat(request, mode=None):
 def delete_chat(request, chat_id, current_chat=None):
     # HTMX delete route
     # Delete chat
-    chat = Chat.objects.get(id=chat_id)
-
-    chat.delete()
-    logger.info("Chat was deleted.", chat_id=chat_id)
+    try:
+        chat = Chat.objects.get(id=chat_id)
+        chat.delete()
+        logger.info("Chat was deleted.", chat_id=chat_id)
+    except Chat.DoesNotExist:
+        logger.warning("Attempted to delete non-existent chat.", chat_id=chat_id)
+        return HttpResponse(status=404)
 
     # Is this the currently open chat? If so, redirect away
     if current_chat == "True":
@@ -300,7 +303,7 @@ def chat(request, chat_id):
         "librarian.view_library", chat.options.qa_library
     ):
         # The copy_options function fixes these issues
-        copy_options(chat.options, chat.options)
+        copy_options(chat.options, chat.options, user=request.user)
 
     form = ChatOptionsForm(instance=chat.options, user=request.user)
 
@@ -639,7 +642,7 @@ def chat_options(request, chat_id, action=None, preset_id=None):
         chat.save()
 
         # Update the chat options with the preset options
-        copy_options(preset.options, chat.options)
+        copy_options(preset.options, chat.options, user=request.user)
 
         chat_options_form = ChatOptionsForm(instance=chat.options, user=request.user)
 
