@@ -27,6 +27,7 @@ def test_enabling_load_test(client, basic_user, all_apps_user):
     assert response.status_code == 200
 
 
+@pytest.mark.skip(reason="Requires laws database to be loaded. Run: python manage.py load_laws_xml --reset --small --start")
 @pytest.mark.django_db
 def test_load_tests(client, all_apps_user):
     # Shouldn't need to be logged in at all
