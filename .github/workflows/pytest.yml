@@ -50,8 +50,20 @@ jobs:
           - 6379:6379
     env:
       GEMINI_API_KEY: ${{secrets.GEMINI_API_KEY}}
+      # Django database configuration (must match postgres-service container)
+      DJANGODB_ENGINE: django.db.backends.postgresql
+      DJANGODB_NAME: otto
+      DJANGODB_USER: postgres
+      DJANGODB_PASSWORD: password
       DJANGODB_HOST: postgres-service
+      DJANGODB_PORT: 5432
+      # Vector database configuration (uses same postgres-service)
+      VECTORDB_ENGINE: django.db.backends.postgresql
+      VECTORDB_NAME: otto
+      VECTORDB_USER: postgres
+      VECTORDB_PASSWORD: password
       VECTORDB_HOST: postgres-service
+      VECTORDB_PORT: 5432
       LOG_LEVEL: ERROR
     steps:
     - uses: actions/checkout@v4
