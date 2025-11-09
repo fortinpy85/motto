@@ -37,7 +37,7 @@ from otto.rules import (
     can_manage_library_users
 )
 from otto.utils.decorators import permission_required, app_access_required, budget_required
-from chat.models import Chat, Preset
+from chat.models import Chat, ChatOptions, Preset
 from librarian.models import Library, LibraryUserRole
 
 
@@ -185,7 +185,7 @@ class TestGroupBasedAuthorization:
         assert not user.is_admin
 
         user.make_otto_admin()
-
+        user.refresh_from_db()
         assert user.is_admin
         assert user.has_perm("otto.manage_users")
         assert user.has_perm("otto.load_laws")

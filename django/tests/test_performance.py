@@ -107,11 +107,8 @@ class TestLLMPerformance:
             title="Performance Test",
             user=user,)
 
-        user_message = Message.objects.create(
-            chat=chat,
-            content="Hello, how are you?",
-            created_by=user,
-            role="user"
+        user_message = Message.objects.create(chat=chat,
+            text="Hello, how are you?", is_bot=False
         )
 
         with PerformanceBenchmark("Simple chat response") as bench:
@@ -136,15 +133,11 @@ class TestLLMPerformance:
             chat = Chat.objects.create(
                 title=f"Concurrent Test {threading.get_ident()}",
                 user=user,
-                created_by=user,
                 options=ChatOptions.objects.create(mode="chat")
             )
 
-            Message.objects.create(
-                chat=chat,
-                content="Test message",
-                created_by=user,
-                role="user"
+            Message.objects.create(chat=chat,
+                text="Test message", is_bot=False
             )
 
             llm = OttoLLM(mock_embedding=True)
@@ -183,16 +176,14 @@ class TestDocumentProcessingPerformance:
             for i in range(100):
                 doc = Document.objects.create(data_source=datasource,
                     url=f"https://example.com/doc{i}",
-                    title=f"Document {i}",
-                    created_by=user
-                )
+                    title=f"Document {i}")
                 documents.append(doc)
 
         # Creating 100 documents should be fast (< 5 seconds)
         bench.assert_performance(max_time=5.0)
         assert len(documents) == 100
 
-    @patch('librarian.utils.process_document.fetch_from_url')
+    @patch('librarian.utils.process_engine.fetch_from_url')
     @patch('librarian.utils.process_engine.extract_markdown')
     def test_batch_document_processing(self, mock_extract, mock_fetch, basic_user):
         """Test processing multiple documents"""
@@ -214,9 +205,7 @@ class TestDocumentProcessingPerformance:
         documents = []
         for i in range(10):
             doc = Document.objects.create(data_source=datasource,
-                url=f"https://example.com/doc{i}",
-                created_by=user
-            )
+                url=f"https://example.com/doc{i}")
             documents.append(doc)
 
         with PerformanceBenchmark("Process 10 documents") as bench:
@@ -282,9 +271,7 @@ class TestSecureModelQueryPerformance:
         # Create 50 documents
         for i in range(50):
             Document.objects.create(data_source=datasource,
-                title=f"Document {i}",
-                created_by=user
-            )
+                title=f"Document {i}")
 
         with PerformanceBenchmark("Query 50 secure documents") as bench:
             docs = Document.objects.all(access_key=access_key)
@@ -309,9 +296,7 @@ class TestSecureModelQueryPerformance:
             status = "COMPLETE" if i % 2 == 0 else "PENDING"
             Document.objects.create(data_source=datasource,
                 title=f"Document {i}",
-                status=status,
-                created_by=user
-            )
+                status=status)
 
         with PerformanceBenchmark("Filtered query on 100 documents") as bench:
             complete_docs = Document.objects.filter(
@@ -338,9 +323,7 @@ class TestSecureModelQueryPerformance:
         # Create 20 documents
         for i in range(20):
             Document.objects.create(data_source=datasource,
-                title=f"Document {i}",
-                created_by=user
-            )
+                title=f"Document {i}")
 
         with PerformanceBenchmark("Access 20 documents with related data") as bench:
             docs = Document.objects.select_related(
@@ -404,9 +387,7 @@ class TestConcurrentOperations:
             name="Race Condition Source")
 
         document = Document.objects.create(data_source=datasource,
-            title="Concurrent Update Test",
-            created_by=user
-        )
+            title="Concurrent Update Test")
 
         def update_document(doc_id, value):
             """Update document status"""
@@ -454,7 +435,7 @@ class TestConcurrentOperations:
         assert all(results)
         # All users should have view permission
         for user in users:
-            assert library.has_view_permission(AccessKey(user=user))
+            assert user.has_perm("librarian.view_library", library)
 
         bench.assert_performance(max_time=3.0)
 
@@ -548,7 +529,7 @@ class TestStressScenarios:
 
         with PerformanceBenchmark("1000 permission checks") as bench:
             for _ in range(1000):
-                _ = library.has_view_permission(access_key)
+                _ = user.has_perm("librarian.view_library", library)
 
         # Should handle many permission checks efficiently
         bench.assert_performance(max_time=2.0)
@@ -691,9 +672,7 @@ class TestPerformanceRegression:
 
         for i in range(50):
             Document.objects.create(data_source=datasource,
-                title=f"Document {i}",
-                created_by=user
-            )
+                title=f"Document {i}")
 
         # Baseline: Query 50 documents
         with PerformanceBenchmark("Baseline SecureModel query") as bench:

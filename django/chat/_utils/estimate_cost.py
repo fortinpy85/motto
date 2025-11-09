@@ -23,7 +23,16 @@ def _estimate_file_size_tokens(file_size: int) -> int:
 
 def _calculate_cost_for_units(cost_type_name: str, unit_count: int) -> Decimal:
     """Calculate cost for a given number of units and cost type short name."""
-    cost_type = CostType.objects.get(short_name=cost_type_name)
+    cost_type, _ = CostType.objects.get_or_create(
+        short_name=cost_type_name,
+        defaults={
+            "name": cost_type_name,
+            "description": f"Auto-created cost type for {cost_type_name}",
+            "unit_name": "tokens",
+            "unit_cost": Decimal("0.00001"),
+            "unit_quantity": 1000
+        }
+    )
     return (unit_count * cost_type.unit_cost) / cost_type.unit_quantity
 
 

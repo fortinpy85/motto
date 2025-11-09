@@ -196,7 +196,7 @@ class TestChatConversationWorkflow:
 class TestDocumentRAGWorkflow:
     """Test complete document upload and RAG query workflow"""
 
-    @patch('librarian.utils.process_document.fetch_from_url')
+    @patch('librarian.utils.process_engine.fetch_from_url')
     @patch('librarian.utils.process_engine.extract_markdown')
     @patch('chat.llm.genai.GenerativeModel')
     def test_complete_document_rag_workflow(
