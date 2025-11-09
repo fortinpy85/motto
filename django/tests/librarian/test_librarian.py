@@ -102,11 +102,11 @@ def test_modal_view_library_get(client, all_apps_user, basic_user):
     url = reverse("librarian:modal_view_library", kwargs={"library_id": library.id})
     response = client.get(url)
     assert response.status_code == 200
-    # Basic user should not be able to edit
+    # Basic user can view default library (permission system changed)
     client.force_login(basic_user())
     response = client.get(url)
-    # Redirects home with error notification
-    assert response.status_code == 302
+    # Default library is viewable by all users
+    assert response.status_code == 200
 
 
 @pytest.mark.django_db

@@ -358,10 +358,9 @@ class TestLibraryManagementWorkflow:
         )
         assert not library.is_public
 
-        # Step 2: Regular user cannot access
-        regular_key = AccessKey(user=regular_user)
-        accessible_libs = Library.objects.all()
-        assert library not in accessible_libs
+        # Step 2: Regular user cannot access private library
+        # Since SecureModel was removed, use django-rules to check permissions
+        assert not regular_user.has_perm("librarian.view_library", library)
 
         # Step 3: Admin makes library public
         library.is_public = True
@@ -494,7 +493,7 @@ class TestCostBudgetWorkflow:
             user=user,
             cost_type=cost_type,
             count=15000,
-            usd_cost=0.90  # Close to limit
+            usd_cost=0.70  # Accounts for USD->CAD exchange rate (~1.38)
         )
 
         # Step 2: Check if user is over budget
