@@ -60,11 +60,9 @@ class TestUserOnboardingWorkflow:
         # Step 6: User sends first message
         message = Message.objects.create(
             chat=chat,
-            content="Hello, this is my first message!",
-            created_by=user,
-            role="user"
+            text="Hello, this is my first message!"
         )
-        assert message.content == "Hello, this is my first message!"
+        assert message.text == "Hello, this is my first message!"
 
         # Step 7: Verify user state
         assert user.accepted_terms
@@ -121,54 +119,48 @@ class TestChatConversationWorkflow:
         # Step 2: User sends first message
         user_msg1 = Message.objects.create(
             chat=chat,
-            content="Hello, I need help with Python",
-            created_by=user,
-            role="user"
+            text="Hello, I need help with Python",
+            is_bot=False
         )
 
         # Step 3: System generates response
         assistant_msg1 = Message.objects.create(
             chat=chat,
-            content="Hello! How can I help you today?",
-            created_by=user,
-            role="assistant"
+            text="Hello! How can I help you today?",
+            is_bot=True
         )
 
         # Step 4: User continues conversation
         user_msg2 = Message.objects.create(
             chat=chat,
-            content="Can you explain list comprehensions?",
-            created_by=user,
-            role="user"
+            text="Can you explain list comprehensions?",
+            is_bot=False
         )
 
         assistant_msg2 = Message.objects.create(
             chat=chat,
-            content="Sure, I can help with that.",
-            created_by=user,
-            role="assistant"
+            text="Sure, I can help with that.",
+            is_bot=True
         )
 
         # Step 5: User asks follow-up question
         user_msg3 = Message.objects.create(
             chat=chat,
-            content="Can you show me an example?",
-            created_by=user,
-            role="user"
+            text="Can you show me an example?",
+            is_bot=False
         )
 
         assistant_msg3 = Message.objects.create(
             chat=chat,
-            content="Here's the answer to your question.",
-            created_by=user,
-            role="assistant"
+            text="Here's the answer to your question.",
+            is_bot=True
         )
 
         # Step 6: Verify conversation state
-        messages = Message.objects.filter(chat=chat).order_by('created_at')
+        messages = Message.objects.filter(chat=chat).order_by('date_created')
         assert messages.count() == 6  # 3 user + 3 assistant
-        assert messages[0].role == "user"
-        assert messages[1].role == "assistant"
+        assert messages[0].is_bot == False
+        assert messages[1].is_bot == True
 
         # Step 7: User pins important chat
         chat.pinned = True
@@ -226,16 +218,14 @@ class TestDocumentRAGWorkflow:
 
         # Step 2: User creates datasource in library
         datasource = DataSource.objects.create(library=library,
-            name="Research Papers",
-            created_by=user
+            name="Research Papers"
         )
         assert datasource.name == "Research Papers"
 
         # Step 3: User uploads document
         document = Document.objects.create(data_source=datasource,
             url="https://example.com/research-paper.pdf",
-            title="Research Paper",
-            created_by=user
+            manual_title="Research Paper"
         )
         assert document.status == "PENDING"
 
@@ -253,18 +243,16 @@ class TestDocumentRAGWorkflow:
         # Step 6: User asks question about document
         question = Message.objects.create(
             chat=chat,
-            content="What is the main finding of the research?",
-            created_by=user,
-            role="user"
+            text="What is the main finding of the research?",
+            is_bot=False
         )
 
         # Step 7: System retrieves relevant documents and generates answer
         # (In real workflow, this uses vector similarity search)
         answer = Message.objects.create(
             chat=chat,
-            content="Based on the document, here's the answer...",
-            created_by=user,
-            role="assistant"
+            text="Based on the document, here's the answer...",
+            is_bot=True
         )
 
         # Step 8: Verify workflow completion
@@ -310,8 +298,7 @@ class TestLibraryManagementWorkflow:
         # Step 3: Owner creates datasource
         datasource = DataSource.objects.create(
             library=library,
-            name="Shared Documents",
-            created_by=owner
+            name="Shared Documents"
         )
 
         # Step 4: Contributor adds document
@@ -386,7 +373,7 @@ class TestPresetSharingWorkflow:
         # Step 1: Creator creates custom preset
         options = ChatOptions.objects.create(
             mode="qa",
-            model_id="gemini-1.5-pro"
+            qa_model="gemini-1.5-pro"
         )
         preset = Preset.objects.create(
             name_en="Custom Research Preset",
@@ -442,8 +429,7 @@ class TestCostBudgetWorkflow:
             Message.objects.create(
                 chat=chat,
                 content=f"Message {i}",
-                created_by=user,
-                role="user"
+                    is_bot=False
             )
 
             # System response creates cost
@@ -539,12 +525,16 @@ class TestFileUploadWorkflow:
         chat = Chat.objects.create(title="File Discussion",
             user=user)
 
-        # Step 2: User uploads file
+        # Step 2: User uploads file - need to create message first
+        file_message = Message.objects.create(
+            chat=chat,
+            text="",
+            is_bot=False
+        )
         chat_file = ChatFile.objects.create(
             filename="document.pdf",
             content_type="application/pdf",
-            chat=chat,
-            created_by=user
+            message=file_message
         )
         assert chat_file.filename == "document.pdf"
 
@@ -555,9 +545,7 @@ class TestFileUploadWorkflow:
         # Step 4: User references file in message
         message = Message.objects.create(
             chat=chat,
-            content="Can you summarize this document?",
-            created_by=user,
-            role="user"
+            text="Can you summarize this document?"
         )
 
         # Attach file to message
@@ -584,8 +572,7 @@ class TestErrorRecoveryWorkflows:
         )
 
         datasource = DataSource.objects.create(library=library,
-            name="Error Test Source",
-            created_by=user
+            name="Error Test Source"
         )
 
         # Step 1: Document processing fails
@@ -676,8 +663,7 @@ class TestMultiUserCollaboration:
         # Step 3: Create shared datasource
         datasource = DataSource.objects.create(
             library=library,
-            name="Project Documents",
-            created_by=team_lead
+            name="Project Documents"
         )
 
         # Step 4: Team members add documents
@@ -725,7 +711,6 @@ class TestFeedbackWorkflow:
             feedback_message="The chat interface is not loading properly",
             app="Otto",
             otto_version="v1.0",
-            created_by=user,
             modified_by=user,
             created_at=timezone.now(),
             modified_on=timezone.now()
@@ -774,9 +759,8 @@ class TestSessionManagementWorkflow:
         for chat in chats:
             Message.objects.create(
                 chat=chat,
-                content="Session message",
-                created_by=user,
-                role="user"
+                text="Session message",
+                    is_bot=False
             )
 
         # Step 4: Verify session state persistence

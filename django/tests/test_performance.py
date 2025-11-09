@@ -25,7 +25,7 @@ from django.test.utils import override_settings
 
 from chat.models import Chat, Message, ChatOptions
 from chat.llm import OttoLLM
-from librarian.models import Document, DataSource, Library
+from librarian.models import Document, DataSource, Library, LibraryUserRole
 from otto.secure_models import AccessKey
 from otto.models import Cost, CostType
 
@@ -131,9 +131,9 @@ class TestLLMPerformance:
             """Create a chat and get a response"""
             chat = Chat.objects.create(
                 title=f"Concurrent Test {threading.get_ident()}",
-                user=user,
-                options=ChatOptions.objects.create(mode="chat")
+                user=user
             )
+            ChatOptions.objects.create(mode="chat", chat=chat)
 
             Message.objects.create(chat=chat,
                 text="Test message", is_bot=False
@@ -174,7 +174,7 @@ class TestDocumentProcessingPerformance:
             for i in range(100):
                 doc = Document.objects.create(data_source=datasource,
                     url=f"https://example.com/doc{i}",
-                    title=f"Document {i}")
+                    manual_title=f"Document {i}")
                 documents.append(doc)
 
         # Creating 100 documents should be fast (< 5 seconds)
@@ -267,7 +267,7 @@ class TestSecureModelQueryPerformance:
         # Create 50 documents
         for i in range(50):
             Document.objects.create(data_source=datasource,
-                title=f"Document {i}")
+                manual_title=f"Document {i}")
 
         with PerformanceBenchmark("Query 50 secure documents") as bench:
             docs = Document.objects.all(access_key=access_key)
@@ -291,7 +291,7 @@ class TestSecureModelQueryPerformance:
         for i in range(100):
             status = "COMPLETE" if i % 2 == 0 else "PENDING"
             Document.objects.create(data_source=datasource,
-                title=f"Document {i}",
+                manual_title=f"Document {i}",
                 status=status)
 
         with PerformanceBenchmark("Filtered query on 100 documents") as bench:
@@ -319,7 +319,7 @@ class TestSecureModelQueryPerformance:
         # Create 20 documents
         for i in range(20):
             Document.objects.create(data_source=datasource,
-                title=f"Document {i}")
+                manual_title=f"Document {i}")
 
         with PerformanceBenchmark("Access 20 documents with related data") as bench:
             docs = Document.objects.select_related(
@@ -383,14 +383,14 @@ class TestConcurrentOperations:
             name="Race Condition Source")
 
         document = Document.objects.create(data_source=datasource,
-            title="Concurrent Update Test")
+            manual_title="Concurrent Update Test")
 
         def update_document(doc_id, value):
             """Update document status"""
             access_key = AccessKey(bypass=True)
             doc = Document.objects.get(id=doc_id)
             doc.status = value
-            doc.save(access_key=access_key)
+            doc.save()
             return True
 
         with ThreadPoolExecutor(max_workers=5) as executor:
@@ -454,7 +454,7 @@ class TestMemoryAndResources:
         # Create 200 documents with text content
         for i in range(200):
             Document.objects.create(data_source=datasource,
-                title=f"Document {i}",
+                manual_title=f"Document {i}",
                 text="A" * 1000,  # 1KB of text per document
                 created_by=user
             )
@@ -663,7 +663,7 @@ class TestPerformanceRegression:
 
         for i in range(50):
             Document.objects.create(data_source=datasource,
-                title=f"Document {i}")
+                manual_title=f"Document {i}")
 
         # Baseline: Query 50 documents
         with PerformanceBenchmark("Baseline SecureModel query") as bench:
