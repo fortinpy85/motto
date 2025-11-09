@@ -29,7 +29,7 @@ from django.urls import reverse
 
 from otto.models import User, Feedback, Pilot
 from otto.forms import FeedbackForm, UserGroupForm, PilotForm
-from chat.models import Chat, Message, Preset
+from chat.models import Chat, ChatOptions, Message, Preset
 from chat.forms import PresetForm
 from librarian.models import Library, DataSource, Document
 from librarian.forms import LibraryDetailForm, DataSourceDetailForm, DocumentDetailForm

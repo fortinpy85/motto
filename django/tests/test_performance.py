@@ -173,14 +173,10 @@ class TestDocumentProcessingPerformance:
         user = basic_user()
         access_key = AccessKey(user=user)
 
-        library = Library.objects.create(name="Performance Test Library",
-            created_by=user
-        )
+        library = Library.objects.create(name="Performance Test Library")
 
         datasource = DataSource.objects.create(library=library,
-            name="Performance Test Source",
-            created_by=user
-        )
+            name="Performance Test Source")
 
         with PerformanceBenchmark("Create 100 documents") as bench:
             documents = []
@@ -203,14 +199,10 @@ class TestDocumentProcessingPerformance:
         user = basic_user()
         access_key = AccessKey(user=user)
 
-        library = Library.objects.create(name="Batch Test Library",
-            created_by=user
-        )
+        library = Library.objects.create(name="Batch Test Library")
 
         datasource = DataSource.objects.create(library=library,
-            name="Batch Test Source",
-            created_by=user
-        )
+            name="Batch Test Source")
 
         # Mock document content
         mock_fetch.return_value = b"<html><body>Test content</body></html>"
@@ -282,14 +274,10 @@ class TestSecureModelQueryPerformance:
         access_key = AccessKey(user=user)
 
         # Create test data
-        library = Library.objects.create(name="Query Performance Test",
-            created_by=user
-        )
+        library = Library.objects.create(name="Query Performance Test")
 
         datasource = DataSource.objects.create(library=library,
-            name="Query Performance Source",
-            created_by=user
-        )
+            name="Query Performance Source")
 
         # Create 50 documents
         for i in range(50):
@@ -311,14 +299,10 @@ class TestSecureModelQueryPerformance:
         user = basic_user()
         access_key = AccessKey(user=user)
 
-        library = Library.objects.create(name="Filter Test Library",
-            created_by=user
-        )
+        library = Library.objects.create(name="Filter Test Library")
 
         datasource = DataSource.objects.create(library=library,
-            name="Filter Test Source",
-            created_by=user
-        )
+            name="Filter Test Source")
 
         # Create documents with different statuses
         for i in range(100):
@@ -346,14 +330,10 @@ class TestSecureModelQueryPerformance:
         user = basic_user()
         access_key = AccessKey(user=user)
 
-        library = Library.objects.create(name="N+1 Test Library",
-            created_by=user
-        )
+        library = Library.objects.create(name="N+1 Test Library")
 
         datasource = DataSource.objects.create(library=library,
-            name="N+1 Test Source",
-            created_by=user
-        )
+            name="N+1 Test Source")
 
         # Create 20 documents
         for i in range(20):
@@ -418,14 +398,10 @@ class TestConcurrentOperations:
         user = basic_user()
         access_key = AccessKey(user=user)
 
-        library = Library.objects.create(name="Race Condition Test",
-            created_by=user
-        )
+        library = Library.objects.create(name="Race Condition Test")
 
         datasource = DataSource.objects.create(library=library,
-            name="Race Condition Source",
-            created_by=user
-        )
+            name="Race Condition Source")
 
         document = Document.objects.create(data_source=datasource,
             title="Concurrent Update Test",
@@ -458,9 +434,7 @@ class TestConcurrentOperations:
         users = [basic_user(username=f"user{i}") for i in range(5)]
 
         access_key = AccessKey(user=owner)
-        library = Library.objects.create(name="Permission Test",
-            created_by=owner
-        )
+        library = Library.objects.create(name="Permission Test")
 
         def grant_permission(lib_id, user):
             """Grant view permission to user"""
@@ -496,14 +470,10 @@ class TestMemoryAndResources:
         user = basic_user()
         access_key = AccessKey(user=user)
 
-        library = Library.objects.create(name="Memory Test Library",
-            created_by=user
-        )
+        library = Library.objects.create(name="Memory Test Library")
 
         datasource = DataSource.objects.create(library=library,
-            name="Memory Test Source",
-            created_by=user
-        )
+            name="Memory Test Source")
 
         # Create 200 documents with text content
         for i in range(200):
@@ -574,9 +544,7 @@ class TestStressScenarios:
         user = basic_user()
         access_key = AccessKey(user=user)
 
-        library = Library.objects.create(name="Permission Stress Test",
-            created_by=user
-        )
+        library = Library.objects.create(name="Permission Stress Test")
 
         with PerformanceBenchmark("1000 permission checks") as bench:
             for _ in range(1000):
@@ -716,14 +684,10 @@ class TestPerformanceRegression:
         access_key = AccessKey(user=user)
 
         # Create baseline data
-        library = Library.objects.create(name="Baseline Test",
-            created_by=user
-        )
+        library = Library.objects.create(name="Baseline Test")
 
         datasource = DataSource.objects.create(library=library,
-            name="Baseline Source",
-            created_by=user
-        )
+            name="Baseline Source")
 
         for i in range(50):
             Document.objects.create(data_source=datasource,

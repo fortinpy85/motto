@@ -52,11 +52,8 @@ class TestUserOnboardingWorkflow:
         # (In production, this happens via SSO or admin action)
 
         # Step 5: User creates first chat
-        chat = Chat.objects.create(
-            title="My First Chat",
-            user=user,
-            options=ChatOptions.objects.create(mode="chat")
-        )
+        chat = Chat.objects.create(title="My First Chat",
+            user=user)
         assert chat.title == "My First Chat"
         assert chat.user == user
 
@@ -117,14 +114,8 @@ class TestChatConversationWorkflow:
         mock_genai.return_value.generate_content.side_effect = mock_responses
 
         # Step 1: User creates new chat
-        chat = Chat.objects.create(
-            title="Technical Discussion",
-            user=user,
-            options=ChatOptions.objects.create(
-                mode="chat",
-                model_id="gemini-1.5-flash"
-            )
-        )
+        chat = Chat.objects.create(title="Technical Discussion",
+            user=user)
         assert chat.title == "Technical Discussion"
 
         # Step 2: User sends first message
@@ -255,15 +246,8 @@ class TestDocumentRAGWorkflow:
         assert document.status == "COMPLETE"
 
         # Step 5: User creates Q&A chat with library
-        chat = Chat.objects.create(
-            title="Research Questions",
-            user=user,
-            options=ChatOptions.objects.create(
-                mode="qa",
-                qa_mode="rag",
-                libraries=[library.id]
-            )
-        )
+        chat = Chat.objects.create(title="Research Questions",
+            user=user)
         assert chat.options.mode == "qa"
 
         # Step 6: User asks question about document
@@ -423,14 +407,8 @@ class TestPresetSharingWorkflow:
         assert can_view_preset(recipient, preset)
 
         # Step 4: Recipient creates chat using shared preset
-        chat = Chat.objects.create(
-            title="Using Shared Preset",
-            user=recipient,
-            options=ChatOptions.objects.create(
-                mode="qa",
-                model_id="gemini-1.5-pro"
-            )
-        )
+        chat = Chat.objects.create(title="Using Shared Preset",
+            user=recipient)
 
         # Step 5: Verify preset usage
         assert chat.options.mode == "qa"
@@ -457,11 +435,8 @@ class TestCostBudgetWorkflow:
         assert initial_cost == 0
 
         # Step 2: User creates chat
-        chat = Chat.objects.create(
-            title="Cost Test Chat",
-            user=user,
-            options=ChatOptions.objects.create(mode="chat")
-        )
+        chat = Chat.objects.create(title="Cost Test Chat",
+            user=user)
 
         # Step 3: User sends messages, incurring costs
         for i in range(5):
@@ -562,11 +537,8 @@ class TestFileUploadWorkflow:
         mock_extract.return_value = mock_result
 
         # Step 1: User creates chat
-        chat = Chat.objects.create(
-            title="File Discussion",
-            user=user,
-            options=ChatOptions.objects.create(mode="chat")
-        )
+        chat = Chat.objects.create(title="File Discussion",
+            user=user)
 
         # Step 2: User uploads file
         chat_file = ChatFile.objects.create(
@@ -652,11 +624,8 @@ class TestErrorRecoveryWorkflows:
             Mock(text="Success after retry")
         ]
 
-        chat = Chat.objects.create(
-            title="Error Recovery Test",
-            user=user,
-            options=ChatOptions.objects.create(mode="chat")
-        )
+        chat = Chat.objects.create(title="Error Recovery Test",
+            user=user)
 
         # Step 2: First message fails
         try:
@@ -748,11 +717,8 @@ class TestFeedbackWorkflow:
         user = basic_user()
 
         # Step 1: User encounters issue
-        chat = Chat.objects.create(
-            title="Problematic Chat",
-            user=user,
-            options=ChatOptions.objects.create(mode="chat")
-        )
+        chat = Chat.objects.create(title="Problematic Chat",
+            user=user)
 
         # Step 2: User submits feedback
         feedback = Feedback.objects.create(
@@ -801,11 +767,8 @@ class TestSessionManagementWorkflow:
         # Step 2: User creates multiple chats
         chats = []
         for i in range(3):
-            chat = Chat.objects.create(
-                title=f"Session Chat {i}",
-                user=user,
-                options=ChatOptions.objects.create(mode="chat")
-            )
+            chat = Chat.objects.create(title=f"Session Chat {i}",
+                user=user)
             chats.append(chat)
 
         # Step 3: User creates messages across chats

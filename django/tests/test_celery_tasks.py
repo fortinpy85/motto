@@ -20,7 +20,7 @@ from celery.exceptions import SoftTimeLimitExceeded
 
 from chat.tasks import extract_text_task, translate_file
 from librarian.tasks import process_document, process_document_helper
-from librarian.models import Document, DataSource
+from librarian.models import Document, DataSource, Library
 from chat.models import ChatFile
 from otto.secure_models import AccessKey
 
@@ -146,14 +146,11 @@ class TestProcessDocumentTask:
     def test_process_document_success(self, mock_helper):
         """Test successful document processing"""
         # Create test document
-        datasource = DataSource.objects.create(
-            access_key=AccessKey(bypass=True),
-            name_en="Test Source"
-        )
+        library = Library.objects.create(name="Test Library")
 
-        doc = Document.objects.create(
-            access_key=AccessKey(bypass=True),
-            url="https://example.com/test",
+        datasource = DataSource.objects.create(name="Test Source", library=library)
+
+        doc = Document.objects.create(url="https://example.com/test",
             data_source=datasource
         )
 
@@ -171,14 +168,11 @@ class TestProcessDocumentTask:
     def test_process_document_error_handling(self, mock_helper):
         """Test process_document error handling and status updates"""
         # Create test document
-        datasource = DataSource.objects.create(
-            access_key=AccessKey(bypass=True),
-            name_en="Test Source"
-        )
+        library = Library.objects.create(name="Test Library")
 
-        doc = Document.objects.create(
-            access_key=AccessKey(bypass=True),
-            url="https://example.com/test",
+        datasource = DataSource.objects.create(name="Test Source", library=library)
+
+        doc = Document.objects.create(url="https://example.com/test",
             data_source=datasource
         )
 
@@ -196,14 +190,11 @@ class TestProcessDocumentTask:
     @patch('librarian.tasks.process_document_helper')
     def test_process_document_sets_celery_task_id(self, mock_helper):
         """Test that process_document sets and clears celery_task_id"""
-        datasource = DataSource.objects.create(
-            access_key=AccessKey(bypass=True),
-            name_en="Test Source"
-        )
+        library = Library.objects.create(name="Test Library")
 
-        doc = Document.objects.create(
-            access_key=AccessKey(bypass=True),
-            url="https://example.com/test",
+        datasource = DataSource.objects.create(name="Test Source", library=library)
+
+        doc = Document.objects.create(url="https://example.com/test",
             data_source=datasource
         )
 
@@ -230,14 +221,11 @@ class TestProcessDocumentHelper:
     ):
         """Test processing document from URL"""
         # Create test document
-        datasource = DataSource.objects.create(
-            access_key=AccessKey(bypass=True),
-            name_en="Test Source"
-        )
+        library = Library.objects.create(name="Test Library")
 
-        doc = Document.objects.create(
-            access_key=AccessKey(bypass=True),
-            url="https://example.com/test",
+        datasource = DataSource.objects.create(name="Test Source", library=library)
+
+        doc = Document.objects.create(url="https://example.com/test",
             data_source=datasource
         )
 
@@ -337,14 +325,11 @@ class TestTaskStatusTracking:
 
     def test_document_status_lifecycle(self):
         """Test document status changes during processing"""
-        datasource = DataSource.objects.create(
-            access_key=AccessKey(bypass=True),
-            name_en="Test Source"
-        )
+        library = Library.objects.create(name="Test Library")
 
-        doc = Document.objects.create(
-            access_key=AccessKey(bypass=True),
-            url="https://example.com/test",
+        datasource = DataSource.objects.create(name="Test Source", library=library)
+
+        doc = Document.objects.create(url="https://example.com/test",
             data_source=datasource
         )
 
@@ -360,14 +345,11 @@ class TestTaskStatusTracking:
 
     def test_document_celery_task_id_tracking(self):
         """Test celery_task_id field for task tracking"""
-        datasource = DataSource.objects.create(
-            access_key=AccessKey(bypass=True),
-            name_en="Test Source"
-        )
+        library = Library.objects.create(name="Test Library")
 
-        doc = Document.objects.create(
-            access_key=AccessKey(bypass=True),
-            url="https://example.com/test",
+        datasource = DataSource.objects.create(name="Test Source", library=library)
+
+        doc = Document.objects.create(url="https://example.com/test",
             data_source=datasource
         )
 
@@ -389,14 +371,11 @@ class TestTaskCostTracking:
     @patch('librarian.tasks.OttoLLM')
     def test_process_document_creates_costs(self, mock_llm_class):
         """Test that process_document creates cost records"""
-        datasource = DataSource.objects.create(
-            access_key=AccessKey(bypass=True),
-            name_en="Test Source"
-        )
+        library = Library.objects.create(name="Test Library")
 
-        doc = Document.objects.create(
-            access_key=AccessKey(bypass=True),
-            url="https://example.com/test",
+        datasource = DataSource.objects.create(name="Test Source", library=library)
+
+        doc = Document.objects.create(url="https://example.com/test",
             data_source=datasource
         )
 
@@ -423,14 +402,11 @@ class TestTaskErrorRecovery:
     @patch('librarian.tasks.process_document_helper')
     def test_process_document_error_cleanup(self, mock_helper):
         """Test that errors clean up task state properly"""
-        datasource = DataSource.objects.create(
-            access_key=AccessKey(bypass=True),
-            name_en="Test Source"
-        )
+        library = Library.objects.create(name="Test Library")
 
-        doc = Document.objects.create(
-            access_key=AccessKey(bypass=True),
-            url="https://example.com/test",
+        datasource = DataSource.objects.create(name="Test Source", library=library)
+
+        doc = Document.objects.create(url="https://example.com/test",
             data_source=datasource
         )
 
@@ -454,14 +430,11 @@ class TestTaskLanguageHandling:
 
     def test_process_document_respects_language_parameter(self):
         """Test that process_document uses specified language"""
-        datasource = DataSource.objects.create(
-            access_key=AccessKey(bypass=True),
-            name_en="Test Source"
-        )
+        library = Library.objects.create(name="Test Library")
 
-        doc = Document.objects.create(
-            access_key=AccessKey(bypass=True),
-            url="https://example.com/test",
+        datasource = DataSource.objects.create(name="Test Source", library=library)
+
+        doc = Document.objects.create(url="https://example.com/test",
             data_source=datasource
         )
 
@@ -482,14 +455,11 @@ class TestMockEmbedding:
 
     def test_process_document_with_mock_embedding(self):
         """Test that mock_embedding=True works for testing"""
-        datasource = DataSource.objects.create(
-            access_key=AccessKey(bypass=True),
-            name_en="Test Source"
-        )
+        library = Library.objects.create(name="Test Library")
 
-        doc = Document.objects.create(
-            access_key=AccessKey(bypass=True),
-            url="https://example.com/test",
+        datasource = DataSource.objects.create(name="Test Source", library=library)
+
+        doc = Document.objects.create(url="https://example.com/test",
             data_source=datasource
         )
 
