@@ -31,8 +31,17 @@ def test_process_ocr_document_image(mock_image_file3, all_apps_user):
         access_key=access_key, user_request=user_request, file_name="test_image"
     )
 
-    with (mock.patch("text_extractor.tasks.current_task", current_task_mock),):
+    mock_create_searchable_pdf = mock.MagicMock(return_value={
+        "error": False,
+        "pdf_content": [b"mock pdf content"],
+        "all_text": "RIF drawing",
+        "cost": Decimal("0.01")
+    })
 
+    with (
+        mock.patch("text_extractor.tasks.current_task", current_task_mock),
+        mock.patch("text_extractor.tasks.create_searchable_pdf", mock_create_searchable_pdf),
+    ):
         result = process_ocr_document(
             file_content, file_name, str(output_file.id), str(user.id)
         )
@@ -77,8 +86,17 @@ def test_process_ocr_document_pdf(mock_pdf_file3, all_apps_user):
     current_task_mock = mock.MagicMock()
     current_task_mock.update_state = mock.MagicMock()
 
-    with (mock.patch("text_extractor.tasks.current_task", current_task_mock),):
+    mock_create_searchable_pdf = mock.MagicMock(return_value={
+        "error": False,
+        "pdf_content": [b"mock pdf content"],
+        "all_text": "RIF drawing",
+        "cost": Decimal("0.01")
+    })
 
+    with (
+        mock.patch("text_extractor.tasks.current_task", current_task_mock),
+        mock.patch("text_extractor.tasks.create_searchable_pdf", mock_create_searchable_pdf),
+    ):
         result = process_ocr_document(
             file_content, file_name, str(output_file.id), str(user.id)
         )

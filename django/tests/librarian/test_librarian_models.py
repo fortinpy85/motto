@@ -23,7 +23,7 @@ def test_create_data_source():
     SecurityLabel.objects.get_or_create(name="Unclassified", defaults={"acronym_en": "UC"})
     user = User.objects.create_user(upn="testuser@example.com", email="testuser@example.com")
     options = ChatOptions.objects.create()
-    Preset.objects.create(name_en="Default", options=options, english_default=True)
+    preset, _ = Preset.objects.get_or_create(name_en="Default", defaults={"options": options, "english_default": True})
     chat = Chat.objects.create(user=user)
     data_source = DataSource.objects.get(chat=chat)
     assert data_source.chat == chat

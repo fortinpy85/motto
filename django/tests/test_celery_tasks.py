@@ -135,10 +135,10 @@ class TestProcessDocumentTask:
 
     def test_process_document_not_found(self):
         """Test process_document with non-existent document"""
-        fake_id = uuid.uuid4()
+        fake_id = 99999
 
         # Should log error and return None, not raise exception
-        result = process_document(str(fake_id), mock_embedding=True)
+        result = process_document(fake_id, mock_embedding=True)
 
         assert result is None
 

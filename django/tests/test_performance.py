@@ -79,7 +79,6 @@ class PerformanceBenchmark:
 
 # ==================== LLM Performance Tests ====================
 
-@pytest.mark.django_db
 @pytest.mark.slow
 class TestLLMPerformance:
     """Test LLM chat performance and throughput"""
@@ -156,7 +155,6 @@ class TestLLMPerformance:
 
 # ==================== Document Processing Performance Tests ====================
 
-@pytest.mark.django_db
 @pytest.mark.slow
 class TestDocumentProcessingPerformance:
     """Test document processing performance"""
@@ -221,7 +219,6 @@ class TestDocumentProcessingPerformance:
 
 # ==================== Vector Store Performance Tests ====================
 
-@pytest.mark.django_db
 @pytest.mark.slow
 class TestVectorStorePerformance:
     """Test vector store query performance"""
@@ -253,7 +250,6 @@ class TestVectorStorePerformance:
 
 # ==================== SecureModel Query Performance Tests ====================
 
-@pytest.mark.django_db
 class TestSecureModelQueryPerformance:
     """Test SecureModel query performance and optimization"""
 
@@ -342,7 +338,7 @@ class TestSecureModelQueryPerformance:
 
 # ==================== Concurrent Operations and Race Conditions ====================
 
-@pytest.mark.django_db
+@pytest.mark.django_db(transaction=True)
 class TestConcurrentOperations:
     """Test concurrent user operations and race conditions"""
 
@@ -421,7 +417,7 @@ class TestConcurrentOperations:
             """Grant view permission to user"""
             access_key = AccessKey(user=owner)
             lib = Library.objects.get(id=lib_id)
-            lib.grant_view_to(AccessKey(user=user))
+            LibraryUserRole.objects.create(library=lib, user=user, role="viewer")
             return True
 
         with PerformanceBenchmark("Concurrent permission grants") as bench:
@@ -442,7 +438,6 @@ class TestConcurrentOperations:
 
 # ==================== Memory and Resource Management Tests ====================
 
-@pytest.mark.django_db
 class TestMemoryAndResources:
     """Test memory usage and resource management"""
 
@@ -499,7 +494,6 @@ class TestMemoryAndResources:
 
 # ==================== Stress Tests ====================
 
-@pytest.mark.django_db
 @pytest.mark.slow
 class TestStressScenarios:
     """Stress tests for high-load scenarios"""
@@ -562,7 +556,6 @@ class TestStressScenarios:
 
 # ==================== Cost Tracking Performance Tests ====================
 
-@pytest.mark.django_db
 class TestCostTrackingPerformance:
     """Test performance of cost tracking operations"""
 
@@ -622,7 +615,6 @@ class TestCostTrackingPerformance:
 
 # ==================== API Rate Limiting Tests ====================
 
-@pytest.mark.django_db
 class TestRateLimitingPerformance:
     """Test API rate limiting behavior"""
 
@@ -655,7 +647,6 @@ class TestRateLimitingPerformance:
 
 # ==================== Performance Regression Tests ====================
 
-@pytest.mark.django_db
 class TestPerformanceRegression:
     """Tests to detect performance regressions"""
 
