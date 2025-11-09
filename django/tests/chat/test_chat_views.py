@@ -182,7 +182,7 @@ def test_translate_file(client, all_apps_user):
         # Create a message and add a file
         in_message = Message.objects.create(chat=chat, text="")
         chat_file = ChatFile.objects.create(
-            message_id=in_message.id,
+            message=in_message,
             filename="test file.txt",
             eof=1,
             content_type="text/plain",
@@ -397,7 +397,7 @@ def test_download_file(client, all_apps_user):
         chat = Chat.objects.create(user=user)
         in_message = Message.objects.create(chat=chat, text="")
         chat_file = ChatFile.objects.create(
-            message_id=in_message.id,
+            message=in_message,
             filename="test file.txt",
             eof=1,
             content_type="text/plain",
