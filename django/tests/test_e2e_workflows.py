@@ -386,8 +386,8 @@ class TestPresetSharingWorkflow:
         # Note: Preset sharing handled through is_public flag or direct sharing
 
         # Step 3: Recipient can now see and use preset
-        from otto.rules import can_view_preset
-        assert can_view_preset(recipient, preset)
+        from otto.rules import can_access_preset
+        assert can_access_preset(recipient, preset)
 
         # Step 4: Recipient creates chat using shared preset
         chat = Chat.objects.create(title="Using Shared Preset",
@@ -453,10 +453,9 @@ class TestCostBudgetWorkflow:
 
         # Step 6: Verify cost breakdown
         costs = Cost.objects.filter(user=user)
-        total_input_tokens = sum(c.input_tokens for c in costs)
-        total_output_tokens = sum(c.output_tokens for c in costs)
-        assert total_input_tokens > 0
-        assert total_output_tokens > 0
+        assert costs.count() > 0, "Should have cost records"
+        total_cost = sum(c.usd_cost for c in costs)
+        assert total_cost > 0, "Total cost should be greater than 0"
 
     def test_budget_limit_workflow(self, basic_user):
         """Test budget limit enforcement workflow"""
