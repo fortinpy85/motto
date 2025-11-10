@@ -67,7 +67,7 @@ class TestUserOnboardingWorkflow:
         # Step 7: Verify user state
         assert user.accepted_terms
         assert Chat.objects.filter(user=user).count() == 1
-        assert Message.objects.filter(created_by=user).count() == 1
+        assert Message.objects.filter(chat__user=user).count() == 1
 
     def test_admin_user_onboarding(self, basic_user):
         """Test admin user gets additional permissions"""
@@ -230,14 +230,14 @@ class TestDocumentRAGWorkflow:
         assert document.status == "PENDING"
 
         # Step 4: Document is processed (simulated)
-        document.text = "# Important Document\n\nThis is important information."
         document.status = "COMPLETE"
         document.save()
         assert document.status == "COMPLETE"
 
         # Step 5: User creates Q&A chat with library
         chat = Chat.objects.create(title="Research Questions",
-            user=user)
+            user=user,
+            mode="qa")
         assert chat.options.mode == "qa"
 
         # Step 6: User asks question about document
@@ -305,10 +305,8 @@ class TestLibraryManagementWorkflow:
         contributor_key = AccessKey(user=contributor)
         doc = Document.objects.create(
             data_source=datasource,
-            title="Contributor Document",
-            created_by=contributor
+            manual_title="Contributor Document"
         )
-        assert doc.created_by == contributor
 
         # Step 5: Viewer views documents (read-only)
         viewer_key = AccessKey(user=viewer)
@@ -380,7 +378,6 @@ class TestPresetSharingWorkflow:
             description_en="Optimized for research tasks",
             owner=creator,
             sharing_option="everyone",
-            is_public=False,
             options=options
         )
         assert preset.name_en == "Custom Research Preset"
@@ -428,8 +425,8 @@ class TestCostBudgetWorkflow:
         for i in range(5):
             Message.objects.create(
                 chat=chat,
-                content=f"Message {i}",
-                    is_bot=False
+                text=f"Message {i}",
+                is_bot=False
             )
 
             # System response creates cost
@@ -577,8 +574,7 @@ class TestErrorRecoveryWorkflows:
 
         # Step 1: Document processing fails
         document = Document.objects.create(data_source=datasource,
-            url="https://example.com/broken.pdf",
-            created_by=user
+            url="https://example.com/broken.pdf"
         )
 
         # Step 2: Mark as error with details
@@ -670,15 +666,13 @@ class TestMultiUserCollaboration:
         member1_key = AccessKey(user=member1)
         doc1 = Document.objects.create(
             data_source=datasource,
-            title="Member 1 Contribution",
-            created_by=member1
+            manual_title="Member 1 Contribution"
         )
 
         member2_key = AccessKey(user=member2)
         doc2 = Document.objects.create(
             data_source=datasource,
-            title="Member 2 Contribution",
-            created_by=member2
+            manual_title="Member 2 Contribution"
         )
 
         # Step 5: All team members can access all documents
@@ -767,7 +761,7 @@ class TestSessionManagementWorkflow:
         user_chats = Chat.objects.filter(user=user)
         assert user_chats.count() == 3
 
-        user_messages = Message.objects.filter(created_by=user)
+        user_messages = Message.objects.filter(chat__user=user)
         assert user_messages.count() == 3
 
         # Step 5: User returns after session timeout

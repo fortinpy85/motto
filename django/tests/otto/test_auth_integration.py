@@ -285,7 +285,7 @@ class TestChatAccessAuthorization:
         options = ChatOptions.objects.create()
         preset = Preset.objects.create(
             owner=owner,
-            name="Public Preset",
+            name_en="Public Preset",
             options=options,
             sharing_option="everyone"
         )
@@ -302,9 +302,9 @@ class TestChatAccessAuthorization:
         options = ChatOptions.objects.create()
         preset = Preset.objects.create(
             owner=owner,
-            name="Shared Preset",
+            name_en="Shared Preset",
             options=options,
-            sharing_option="specific"
+            sharing_option="others"
         )
         preset.accessible_to.add(allowed_user)
 
@@ -321,7 +321,7 @@ class TestChatAccessAuthorization:
         options = ChatOptions.objects.create()
         preset = Preset.objects.create(
             owner=owner,
-            name="User Preset",
+            name_en="User Preset",
             options=options
         )
 
@@ -342,7 +342,7 @@ class TestChatAccessAuthorization:
         options = ChatOptions.objects.create()
         global_preset = Preset.objects.create(
             owner=None,
-            name="Global Default",
+            name_en="Global Default",
             options=options,
             english_default=True
         )

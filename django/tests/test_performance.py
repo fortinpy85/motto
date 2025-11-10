@@ -322,13 +322,12 @@ class TestSecureModelQueryPerformance:
 
         with PerformanceBenchmark("Access 20 documents with related data") as bench:
             docs = Document.objects.select_related(
-                'data_source', 'created_by'
+                'data_source'
             ).all()
 
             # Access related fields (should not trigger additional queries)
             for doc in docs:
                 _ = doc.data_source.name_en
-                _ = doc.created_by.upn
 
         # Should use select_related to avoid N+1 queries
         # Expect: 1 main query + permission queries, not 20+ queries

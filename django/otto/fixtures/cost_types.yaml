@@ -360,3 +360,15 @@
     unit_name_fr: jetons
     unit_cost: 0.40
     unit_quantity: 1000000
+- model: otto.CostType
+  pk: 35
+  fields:
+    short_name: gemini-ocr
+    name: Gemini OCR/Document Processing
+    name_fr: Gemini OCR/Traitement de documents
+    description: Google Gemini File API for OCR and document processing
+    description_fr: API Google Gemini File pour OCR et traitement de documents
+    unit_name: characters
+    unit_name_fr: caractères
+    unit_cost: 0.02
+    unit_quantity: 1000000

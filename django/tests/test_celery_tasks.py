@@ -230,7 +230,7 @@ class TestProcessDocumentHelper:
         )
 
         # Setup mocks
-        mock_fetch.return_value = b"<html><body>Test content</body></html>"
+        mock_fetch.return_value = (b"<html><body>Test content</body></html>", "text/html")
 
         mock_result = Mock()
         mock_result.markdown = "Test content"
