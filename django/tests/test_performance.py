@@ -209,9 +209,8 @@ class TestDocumentProcessingPerformance:
         with PerformanceBenchmark("Process 10 documents") as bench:
             for doc in documents:
                 # Simulate processing (actual processing would be in Celery task)
-                doc.text = "Processed content"
                 doc.status = "COMPLETE"
-                doc.save(access_key=access_key)
+                doc.save()
 
         # Processing 10 documents (simulated) should be fast (< 3 seconds)
         bench.assert_performance(max_time=3.0)
@@ -270,7 +269,7 @@ class TestSecureModelQueryPerformance:
                 manual_title=f"Document {i}")
 
         with PerformanceBenchmark("Query 50 secure documents") as bench:
-            docs = Document.objects.all(access_key=access_key)
+            docs = Document.objects.all()
             doc_list = list(docs)  # Force evaluation
 
         # Querying 50 documents should be fast (< 1 second)
@@ -297,7 +296,7 @@ class TestSecureModelQueryPerformance:
         with PerformanceBenchmark("Filtered query on 100 documents") as bench:
             complete_docs = Document.objects.filter(
                 status="COMPLETE"
-            ).all(access_key=access_key)
+            ).all()
             doc_list = list(complete_docs)
 
         # Filtered queries should be fast (< 1 second)
@@ -324,7 +323,7 @@ class TestSecureModelQueryPerformance:
         with PerformanceBenchmark("Access 20 documents with related data") as bench:
             docs = Document.objects.select_related(
                 'data_source', 'created_by'
-            ).all(access_key=access_key)
+            ).all()
 
             # Access related fields (should not trigger additional queries)
             for doc in docs:
@@ -451,19 +450,17 @@ class TestMemoryAndResources:
         datasource = DataSource.objects.create(library=library,
             name="Memory Test Source")
 
-        # Create 200 documents with text content
+        # Create 200 documents
         for i in range(200):
             Document.objects.create(data_source=datasource,
-                manual_title=f"Document {i}",
-                text="A" * 1000,  # 1KB of text per document
-                created_by=user
+                manual_title=f"Document {i}"
             )
 
         gc.collect()
 
         with PerformanceBenchmark("Query 200 large documents") as bench:
             # Use iterator to avoid loading all into memory at once
-            docs = Document.objects.all(access_key=access_key).iterator(chunk_size=50)
+            docs = Document.objects.all().iterator(chunk_size=50)
             count = sum(1 for _ in docs)
 
         assert count == 200
@@ -667,7 +664,7 @@ class TestPerformanceRegression:
 
         # Baseline: Query 50 documents
         with PerformanceBenchmark("Baseline SecureModel query") as bench:
-            docs = list(Document.objects.all(access_key=access_key))
+            docs = list(Document.objects.all())
 
         # Establish baseline metrics (these can be adjusted based on actual performance)
         # Time: < 1 second
