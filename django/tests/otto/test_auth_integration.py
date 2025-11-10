@@ -145,7 +145,7 @@ class TestGroupBasedAuthorization:
 
         # Add to admin group
         user.groups.add(admin_group)
-        user.refresh_from_db()
+        user = User.objects.get(pk=user.pk)  # Get fresh instance to clear caches
 
         assert user.is_admin
         assert is_admin(user)
@@ -174,7 +174,7 @@ class TestGroupBasedAuthorization:
 
         # Add to data steward group
         user.groups.add(steward_group)
-        user.refresh_from_db()
+        user = User.objects.get(pk=user.pk)  # Get fresh instance to clear caches
 
         assert user.has_perm("librarian.manage_public_libraries")
 
