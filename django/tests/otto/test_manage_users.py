@@ -162,8 +162,8 @@ def test_get_cost_dashboard(client, all_apps_user):
     # Create some costs
     bind_contextvars(user_id=user.id, feature="chat")
     for _ in range(5):
-        Cost.objects.new("gemini-in", 100)
-        Cost.objects.new("gemini-out", 200)
+        Cost.objects.new("gemini-1.5-flash-in", 100)
+        Cost.objects.new("gemini-1.5-flash-out", 200)
 
     # Now try GET requests with some different parameters
     x_axes = ["day", "week", "month", "feature", "pilot", "user", "cost_type"]
