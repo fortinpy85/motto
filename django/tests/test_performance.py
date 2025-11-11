@@ -559,11 +559,17 @@ class TestCostTrackingPerformance:
         """Test cost calculation performance"""
         user = basic_user()
 
+        # Create CostType once before loop to avoid duplicates
+        cost_type, _ = CostType.objects.get_or_create(
+            name="LLM",
+            defaults={"unit_name": "tokens", "unit_cost": 0.00001, "unit_quantity": 1000}
+        )
+
         # Create 100 cost records
         for i in range(100):
             Cost.objects.create(
                 user=user,
-                cost_type=CostType.objects.get_or_create(name="LLM", defaults={"unit_name": "tokens", "unit_cost": 0.00001, "unit_quantity": 1000})[0],
+                cost_type=cost_type,
                 count=1500,
                 usd_cost=0.015
             )
@@ -582,15 +588,22 @@ class TestCostTrackingPerformance:
         """Test concurrent cost record creation"""
         user = basic_user()
 
-        def create_cost_record(user_id, index):
+        # Create CostType once before concurrent operations to avoid race condition
+        cost_type, _ = CostType.objects.get_or_create(
+            name="LLM",
+            defaults={"unit_name": "tokens", "unit_cost": 0.00001, "unit_quantity": 1000}
+        )
+
+        def create_cost_record(user_id, cost_type_id, index):
             """Create a cost record"""
             from django.contrib.auth import get_user_model
             User = get_user_model()
             user = User.objects.get(id=user_id)
+            cost_type = CostType.objects.get(id=cost_type_id)
 
             Cost.objects.create(
                 user=user,
-                cost_type=CostType.objects.get_or_create(name="LLM", defaults={"unit_name": "tokens", "unit_cost": 0.00001, "unit_quantity": 1000})[0],
+                cost_type=cost_type,
                 count=1500,
                 usd_cost=0.015
             )
@@ -599,7 +612,7 @@ class TestCostTrackingPerformance:
         with PerformanceBenchmark("Concurrent cost creation") as bench:
             with ThreadPoolExecutor(max_workers=10) as executor:
                 futures = [
-                    executor.submit(create_cost_record, user.id, i)
+                    executor.submit(create_cost_record, user.id, cost_type.id, i)
                     for i in range(50)
                 ]
                 results = [f.result() for f in as_completed(futures)]
