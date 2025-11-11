@@ -282,6 +282,13 @@ class TestLibraryManagementWorkflow:
             created_by=owner
         )
 
+        # Owner needs admin role to access their own private library
+        LibraryUserRole.objects.create(
+            user=owner,
+            library=library,
+            role="admin"
+        )
+
         # Step 2: Owner adds contributors
         LibraryUserRole.objects.create(
             user=contributor,
