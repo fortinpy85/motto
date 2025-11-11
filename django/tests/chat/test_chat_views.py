@@ -414,8 +414,8 @@ def test_download_file(client, all_apps_user):
     wrong_user = all_apps_user("wrong_user")
     client.force_login(wrong_user)
     response = client.get(url)
-    # In production, this would be 403 or 404, but in test mode permissions are bypassed
-    assert response.status_code == 200
+    # Permissions are enforced - wrong_user gets redirected
+    assert response.status_code == 302
     # Non-existing chat file
     response = client.get(reverse("chat:download_file", args=[999]))
     assert response.status_code == 404
