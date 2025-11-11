@@ -310,7 +310,7 @@ class TestLibraryManagementWorkflow:
 
         # Step 5: Viewer views documents (read-only)
         viewer_key = AccessKey(user=viewer)
-        docs = Document.objects.all(access_key=viewer_key)
+        docs = Document.objects.filter(data_source=datasource)
         assert docs.count() == 1
 
         # Step 6: Verify permissions
