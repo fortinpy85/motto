@@ -310,7 +310,7 @@ class TestLibraryManagementWorkflow:
 
         # Step 5: Viewer views documents (read-only)
         viewer_key = AccessKey(user=viewer)
-        docs = Document.objects.all()
+        docs = Document.objects.all(access_key=viewer_key)
         assert docs.count() == 1
 
         # Step 6: Verify permissions
@@ -396,7 +396,7 @@ class TestPresetSharingWorkflow:
 
         # Step 5: Verify preset usage
         assert chat.options.mode == "qa"
-        assert chat.options.model_id == "gemini-1.5-pro"
+        assert chat.options.qa_model == "gemini-1.5-pro"
 
 
 # ==================== Cost Tracking and Budget Workflow ====================
