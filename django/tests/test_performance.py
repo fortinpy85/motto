@@ -276,7 +276,7 @@ class TestSecureModelQueryPerformance:
                 manual_title=f"Document {i}")
 
         with PerformanceBenchmark("Query 50 secure documents") as bench:
-            docs = Document.objects.all()
+            docs = Document.objects.filter(data_source=datasource)
             doc_list = list(docs)  # Force evaluation
 
         # Querying 50 documents should be fast (< 1 second)
@@ -466,7 +466,7 @@ class TestMemoryAndResources:
 
         with PerformanceBenchmark("Query 200 large documents") as bench:
             # Use iterator to avoid loading all into memory at once
-            docs = Document.objects.all().iterator(chunk_size=50)
+            docs = Document.objects.filter(data_source=datasource).iterator(chunk_size=50)
             count = sum(1 for _ in docs)
 
         assert count == 200
@@ -683,7 +683,7 @@ class TestPerformanceRegression:
 
         # Baseline: Query 50 documents
         with PerformanceBenchmark("Baseline SecureModel query") as bench:
-            docs = list(Document.objects.all())
+            docs = list(Document.objects.filter(data_source=datasource))
 
         # Establish baseline metrics (these can be adjusted based on actual performance)
         # Time: < 1 second
