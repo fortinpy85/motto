@@ -89,7 +89,7 @@ def test_process_ocr_document_pdf(mock_pdf_file3, all_apps_user):
     mock_create_searchable_pdf = mock.MagicMock(return_value={
         "error": False,
         "pdf_content": [b"mock pdf content"],
-        "all_text": "RIF drawing",
+        "all_text": "Page 1\nPage 2\nPage 3",
         "cost": Decimal("0.01")
     })
 
