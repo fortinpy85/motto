@@ -1,0 +1,180 @@
+=========================== short test summary info ============================
+FAILED django/tests/chat/test_chat_translate.py::test_translate_file - AttributeError: <module 'chat.tasks' from '/__w/motto/motto/django/chat/tasks.py'> does not have the attribute 'settings'
+FAILED django/tests/chat/test_chat_views.py::test_chat - AssertionError: assert '/chat/id/a3d...464ea41a40db/' == '/welcome/?next=/chat/'
+  
+  - /welcome/?next=/chat/
+  + /chat/id/a3d363ce-c1be-4580-94d1-464ea41a40db/
+FAILED django/tests/chat/test_chat_views.py::test_delete_chat - chat.models.Chat.DoesNotExist: Chat matching query does not exist.
+FAILED django/tests/chat/test_chat_views.py::test_download_file - assert 200 != 200
+ +  where 200 = <HttpResponse status_code=200, "text/plain">.status_code
+FAILED django/tests/chat/test_chat_views.py::test_preset - assert <Library: Chat uploads> == <Library: Chat uploads>
+ +  where <Library: Chat uploads> = <ChatOptions: ChatOptions object (630)>.qa_library
+ +    where <ChatOptions: ChatOptions object (630)> = <Chat: Chat 4ad390f8-603f-45d5-ac87-9d25aa915cb0: >.options
+ +  and   <Library: Chat uploads> = <User: ,  (user2@example.com)>.personal_library
+FAILED django/tests/chat/test_llm_edge_cases.py::TestLLMModelConfiguration::test_get_model_invalid_raises_error - Failed: DID NOT RAISE <class 'KeyError'>
+FAILED django/tests/chat/test_llm_edge_cases.py::TestOttoLLMInitialization::test_ottollm_custom_deployment - AssertionError: assert 'models/gemini-1.5-pro-latest' == 'gemini-1.5-pro'
+  
+  - gemini-1.5-pro
+  + models/gemini-1.5-pro-latest
+FAILED django/tests/chat/test_llm_edge_cases.py::TestLLMNegativeCases::test_chat_history_with_malformed_data - pydantic_core._pydantic_core.ValidationError: 1 validation error for ChatMessage
+  Input should be a valid dictionary or instance of ChatMessage [type=model_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+FAILED django/tests/laws/test_laws_views.py::test_laws_search_and_answer - assert 'HX-Push-Url' in <HttpResponse status_code=200, "text/html; charset=utf-8">
+FAILED django/tests/librarian/test_document_loading.py::test_extract_pdf_azure_read - ModuleNotFoundError: No module named 'azure'
+FAILED django/tests/librarian/test_document_loading.py::test_extract_pdf_azure_layout - ModuleNotFoundError: No module named 'azure'
+FAILED django/tests/librarian/test_document_loading.py::test_extract_png - ModuleNotFoundError: No module named 'azure'
+FAILED django/tests/librarian/test_librarian.py::test_modal_view_library_get - assert 200 == 302
+ +  where 200 = <HttpResponse status_code=200, "text/html; charset=utf-8">.status_code
+FAILED django/tests/librarian/test_librarian.py::test_modal_edit_library_get_redirect - assert 200 == 302
+ +  where 200 = <HttpResponse status_code=200, "text/html; charset=utf-8">.status_code
+FAILED django/tests/librarian/test_librarian_models.py::test_create_data_source - django.db.utils.IntegrityError: duplicate key value violates unique constraint "otto_securitylabel_name_key"
+DETAIL:  Key (name)=(Unclassified) already exists.
+FAILED django/tests/otto/test_auth_integration.py::TestGroupBasedAuthorization::test_otto_admin_group_membership - assert False
+ +  where False = is_admin(<User: ,  (basic_user@example.com)>)
+FAILED django/tests/otto/test_auth_integration.py::TestGroupBasedAuthorization::test_data_steward_permissions - AssertionError: assert False
+ +  where False = has_perm('librarian.manage_public_libraries')
+ +    where has_perm = <User: ,  (basic_user@example.com)>.has_perm
+FAILED django/tests/otto/test_auth_integration.py::TestChatAccessAuthorization::test_preset_sharing_everyone - TypeError: Preset() got unexpected keyword arguments: 'name'
+FAILED django/tests/otto/test_auth_integration.py::TestChatAccessAuthorization::test_preset_sharing_specific_users - TypeError: Preset() got unexpected keyword arguments: 'name'
+FAILED django/tests/otto/test_auth_integration.py::TestChatAccessAuthorization::test_preset_edit_permissions - TypeError: Preset() got unexpected keyword arguments: 'name'
+FAILED django/tests/otto/test_auth_integration.py::TestChatAccessAuthorization::test_global_default_preset_restrictions - AttributeError: property 'global_default' of 'Preset' object has no setter
+FAILED django/tests/otto/test_auth_integration.py::TestLibraryAccessAuthorization::test_manage_library_users_permission - AssertionError: assert False
+ +  where False = has_perm('librarian.manage_library_users', <Library: Managed Library>)
+ +    where has_perm = <User: ,  (all_apps_user@example.com)>.has_perm
+FAILED django/tests/otto/test_auth_integration.py::TestAuthorizationEdgeCases::test_app_without_user_group - AttributeError: 'NoneType' object has no attribute 'name'
+FAILED django/tests/otto/test_commands_delete_translation_files.py::test_handle_no_files - AttributeError: <UserSettingsHolder> does not have the attribute 'AZURE_STORAGE'
+FAILED django/tests/otto/test_commands_delete_translation_files.py::test_handle_with_translation_files - AttributeError: <UserSettingsHolder> does not have the attribute 'AZURE_STORAGE'
+FAILED django/tests/otto/test_commands_delete_translation_files.py::test_handle_list_error - AttributeError: <UserSettingsHolder> does not have the attribute 'AZURE_STORAGE'
+FAILED django/tests/otto/test_commands_delete_translation_files.py::test_handle_delete_error - AttributeError: <UserSettingsHolder> does not have the attribute 'AZURE_STORAGE'
+FAILED django/tests/otto/test_load_test.py::test_enabling_load_test - assert 200 == 302
+ +  where 200 = <HttpResponse status_code=200, "text/html; charset=utf-8">.status_code
+FAILED django/tests/otto/test_load_test.py::test_load_tests - assert 200 == 403
+ +  where 200 = <HttpResponse status_code=200, "text/html; charset=utf-8">.status_code
+FAILED django/tests/otto/test_manage_users.py::test_access_manage_users - assert 200 == 302
+ +  where 200 = <HttpResponse status_code=200, "text/html; charset=utf-8">.status_code
+FAILED django/tests/otto/test_otto_models.py::test_create_security_label - django.db.utils.IntegrityError: duplicate key value violates unique constraint "otto_securitylabel_name_key"
+DETAIL:  Key (name)=(Unclassified) already exists.
+FAILED django/tests/otto/test_secure_models.py::TestAccessControl::test_grant_view_permission - TypeError: Library() got unexpected keyword arguments: 'access_key'
+FAILED django/tests/otto/test_secure_models.py::TestAccessControl::test_grant_multiple_permissions - TypeError: Library() got unexpected keyword arguments: 'access_key'
+FAILED django/tests/otto/test_secure_models.py::TestAccessControl::test_grant_empty_permissions_raises_error - TypeError: Library() got unexpected keyword arguments: 'access_key'
+FAILED django/tests/otto/test_secure_models.py::TestAccessControl::test_grant_invalid_permission_raises_error - TypeError: Library() got unexpected keyword arguments: 'access_key'
+FAILED django/tests/otto/test_secure_models.py::TestAccessControl::test_revoke_specific_permission - TypeError: Library() got unexpected keyword arguments: 'access_key'
+FAILED django/tests/otto/test_secure_models.py::TestAccessControl::test_revoke_all_permissions - TypeError: Library() got unexpected keyword arguments: 'access_key'
+FAILED django/tests/otto/test_secure_models.py::TestAccessControl::test_revoke_invalid_permission_raises_error - TypeError: Library() got unexpected keyword arguments: 'access_key'
+FAILED django/tests/otto/test_secure_models.py::TestAccessControl::test_check_permissions_no_access_control - TypeError: Library() got unexpected keyword arguments: 'access_key'
+FAILED django/tests/otto/test_secure_models.py::TestAccessControl::test_access_control_logging_on_create - TypeError: Library() got unexpected keyword arguments: 'access_key'
+FAILED django/tests/otto/test_secure_models.py::TestAccessControl::test_access_control_unique_constraint - TypeError: Library() got unexpected keyword arguments: 'access_key'
+FAILED django/tests/otto/test_secure_models.py::TestSecureManager::test_all_with_bypass_returns_all_objects - TypeError: Library() got unexpected keyword arguments: 'access_key'
+FAILED django/tests/otto/test_secure_models.py::TestSecureManager::test_all_with_user_filters_by_permissions - TypeError: Library() got unexpected keyword arguments: 'access_key'
+FAILED django/tests/otto/test_secure_models.py::TestSecureManager::test_get_with_permissions - TypeError: Library() got unexpected keyword arguments: 'access_key'
+FAILED django/tests/otto/test_secure_models.py::TestSecureManager::test_get_without_permissions_raises_error - TypeError: Library() got unexpected keyword arguments: 'access_key'
+FAILED django/tests/otto/test_secure_models.py::TestSecureManager::test_filter_with_permissions - TypeError: Library() got unexpected keyword arguments: 'access_key'
+FAILED django/tests/otto/test_secure_models.py::TestSecureModelCRUD::test_create_with_bypass - TypeError: Library() got unexpected keyword arguments: 'access_key'
+FAILED django/tests/otto/test_secure_models.py::TestSecureModelCRUD::test_create_with_user_grants_permissions - TypeError: Library() got unexpected keyword arguments: 'access_key'
+FAILED django/tests/otto/test_secure_models.py::TestSecureModelCRUD::test_save_with_bypass - TypeError: Library() got unexpected keyword arguments: 'access_key'
+FAILED django/tests/otto/test_secure_models.py::TestSecureModelCRUD::test_save_with_change_permission - TypeError: Library() got unexpected keyword arguments: 'access_key'
+FAILED django/tests/otto/test_secure_models.py::TestSecureModelCRUD::test_save_without_change_permission_raises_error - TypeError: Library() got unexpected keyword arguments: 'access_key'
+FAILED django/tests/otto/test_secure_models.py::TestSecureModelCRUD::test_delete_with_bypass - TypeError: Library() got unexpected keyword arguments: 'access_key'
+FAILED django/tests/otto/test_secure_models.py::TestSecureModelCRUD::test_delete_with_delete_permission - TypeError: Library() got unexpected keyword arguments: 'access_key'
+FAILED django/tests/otto/test_secure_models.py::TestSecureModelCRUD::test_delete_without_delete_permission_raises_error - TypeError: Library() got unexpected keyword arguments: 'access_key'
+FAILED django/tests/otto/test_secure_models.py::TestEdgeCases::test_multiple_users_different_permissions - TypeError: Library() got unexpected keyword arguments: 'access_key'
+FAILED django/tests/otto/test_secure_models.py::TestEdgeCases::test_permission_inheritance_not_automatic - TypeError: Library() got unexpected keyword arguments: 'access_key'
+FAILED django/tests/otto/test_secure_models.py::TestEdgeCases::test_cascade_deletion_removes_access_controls - TypeError: Library() got unexpected keyword arguments: 'access_key'
+FAILED django/tests/otto/test_secure_models.py::TestEdgeCases::test_user_deletion_removes_access_controls - TypeError: Library() got unexpected keyword arguments: 'access_key'
+FAILED django/tests/otto/test_secure_models.py::TestEdgeCases::test_update_permissions_replaces_existing - TypeError: Library() got unexpected keyword arguments: 'access_key'
+FAILED django/tests/test_celery_tasks.py::TestExtractTextTask::test_extract_text_task_success - AttributeError: <module 'chat.tasks' from '/__w/motto/motto/django/chat/tasks.py'> does not have the attribute 'extract_markdown'
+FAILED django/tests/test_celery_tasks.py::TestExtractTextTask::test_extract_text_task_file_not_found - AttributeError: module 'chat.tasks' has no attribute 'ChatFile'
+FAILED django/tests/test_celery_tasks.py::TestExtractTextTask::test_extract_text_task_no_saved_file - AttributeError: module 'chat.tasks' has no attribute 'ChatFile'
+FAILED django/tests/test_celery_tasks.py::TestExtractTextTask::test_extract_text_task_extraction_error - AttributeError: <module 'chat.tasks' from '/__w/motto/motto/django/chat/tasks.py'> does not have the attribute 'extract_markdown'
+FAILED django/tests/test_celery_tasks.py::TestExtractTextTask::test_extract_text_task_with_context_vars - AttributeError: <module 'chat.tasks' from '/__w/motto/motto/django/chat/tasks.py'> does not have the attribute 'extract_markdown'
+FAILED django/tests/test_celery_tasks.py::TestProcessDocumentTask::test_process_document_not_found - ValueError: Field 'id' expected a number but got 'aa7731b0-f20b-4c45-b5cc-2db1b9ab1122'.
+FAILED django/tests/test_celery_tasks.py::TestProcessDocumentTask::test_process_document_success - TypeError: DataSource() got unexpected keyword arguments: 'access_key'
+FAILED django/tests/test_celery_tasks.py::TestProcessDocumentTask::test_process_document_error_handling - TypeError: DataSource() got unexpected keyword arguments: 'access_key'
+FAILED django/tests/test_celery_tasks.py::TestProcessDocumentTask::test_process_document_sets_celery_task_id - TypeError: DataSource() got unexpected keyword arguments: 'access_key'
+FAILED django/tests/test_celery_tasks.py::TestProcessDocumentHelper::test_process_document_helper_url_success - TypeError: DataSource() got unexpected keyword arguments: 'access_key'
+FAILED django/tests/test_celery_tasks.py::TestTranslateFileTask::test_translate_file_basic - Exception: Error translating /tmp/test.txt
+FAILED django/tests/test_celery_tasks.py::TestTaskTimeouts::test_extract_text_task_soft_time_limit - AttributeError: module 'chat.tasks' has no attribute 'ChatFile'
+FAILED django/tests/test_celery_tasks.py::TestTaskStatusTracking::test_document_status_lifecycle - TypeError: DataSource() got unexpected keyword arguments: 'access_key'
+FAILED django/tests/test_celery_tasks.py::TestTaskStatusTracking::test_document_celery_task_id_tracking - TypeError: DataSource() got unexpected keyword arguments: 'access_key'
+FAILED django/tests/test_celery_tasks.py::TestTaskCostTracking::test_process_document_creates_costs - TypeError: DataSource() got unexpected keyword arguments: 'access_key'
+FAILED django/tests/test_celery_tasks.py::TestTaskErrorRecovery::test_process_document_error_cleanup - TypeError: DataSource() got unexpected keyword arguments: 'access_key'
+FAILED django/tests/test_celery_tasks.py::TestTaskLanguageHandling::test_process_document_respects_language_parameter - TypeError: DataSource() got unexpected keyword arguments: 'access_key'
+FAILED django/tests/test_celery_tasks.py::TestMockEmbedding::test_process_document_with_mock_embedding - TypeError: DataSource() got unexpected keyword arguments: 'access_key'
+FAILED django/tests/test_e2e_workflows.py::TestUserOnboardingWorkflow::test_new_user_complete_onboarding - AssertionError: assert 'newuser.lastname@example.com' == 'newuser.last...justice.gc.ca'
+  
+  - newuser.lastname@justice.gc.ca
+  + newuser.lastname@example.com
+FAILED django/tests/test_e2e_workflows.py::TestUserOnboardingWorkflow::test_admin_user_onboarding - TypeError: Library() got unexpected keyword arguments: 'access_key'
+FAILED django/tests/test_e2e_workflows.py::TestChatConversationWorkflow::test_complete_chat_conversation - TypeError: ChatOptions() got unexpected keyword arguments: 'model_id'
+FAILED django/tests/test_e2e_workflows.py::TestDocumentRAGWorkflow::test_complete_document_rag_workflow - AttributeError: <module 'librarian.utils.process_document' from '/__w/motto/motto/django/librarian/utils/process_document.py'> does not have the attribute 'extract_markdown'
+FAILED django/tests/test_e2e_workflows.py::TestLibraryManagementWorkflow::test_library_collaboration_workflow - TypeError: Library() got unexpected keyword arguments: 'access_key'
+FAILED django/tests/test_e2e_workflows.py::TestLibraryManagementWorkflow::test_library_visibility_workflow - TypeError: Library() got unexpected keyword arguments: 'access_key'
+FAILED django/tests/test_e2e_workflows.py::TestPresetSharingWorkflow::test_preset_creation_and_sharing - TypeError: Preset() got unexpected keyword arguments: 'name', 'description', 'created_by', 'is_public', 'data'
+FAILED django/tests/test_e2e_workflows.py::TestCostBudgetWorkflow::test_cost_tracking_workflow - ValueError: The following fields do not exist in this model: options
+FAILED django/tests/test_e2e_workflows.py::TestCostBudgetWorkflow::test_budget_limit_workflow - AttributeError: property 'this_month_max' of 'User' object has no setter
+FAILED django/tests/test_e2e_workflows.py::TestFileUploadWorkflow::test_chat_file_upload_workflow - AttributeError: <module 'chat.tasks' from '/__w/motto/motto/django/chat/tasks.py'> does not have the attribute 'extract_markdown'
+FAILED django/tests/test_e2e_workflows.py::TestErrorRecoveryWorkflows::test_document_processing_error_recovery - TypeError: Library() got unexpected keyword arguments: 'access_key'
+FAILED django/tests/test_e2e_workflows.py::TestErrorRecoveryWorkflows::test_llm_error_recovery_workflow - ValueError: The following fields do not exist in this model: options
+FAILED django/tests/test_e2e_workflows.py::TestMultiUserCollaboration::test_team_library_workflow - TypeError: Library() got unexpected keyword arguments: 'access_key'
+FAILED django/tests/test_e2e_workflows.py::TestFeedbackWorkflow::test_feedback_submission_workflow - ValueError: The following fields do not exist in this model: options
+FAILED django/tests/test_e2e_workflows.py::TestSessionManagementWorkflow::test_user_session_continuity - ValueError: The following fields do not exist in this model: options
+FAILED django/tests/test_negative_cases.py::TestFormValidationFailures::test_library_form_missing_name - AssertionError: assert 'name_en' in {'order': ['This field is required.']}
+ +  where {'order': ['This field is required.']} = <LibraryDetailForm bound=True, valid=False, fields=(name_en;name_fr;description_en;description_fr;order)>.errors
+FAILED django/tests/test_negative_cases.py::TestInputValidation::test_null_byte_injection - ValueError: A string literal cannot contain NUL (0x00) characters.
+FAILED django/tests/test_negative_cases.py::TestPermissionDenied::test_user_cannot_edit_other_user_preset - TypeError: Preset() got unexpected keyword arguments: 'name'
+FAILED django/tests/test_negative_cases.py::TestFileUploadValidation::test_document_without_file_or_url - Failed: DID NOT RAISE <class 'django.core.exceptions.ValidationError'>
+FAILED django/tests/test_negative_cases.py::TestFileUploadValidation::test_file_size_limits - AssertionError: assert False
+ +  where False = has_perm('chat.upload_large_files')
+ +    where has_perm = <User: ,  (basic_user@example.com)>.has_perm
+FAILED django/tests/test_negative_cases.py::TestDataIntegrity::test_library_without_name - Failed: DID NOT RAISE <class 'django.core.exceptions.ValidationError'>
+FAILED django/tests/test_negative_cases.py::TestEdgeCases::test_whitespace_only_inputs - assert False
+ +  where False = is_valid()
+ +    where is_valid = <FeedbackForm bound=True, valid=False, fields=(feedback_message;modified_by;created_by;app;chat_message;otto_version;url_context)>.is_valid
+FAILED django/tests/test_performance.py::TestLLMPerformance::test_simple_chat_response_time - ValueError: The following fields do not exist in this model: options
+FAILED django/tests/test_performance.py::TestLLMPerformance::test_concurrent_llm_requests - ValueError: The following fields do not exist in this model: options
+FAILED django/tests/test_performance.py::TestDocumentProcessingPerformance::test_document_creation_performance - TypeError: Library() got unexpected keyword arguments: 'access_key'
+FAILED django/tests/test_performance.py::TestDocumentProcessingPerformance::test_batch_document_processing - AttributeError: <module 'librarian.utils.process_document' from '/__w/motto/motto/django/librarian/utils/process_document.py'> does not have the attribute 'extract_markdown'
+FAILED django/tests/test_performance.py::TestVectorStorePerformance::test_similarity_search_performance - AttributeError: <class 'chat.llm.OttoLLM'> does not have the attribute 'query_engine'
+FAILED django/tests/test_performance.py::TestSecureModelQueryPerformance::test_secure_query_performance - TypeError: Library() got unexpected keyword arguments: 'access_key'
+FAILED django/tests/test_performance.py::TestSecureModelQueryPerformance::test_secure_query_with_filters - TypeError: Library() got unexpected keyword arguments: 'access_key'
+FAILED django/tests/test_performance.py::TestSecureModelQueryPerformance::test_n_plus_one_query_prevention - TypeError: Library() got unexpected keyword arguments: 'access_key'
+FAILED django/tests/test_performance.py::TestConcurrentOperations::test_concurrent_chat_creation - ValueError: The following fields do not exist in this model: options
+FAILED django/tests/test_performance.py::TestConcurrentOperations::test_concurrent_document_updates - TypeError: Library() got unexpected keyword arguments: 'access_key'
+FAILED django/tests/test_performance.py::TestConcurrentOperations::test_concurrent_permission_grants - TypeError: Library() got unexpected keyword arguments: 'access_key'
+FAILED django/tests/test_performance.py::TestMemoryAndResources::test_large_query_result_memory - TypeError: Library() got unexpected keyword arguments: 'access_key'
+FAILED django/tests/test_performance.py::TestStressScenarios::test_high_volume_chat_creation - ValueError: The following fields do not exist in this model: options
+FAILED django/tests/test_performance.py::TestStressScenarios::test_rapid_permission_checks - TypeError: Library() got unexpected keyword arguments: 'access_key'
+FAILED django/tests/test_performance.py::TestStressScenarios::test_database_connection_pooling - otto.models.User.DoesNotExist: User matching query does not exist.
+FAILED django/tests/test_performance.py::TestCostTrackingPerformance::test_cost_aggregation_performance - ValueError: Cannot assign "'LLM'": "Cost.cost_type" must be a "CostType" instance.
+FAILED django/tests/test_performance.py::TestCostTrackingPerformance::test_concurrent_cost_creation - otto.models.User.DoesNotExist: User matching query does not exist.
+FAILED django/tests/test_performance.py::TestPerformanceRegression::test_secure_model_query_baseline - TypeError: Library() got unexpected keyword arguments: 'access_key'
+FAILED django/tests/text_extractor/test_tasks.py::test_process_ocr_document_image - KeyError: 'cost'
+FAILED django/tests/text_extractor/test_tasks.py::test_process_ocr_document_pdf - KeyError: 'cost'
+FAILED django/tests/chat/test_chat_translate.py::test_translate_text_with_gpt - assert ('Bonjour' in 'data: <div class="markdown-text" data-md="&quot;There was an error processing your request. _(Error ID: 7db6792)_&quot;"></div>\n\ndata: <div class="markdown-text" data-md="&quot;There was an error processing your request. _(Error ID: 7db6792)_&quot;"></div><div hx-swap-oob=\'true\' id=\'stop-button\'></div>\n\ndata: \ndata: \ndata: \ndata: <div class="message-outer bot  show-all"\ndata:      id="message_101"\ndata:      hx-swap-oob="true">\ndata:   <div class="message-meta text-muted">\ndata:     <span class="message-author me-1">\ndata:       \ndata:         Otto\ndata:         \ndata:       \ndata:     </span>\ndata:     <span class="message-date">2025-11-07 13:29</span>\ndata:   </div>\ndata:   <div class="d-flex ">\ndata:     \ndata:     <div class="message-blob ">\ndata:       \ndata:         <div class="message-text">\ndata:           <div class="markdown-text" data-md="&quot;There was an error processing your request. _(Error ID: 7db6792)_&quot;">\ndata:             \ndata:           </div>\ndata:         </div>\ndata:         <div id="cost-warning-buttons-101"></div>\ndata:       \ndata:       <div class="row">\ndata:         <div class="message-show-all col mt-2" style...101/-1"\ndata:               hx-target="#feedback-modal-body"\ndata:               hx-trigger="click"\ndata:               class="btn btn-link m-0 ms-1 p-0 text-muted thumb-message-button thumb-down "\ndata:               onclick="thumbMessage(this);"\ndata:               title=\'Dislike\'>\ndata:         <i class="bi bi-hand-thumbs-down"></i><i class="bi bi-hand-thumbs-down-fill"></i>\ndata:       </button>\ndata:     \ndata:     <button type="button"\ndata:             class="btn btn-link m-0 ms-1 p-0 text-muted"\ndata:             hx-delete="/chat/message/101/delete/"\ndata:             hx-target="closest div.message-outer"\ndata:             title="Delete message">\ndata:       <i class="bi bi-trash"></i>\ndata:     </button>\ndata:   \ndata:   \ndata:     <span class="message-time ms-1" style="word-spacing:0">0s</span>\ndata:   \ndata:   \ndata: </div>\ndata: \ndata:   \ndata:     <div hx-get="/user_cost/"\ndata:          hx-swap="outerHTML"\ndata:          hx-target="#cost-bar-outer"\ndata:          hx-trigger=\'load delay:100ms\'></div>\ndata:   \ndata: </div>\ndata: \ndata: \ndata:   \ndata:   \ndata: \ndata: \ndata: <div hx-swap-oob=\'true\' id=\'stop-button\'></div>\n\n' or 'Salut' in 'data: <div class="markdown-text" data-md="&quot;There was an error processing your request. _(Error ID: 7db6792)_&quot;"></div>\n\ndata: <div class="markdown-text" data-md="&quot;There was an error processing your request. _(Error ID: 7db6792)_&quot;"></div><div hx-swap-oob=\'true\' id=\'stop-button\'></div>\n\ndata: \ndata: \ndata: \ndata: <div class="message-outer bot  show-all"\ndata:      id="message_101"\ndata:      hx-swap-oob="true">\ndata:   <div class="message-meta text-muted">\ndata:     <span class="message-author me-1">\ndata:       \ndata:         Otto\ndata:         \ndata:       \ndata:     </span>\ndata:     <span class="message-date">2025-11-07 13:29</span>\ndata:   </div>\ndata:   <div class="d-flex ">\ndata:     \ndata:     <div class="message-blob ">\ndata:       \ndata:         <div class="message-text">\ndata:           <div class="markdown-text" data-md="&quot;There was an error processing your request. _(Error ID: 7db6792)_&quot;">\ndata:             \ndata:           </div>\ndata:         </div>\ndata:         <div id="cost-warning-buttons-101"></div>\ndata:       \ndata:       <div class="row">\ndata:         <div class="message-show-all col mt-2" style...101/-1"\ndata:               hx-target="#feedback-modal-body"\ndata:               hx-trigger="click"\ndata:               class="btn btn-link m-0 ms-1 p-0 text-muted thumb-message-button thumb-down "\ndata:               onclick="thumbMessage(this);"\ndata:               title=\'Dislike\'>\ndata:         <i class="bi bi-hand-thumbs-down"></i><i class="bi bi-hand-thumbs-down-fill"></i>\ndata:       </button>\ndata:     \ndata:     <button type="button"\ndata:             class="btn btn-link m-0 ms-1 p-0 text-muted"\ndata:             hx-delete="/chat/message/101/delete/"\ndata:             hx-target="closest div.message-outer"\ndata:             title="Delete message">\ndata:       <i class="bi bi-trash"></i>\ndata:     </button>\ndata:   \ndata:   \ndata:     <span class="message-time ms-1" style="word-spacing:0">0s</span>\ndata:   \ndata:   \ndata: </div>\ndata: \ndata:   \ndata:     <div hx-get="/user_cost/"\ndata:          hx-swap="outerHTML"\ndata:          hx-target="#cost-bar-outer"\ndata:          hx-trigger=\'load delay:100ms\'></div>\ndata:   \ndata: </div>\ndata: \ndata: \ndata:   \ndata:   \ndata: \ndata: \ndata: <div hx-swap-oob=\'true\' id=\'stop-button\'></div>\n\n' or 'Coucou' in 'data: <div class="markdown-text" data-md="&quot;There was an error processing your request. _(Error ID: 7db6792)_&quot;"></div>\n\ndata: <div class="markdown-text" data-md="&quot;There was an error processing your request. _(Error ID: 7db6792)_&quot;"></div><div hx-swap-oob=\'true\' id=\'stop-button\'></div>\n\ndata: \ndata: \ndata: \ndata: <div class="message-outer bot  show-all"\ndata:      id="message_101"\ndata:      hx-swap-oob="true">\ndata:   <div class="message-meta text-muted">\ndata:     <span class="message-author me-1">\ndata:       \ndata:         Otto\ndata:         \ndata:       \ndata:     </span>\ndata:     <span class="message-date">2025-11-07 13:29</span>\ndata:   </div>\ndata:   <div class="d-flex ">\ndata:     \ndata:     <div class="message-blob ">\ndata:       \ndata:         <div class="message-text">\ndata:           <div class="markdown-text" data-md="&quot;There was an error processing your request. _(Error ID: 7db6792)_&quot;">\ndata:             \ndata:           </div>\ndata:         </div>\ndata:         <div id="cost-warning-buttons-101"></div>\ndata:       \ndata:       <div class="row">\ndata:         <div class="message-show-all col mt-2" style...101/-1"\ndata:               hx-target="#feedback-modal-body"\ndata:               hx-trigger="click"\ndata:               class="btn btn-link m-0 ms-1 p-0 text-muted thumb-message-button thumb-down "\ndata:               onclick="thumbMessage(this);"\ndata:               title=\'Dislike\'>\ndata:         <i class="bi bi-hand-thumbs-down"></i><i class="bi bi-hand-thumbs-down-fill"></i>\ndata:       </button>\ndata:     \ndata:     <button type="button"\ndata:             class="btn btn-link m-0 ms-1 p-0 text-muted"\ndata:             hx-delete="/chat/message/101/delete/"\ndata:             hx-target="closest div.message-outer"\ndata:             title="Delete message">\ndata:       <i class="bi bi-trash"></i>\ndata:     </button>\ndata:   \ndata:   \ndata:     <span class="message-time ms-1" style="word-spacing:0">0s</span>\ndata:   \ndata:   \ndata: </div>\ndata: \ndata:   \ndata:     <div hx-get="/user_cost/"\ndata:          hx-swap="outerHTML"\ndata:          hx-target="#cost-bar-outer"\ndata:          hx-trigger=\'load delay:100ms\'></div>\ndata:   \ndata: </div>\ndata: \ndata: \ndata:   \ndata:   \ndata: \ndata: \ndata: <div hx-swap-oob=\'true\' id=\'stop-button\'></div>\n\n' or 'Allo' in 'data: <div class="markdown-text" data-md="&quot;There was an error processing your request. _(Error ID: 7db6792)_&quot;"></div>\n\ndata: <div class="markdown-text" data-md="&quot;There was an error processing your request. _(Error ID: 7db6792)_&quot;"></div><div hx-swap-oob=\'true\' id=\'stop-button\'></div>\n\ndata: \ndata: \ndata: \ndata: <div class="message-outer bot  show-all"\ndata:      id="message_101"\ndata:      hx-swap-oob="true">\ndata:   <div class="message-meta text-muted">\ndata:     <span class="message-author me-1">\ndata:       \ndata:         Otto\ndata:         \ndata:       \ndata:     </span>\ndata:     <span class="message-date">2025-11-07 13:29</span>\ndata:   </div>\ndata:   <div class="d-flex ">\ndata:     \ndata:     <div class="message-blob ">\ndata:       \ndata:         <div class="message-text">\ndata:           <div class="markdown-text" data-md="&quot;There was an error processing your request. _(Error ID: 7db6792)_&quot;">\ndata:             \ndata:           </div>\ndata:         </div>\ndata:         <div id="cost-warning-buttons-101"></div>\ndata:       \ndata:       <div class="row">\ndata:         <div class="message-show-all col mt-2" style...101/-1"\ndata:               hx-target="#feedback-modal-body"\ndata:               hx-trigger="click"\ndata:               class="btn btn-link m-0 ms-1 p-0 text-muted thumb-message-button thumb-down "\ndata:               onclick="thumbMessage(this);"\ndata:               title=\'Dislike\'>\ndata:         <i class="bi bi-hand-thumbs-down"></i><i class="bi bi-hand-thumbs-down-fill"></i>\ndata:       </button>\ndata:     \ndata:     <button type="button"\ndata:             class="btn btn-link m-0 ms-1 p-0 text-muted"\ndata:             hx-delete="/chat/message/101/delete/"\ndata:             hx-target="closest div.message-outer"\ndata:             title="Delete message">\ndata:       <i class="bi bi-trash"></i>\ndata:     </button>\ndata:   \ndata:   \ndata:     <span class="message-time ms-1" style="word-spacing:0">0s</span>\ndata:   \ndata:   \ndata: </div>\ndata: \ndata:   \ndata:     <div hx-get="/user_cost/"\ndata:          hx-swap="outerHTML"\ndata:          hx-target="#cost-bar-outer"\ndata:          hx-trigger=\'load delay:100ms\'></div>\ndata:   \ndata: </div>\ndata: \ndata: \ndata:   \ndata:   \ndata: \ndata: \ndata: <div hx-swap-oob=\'true\' id=\'stop-button\'></div>\n\n')
+FAILED django/tests/otto/test_cleanup.py::test_delete_text_extractor_files_task - django.db.utils.IntegrityError: duplicate key value violates unique constraint "otto_user_upn_key"
+DETAIL:  Key (upn)=(all_apps_user.lastname@example.com) already exists.
+FAILED django/tests/text_extractor/test_views.py::test_poll_tasks_view - django.db.utils.IntegrityError: duplicate key value violates unique constraint "otto_user_upn_key"
+DETAIL:  Key (upn)=(all_apps_user.lastname@example.com) already exists.
+FAILED django/tests/text_extractor/test_views.py::test_download_all_zip - django.db.utils.IntegrityError: duplicate key value violates unique constraint "otto_user_upn_key"
+DETAIL:  Key (upn)=(all_apps_user.lastname@example.com) already exists.
+ERROR django/tests/chat/test_chat_translate.py::test_translate_text_with_gpt - django.core.management.base.CommandError: Database test_otto couldn't be flushed. Possible reasons:
+  * The database isn't running or isn't configured correctly.
+  * At least one of the expected database tables doesn't exist.
+  * The SQL was invalid.
+Hint: Look at the output of 'django-admin sqlflush'. That's the SQL this command wasn't able to run.
+ERROR django/tests/otto/test_cleanup.py::test_delete_text_extractor_files_task - django.core.management.base.CommandError: Database test_otto couldn't be flushed. Possible reasons:
+  * The database isn't running or isn't configured correctly.
+  * At least one of the expected database tables doesn't exist.
+  * The SQL was invalid.
+Hint: Look at the output of 'django-admin sqlflush'. That's the SQL this command wasn't able to run.
+ERROR django/tests/text_extractor/test_views.py::test_poll_tasks_view - django.core.management.base.CommandError: Database test_otto couldn't be flushed. Possible reasons:
+  * The database isn't running or isn't configured correctly.
+  * At least one of the expected database tables doesn't exist.
+  * The SQL was invalid.
+Hint: Look at the output of 'django-admin sqlflush'. That's the SQL this command wasn't able to run.
+ERROR django/tests/text_extractor/test_views.py::test_download_all_zip - django.core.management.base.CommandError: Database test_otto couldn't be flushed. Possible reasons:
+  * The database isn't running or isn't configured correctly.
+  * At least one of the expected database tables doesn't exist.
+  * The SQL was invalid.
+Hint: Look at the output of 'django-admin sqlflush'. That's the SQL this command wasn't able to run.
+============ 123 failed, 320 passed, 4 errors in 1030.71s (0:17:10) ============

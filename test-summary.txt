@@ -1,0 +1,73 @@
+================================================ short test summary info =================================================
+FAILED django\tests\chat\test_chat_procs.py::test_htmx_stream_response_stream - django.db.utils.IntegrityError: duplicate key value violates unique constraint "otto_user_upn_key"
+DETAIL:  Key (upn)=(test_user_1.lastname@example.com) already exists.
+FAILED django\tests\chat\test_chat_procs.py::test_htmx_stream_response_str - django.db.utils.IntegrityError: duplicate key value violates unique constraint "otto_user_upn_key"
+DETAIL:  Key (upn)=(test_user_2.lastname@example.com) already exists.
+FAILED django\tests\chat\test_chat_procs.py::test_htmx_stream_response_generator - django.db.utils.IntegrityError: duplicate key value violates unique constraint "otto_user_upn_key"
+DETAIL:  Key (upn)=(test_user_3.lastname@example.com) already exists.
+FAILED django\tests\chat\test_chat_procs.py::test_htmx_stream_response_replacer - django.db.utils.IntegrityError: duplicate key value violates unique constraint "otto_user_upn_key"
+DETAIL:  Key (upn)=(test_user_4.lastname@example.com) already exists.
+FAILED django\tests\chat\test_chat_translate.py::test_translate_file - Exception: Error translating C:\Users\barre\AppData\Local\Temp\tmp_q6z6ykf.txt
+FAILED django\tests\chat\test_chat_views.py::test_download_file - assert 302 == 200
+ +  where 302 = <HttpResponseRedirect status_code=302, "text/html; charset=utf-8", url="/">.status_code
+FAILED django\tests\librarian\test_document_loading.py::test_extract_pdf_gemini_read - otto.models.CostType.DoesNotExist: CostType matching query does not exist.
+FAILED django\tests\librarian\test_document_loading.py::test_extract_pdf_gemini_layout - otto.models.CostType.DoesNotExist: CostType matching query does not exist.
+FAILED django\tests\librarian\test_librarian_models.py::test_create_data_source - chat.models.Preset.MultipleObjectsReturned: get() returned more than one Preset -- it returned 2!
+FAILED django\tests\otto\test_auth_integration.py::TestGroupBasedAuthorization::test_otto_admin_group_membership - assert False
+ +  where False = is_admin(<User: ,  (basic_user@example.com)>)
+FAILED django\tests\otto\test_auth_integration.py::TestGroupBasedAuthorization::test_data_steward_permissions - AssertionError: assert False
+ +  where False = has_perm('librarian.manage_public_libraries')
+ +    where has_perm = <User: ,  (basic_user@example.com)>.has_perm
+FAILED django\tests\otto\test_auth_integration.py::TestChatAccessAuthorization::test_preset_sharing_everyone - TypeError: Preset() got unexpected keyword arguments: 'name'
+FAILED django\tests\otto\test_auth_integration.py::TestChatAccessAuthorization::test_preset_sharing_specific_users - TypeError: Preset() got unexpected keyword arguments: 'name'
+FAILED django\tests\otto\test_auth_integration.py::TestChatAccessAuthorization::test_preset_edit_permissions - TypeError: Preset() got unexpected keyword arguments: 'name'
+FAILED django\tests\otto\test_auth_integration.py::TestChatAccessAuthorization::test_global_default_preset_restrictions - TypeError: Preset() got unexpected keyword arguments: 'name'
+FAILED django\tests\otto\test_auth_integration.py::TestLibraryAccessAuthorization::test_manage_library_users_permission - AssertionError: assert False
+ +  where False = has_perm('librarian.manage_library_users', <Library: Managed Library>)
+ +    where has_perm = <User: ,  (all_apps_user@example.com)>.has_perm
+FAILED django\tests\otto\test_cleanup.py::test_redundant_librarian_upload - assert 2 == 1
+ +  where 2 = count()
+ +    where count = <QuerySet [<SavedFile: files/2025/11/08/JUS_EN-FR_naukiKt.csv>, <SavedFile: files/2025/11/09/test_cleanup.py>]>.count
+FAILED django\tests\otto\test_load_test.py::test_load_tests - sqlalchemy.exc.ProgrammingError: (sqlalchemy.dialects.postgresql.asyncpg.ProgrammingError) <class 'asyncpg.exceptions.UndefinedTableError'>: relation "public.data_laws_lois__" does not exist
+[SQL: SELECT public.data_laws_lois__.id, public.data_laws_lois__.node_id, public.data_laws_lois__.text, public.data_laws_lois__.metadata_, ts_rank(public.data_laws_lois__.text_search_tsv, to_tsquery($1, $2::VARCHAR)) AS rank
+FROM public.data_laws_lois__
+WHERE public.data_laws_lois__.text_search_tsv @@ to_tsquery($1, $2::VARCHAR) ORDER BY rank desc
+ LIMIT $3::INTEGER]
+[parameters: ('english', 'query|string', 100)]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+FAILED django\tests\otto\test_manage_users.py::test_get_cost_dashboard - otto.models.CostType.DoesNotExist: CostType matching query does not exist.
+FAILED django\tests\test_celery_tasks.py::TestProcessDocumentHelper::test_process_document_helper_url_success - ValueError: too many values to unpack (expected 2)
+FAILED django\tests\test_e2e_workflows.py::TestUserOnboardingWorkflow::test_new_user_complete_onboarding - TypeError: Message() got unexpected keyword arguments: 'content', 'created_by', 'role'
+FAILED django\tests\test_e2e_workflows.py::TestChatConversationWorkflow::test_complete_chat_conversation - TypeError: Message() got unexpected keyword arguments: 'content', 'created_by', 'role'
+FAILED django\tests\test_e2e_workflows.py::TestDocumentRAGWorkflow::test_complete_document_rag_workflow - TypeError: DataSource() got unexpected keyword arguments: 'created_by'
+FAILED django\tests\test_e2e_workflows.py::TestLibraryManagementWorkflow::test_library_collaboration_workflow - TypeError: DataSource() got unexpected keyword arguments: 'created_by'
+FAILED django\tests\test_e2e_workflows.py::TestPresetSharingWorkflow::test_preset_creation_and_sharing - TypeError: ChatOptions() got unexpected keyword arguments: 'model_id'
+FAILED django\tests\test_e2e_workflows.py::TestCostBudgetWorkflow::test_cost_tracking_workflow - TypeError: Message() got unexpected keyword arguments: 'content', 'created_by', 'role'
+FAILED django\tests\test_e2e_workflows.py::TestFileUploadWorkflow::test_chat_file_upload_workflow - TypeError: ChatFile() got unexpected keyword arguments: 'chat', 'created_by'
+FAILED django\tests\test_e2e_workflows.py::TestErrorRecoveryWorkflows::test_document_processing_error_recovery - TypeError: DataSource() got unexpected keyword arguments: 'created_by'
+FAILED django\tests\test_e2e_workflows.py::TestMultiUserCollaboration::test_team_library_workflow - TypeError: DataSource() got unexpected keyword arguments: 'created_by'
+FAILED django\tests\test_e2e_workflows.py::TestSessionManagementWorkflow::test_user_session_continuity - TypeError: Message() got unexpected keyword arguments: 'content', 'created_by', 'role'
+FAILED django\tests\test_negative_cases.py::TestFileUploadValidation::test_file_size_limits - AssertionError: assert False
+ +  where False = has_perm('chat.upload_large_files')
+ +    where has_perm = <User: ,  (basic_user@example.com)>.has_perm
+FAILED django\tests\test_performance.py::TestLLMPerformance::test_ottollm_initialization_performance - AssertionError: OttoLLM initialization took 1.793s, expected < 1.0s
+assert 1.7927350999962073 < 1.0
+ +  where 1.7927350999962073 = <tests.test_performance.PerformanceBenchmark object at 0x0000021C38E55550>.elapsed_time
+FAILED django\tests\test_performance.py::TestLLMPerformance::test_concurrent_llm_requests - ValueError: The following fields do not exist in this model: options
+FAILED django\tests\test_performance.py::TestDocumentProcessingPerformance::test_document_creation_performance - AttributeError: property 'title' of 'Document' object has no setter
+FAILED django\tests\test_performance.py::TestDocumentProcessingPerformance::test_batch_document_processing - TypeError: Model.save() got an unexpected keyword argument 'access_key'
+FAILED django\tests\test_performance.py::TestSecureModelQueryPerformance::test_secure_query_performance - AttributeError: property 'title' of 'Document' object has no setter
+FAILED django\tests\test_performance.py::TestSecureModelQueryPerformance::test_secure_query_with_filters - AttributeError: property 'title' of 'Document' object has no setter
+FAILED django\tests\test_performance.py::TestSecureModelQueryPerformance::test_n_plus_one_query_prevention - AttributeError: property 'title' of 'Document' object has no setter
+FAILED django\tests\test_performance.py::TestMemoryAndResources::test_large_query_result_memory - AttributeError: property 'title' of 'Document' object has no setter
+FAILED django\tests\test_performance.py::TestPerformanceRegression::test_secure_model_query_baseline - AttributeError: property 'title' of 'Document' object has no setter
+FAILED django\tests\text_extractor\test_tasks.py::test_process_ocr_document_pdf - AssertionError: assert 'RIF drawing' == 'Page 1\nPage 2\nPage 3'
+
+  + RIF drawing
+  - Page 1
+  - Page 2
+  - Page 3
+FAILED django\tests\test_performance.py::TestConcurrentOperations::test_concurrent_document_updates - AttributeError: property 'title' of 'Document' object has no setter
+FAILED django\tests\test_performance.py::TestConcurrentOperations::test_concurrent_permission_grants - NameError: name 'LibraryUserRole' is not defined
+FAILED django\tests\test_performance.py::TestCostTrackingPerformance::test_concurrent_cost_creation - otto.models.CostType.MultipleObjectsReturned: get() returned more than one CostType -- it returned 4!
+=========================== 44 failed, 391 passed, 7 skipped, 1 xfailed in 7449.57s (2:04:09) ============================

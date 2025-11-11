@@ -1,0 +1,300 @@
+test-coverage	UNKNOWN STEP	2025-11-09T15:03:56.6615588Z FAILED django/tests/test_e2e_workflows.py::TestLibraryManagementWorkflow::test_library_collaboration_workflow - TypeError: DataSource() got unexpected keyword arguments: 'created_by'
+test-coverage	UNKNOWN STEP	2025-11-09T15:03:56.6616767Z FAILED django/tests/test_e2e_workflows.py::TestPresetSharingWorkflow::test_preset_creation_and_sharing - TypeError: ChatOptions() got unexpected keyword arguments: 'model_id'
+test-coverage	UNKNOWN STEP	2025-11-09T15:03:56.6617835Z FAILED django/tests/test_e2e_workflows.py::TestCostBudgetWorkflow::test_cost_tracking_workflow - TypeError: Message() got unexpected keyword arguments: 'content', 'created_by', 'role'
+test-coverage	UNKNOWN STEP	2025-11-09T15:03:56.6619050Z FAILED django/tests/test_e2e_workflows.py::TestFileUploadWorkflow::test_chat_file_upload_workflow - TypeError: ChatFile() got unexpected keyword arguments: 'chat', 'created_by'
+test-coverage	UNKNOWN STEP	2025-11-09T15:03:56.6620141Z FAILED django/tests/test_e2e_workflows.py::TestErrorRecoveryWorkflows::test_document_processing_error_recovery - TypeError: DataSource() got unexpected keyword arguments: 'created_by'
+test-coverage	UNKNOWN STEP	2025-11-09T15:03:56.6621205Z FAILED django/tests/test_e2e_workflows.py::TestMultiUserCollaboration::test_team_library_workflow - TypeError: DataSource() got unexpected keyword arguments: 'created_by'
+test-coverage	UNKNOWN STEP	2025-11-09T15:03:56.6622285Z FAILED django/tests/test_e2e_workflows.py::TestSessionManagementWorkflow::test_user_session_continuity - TypeError: Message() got unexpected keyword arguments: 'content', 'created_by', 'role'
+test-coverage	UNKNOWN STEP	2025-11-09T15:03:56.6623240Z FAILED django/tests/test_negative_cases.py::TestFileUploadValidation::test_file_size_limits - AssertionError: assert False
+test-coverage	UNKNOWN STEP	2025-11-09T15:03:56.6623771Z  +  where False = has_perm('chat.upload_large_files')
+test-coverage	UNKNOWN STEP	2025-11-09T15:03:56.6624206Z  +    where has_perm = <User: ,  (basic_user@example.com)>.has_perm
+test-coverage	UNKNOWN STEP	2025-11-09T15:03:56.6624865Z FAILED django/tests/test_performance.py::TestLLMPerformance::test_concurrent_llm_requests - ValueError: The following fields do not exist in this model: options
+test-coverage	UNKNOWN STEP	2025-11-09T15:03:56.6626009Z FAILED django/tests/test_performance.py::TestDocumentProcessingPerformance::test_document_creation_performance - AttributeError: property 'title' of 'Document' object has no setter
+test-coverage	UNKNOWN STEP	2025-11-09T15:03:56.6627133Z FAILED django/tests/test_performance.py::TestDocumentProcessingPerformance::test_batch_document_processing - TypeError: Model.save() got an unexpected keyword argument 'access_key'
+test-coverage	UNKNOWN STEP	2025-11-09T15:03:56.6628231Z FAILED django/tests/test_performance.py::TestSecureModelQueryPerformance::test_secure_query_performance - AttributeError: property 'title' of 'Document' object has no setter
+test-coverage	UNKNOWN STEP	2025-11-09T15:03:56.6629302Z FAILED django/tests/test_performance.py::TestSecureModelQueryPerformance::test_secure_query_with_filters - AttributeError: property 'title' of 'Document' object has no setter
+test-coverage	UNKNOWN STEP	2025-11-09T15:03:56.6630410Z FAILED django/tests/test_performance.py::TestSecureModelQueryPerformance::test_n_plus_one_query_prevention - AttributeError: property 'title' of 'Document' object has no setter
+test-coverage	UNKNOWN STEP	2025-11-09T15:03:56.6631460Z FAILED django/tests/test_performance.py::TestMemoryAndResources::test_large_query_result_memory - AttributeError: property 'title' of 'Document' object has no setter
+test-coverage	UNKNOWN STEP	2025-11-09T15:03:56.6632487Z FAILED django/tests/test_performance.py::TestPerformanceRegression::test_secure_model_query_baseline - AttributeError: property 'title' of 'Document' object has no setter
+test-coverage	UNKNOWN STEP	2025-11-09T15:03:56.6633432Z FAILED django/tests/text_extractor/test_tasks.py::test_process_ocr_document_pdf - AssertionError: assert 'RIF drawing' == 'Page 1\nPage 2\nPage 3'
+test-coverage	UNKNOWN STEP	2025-11-09T15:03:56.6633965Z   
+test-coverage	UNKNOWN STEP	2025-11-09T15:03:56.6634108Z   + RIF drawing
+test-coverage	UNKNOWN STEP	2025-11-09T15:03:56.6634275Z   - Page 1
+test-coverage	UNKNOWN STEP	2025-11-09T15:03:56.6634437Z   - Page 2
+test-coverage	UNKNOWN STEP	2025-11-09T15:03:56.6634579Z   - Page 3
+test-coverage	UNKNOWN STEP	2025-11-09T15:03:56.6635144Z FAILED django/tests/test_performance.py::TestConcurrentOperations::test_concurrent_document_updates - AttributeError: property 'title' of 'Document' object has no setter
+test-coverage	UNKNOWN STEP	2025-11-09T15:03:56.6636243Z FAILED django/tests/test_performance.py::TestConcurrentOperations::test_concurrent_permission_grants - NameError: name 'LibraryUserRole' is not defined
+test-coverage	UNKNOWN STEP	2025-11-09T15:03:56.6637353Z FAILED django/tests/test_performance.py::TestCostTrackingPerformance::test_concurrent_cost_creation - otto.models.CostType.MultipleObjectsReturned: get() returned more than one CostType -- it returned 3!
+test-coverage	UNKNOWN STEP	2025-11-09T15:03:56.6638189Z ============ 36 failed, 399 passed, 8 skipped in 1029.99s (0:17:09) ============
+test-coverage	UNKNOWN STEP	2025-11-09T15:03:59.9562924Z ##[error]Process completed with exit code 1.
+test-coverage	UNKNOWN STEP	2025-11-09T15:03:59.9679581Z Post job cleanup.
+test-coverage	UNKNOWN STEP	2025-11-09T15:03:59.9683225Z ##[command]/usr/bin/docker exec  3bc5cc051b74f5064f8967ebc9cdec052681c355f612bce49e654b0e69159ca8 sh -c "cat /etc/*release | grep ^ID"
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:00.1588057Z [command]/usr/bin/git version
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:00.1628459Z git version 2.47.3
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:00.1674992Z Temporarily overriding HOME='/__w/_temp/f341344a-7fee-4932-8f56-76b0dedbca97' before making global git config changes
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:00.1676556Z Adding repository directory to the temporary git global config as a safe directory
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:00.1681210Z [command]/usr/bin/git config --global --add safe.directory /__w/motto/motto
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:00.1728176Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:00.1764658Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:00.2034359Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:00.2059171Z http.https://github.com/.extraheader
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:00.2072792Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:00.2107633Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:00.2514526Z Stop and remove container: a8976d2b111442b48dc3cafe73c1409c_python311_b5b359
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:00.2519864Z ##[command]/usr/bin/docker rm --force 3bc5cc051b74f5064f8967ebc9cdec052681c355f612bce49e654b0e69159ca8
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.7995346Z 3bc5cc051b74f5064f8967ebc9cdec052681c355f612bce49e654b0e69159ca8
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8020236Z Print service container logs: 955491303c8a48f9a0023274c8738314_pgvectorpgvectorpg16_bd1a4a
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8026458Z ##[command]/usr/bin/docker logs --details e2809ce41d1f443b6105cf50308cb4798f19fb895bb3fd8e912ecc4c8d3abb6a
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8153060Z  The files belonging to this database system will be owned by user "postgres".
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8156668Z  initdb: warning: enabling "trust" authentication for local connections
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8157781Z  initdb: hint: You can change this by editing pg_hba.conf or using the option -A, or --auth-local and --auth-host, the next time you run initdb.
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8159293Z  2025-11-09 14:45:16.588 UTC [1] LOG:  starting PostgreSQL 16.10 (Debian 16.10-1.pgdg12+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8160475Z  2025-11-09 14:45:16.588 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8161175Z  2025-11-09 14:45:16.588 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8161958Z  2025-11-09 14:45:16.589 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8162827Z  2025-11-09 14:45:16.594 UTC [64] LOG:  database system was shut down at 2025-11-09 14:45:16 UTC
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8163627Z  2025-11-09 14:45:16.599 UTC [1] LOG:  database system is ready to accept connections
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8164297Z  2025-11-09 14:45:25.564 UTC [75] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8164900Z  2025-11-09 14:45:35.637 UTC [83] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8165484Z  2025-11-09 14:45:45.708 UTC [91] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8166256Z  2025-11-09 14:45:55.780 UTC [100] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8166834Z  2025-11-09 14:46:05.847 UTC [108] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8167404Z  2025-11-09 14:46:15.917 UTC [116] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8167964Z  2025-11-09 14:46:25.992 UTC [125] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8168529Z  2025-11-09 14:46:36.059 UTC [134] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8169093Z  2025-11-09 14:46:46.122 UTC [142] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8169652Z  2025-11-09 14:46:56.197 UTC [156] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8170225Z  2025-11-09 14:47:06.264 UTC [207] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8170787Z  2025-11-09 14:47:16.329 UTC [257] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8171349Z  2025-11-09 14:47:26.397 UTC [304] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8171905Z  2025-11-09 14:47:36.478 UTC [357] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8172439Z  2025-11-09 14:47:46.544 UTC [381] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8172967Z  2025-11-09 14:47:56.610 UTC [426] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8173526Z  2025-11-09 14:48:06.678 UTC [477] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8174084Z  2025-11-09 14:48:16.746 UTC [502] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8174928Z  2025-11-09 14:48:18.872 UTC [511] ERROR:  relation "public.data_8483c1d8f55845dc89987fd8394408d8" does not exist at character 331
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8178160Z  2025-11-09 14:48:18.872 UTC [511] STATEMENT:  SELECT public.data_8483c1d8f55845dc89987fd8394408d8.id, public.data_8483c1d8f55845dc89987fd8394408d8.node_id, public.data_8483c1d8f55845dc89987fd8394408d8.text, public.data_8483c1d8f55845dc89987fd8394408d8.metadata_, ts_rank(public.data_8483c1d8f55845dc89987fd8394408d8.text_search_tsv, to_tsquery($1, $2::VARCHAR)) AS rank 
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8180250Z  	FROM public.data_8483c1d8f55845dc89987fd8394408d8 
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8181168Z  	WHERE (public.data_8483c1d8f55845dc89987fd8394408d8.text_search_tsv @@ to_tsquery($1, $2::VARCHAR)) AND metadata_->>'node_type' != 'document' ORDER BY rank desc 
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8182116Z  	 LIMIT $3::INTEGER
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8182788Z  2025-11-09 14:48:19.256 UTC [512] ERROR:  relation "public.data_8483c1d8f55845dc89987fd8394408d8" does not exist at character 331
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8185243Z  2025-11-09 14:48:19.256 UTC [512] STATEMENT:  SELECT public.data_8483c1d8f55845dc89987fd8394408d8.id, public.data_8483c1d8f55845dc89987fd8394408d8.node_id, public.data_8483c1d8f55845dc89987fd8394408d8.text, public.data_8483c1d8f55845dc89987fd8394408d8.metadata_, ts_rank(public.data_8483c1d8f55845dc89987fd8394408d8.text_search_tsv, to_tsquery($1, $2::VARCHAR)) AS rank 
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8187872Z  	FROM public.data_8483c1d8f55845dc89987fd8394408d8 
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8188964Z  	WHERE (public.data_8483c1d8f55845dc89987fd8394408d8.text_search_tsv @@ to_tsquery($1, $2::VARCHAR)) AND metadata_->>'node_type' != 'document' AND metadata_->>'doc_id' IN ('072749c964fb4f03865ab4adecd9f6c8') ORDER BY rank desc 
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8189684Z  	 LIMIT $3::INTEGER
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8190092Z  2025-11-09 14:48:19.257 UTC [513] ERROR:  relation "public.data_8483c1d8f55845dc89987fd8394408d8" does not exist at character 298
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8191383Z  2025-11-09 14:48:19.257 UTC [513] STATEMENT:  SELECT public.data_8483c1d8f55845dc89987fd8394408d8.id, public.data_8483c1d8f55845dc89987fd8394408d8.node_id, public.data_8483c1d8f55845dc89987fd8394408d8.text, public.data_8483c1d8f55845dc89987fd8394408d8.metadata_, public.data_8483c1d8f55845dc89987fd8394408d8.embedding <=> $1 AS distance 
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8192487Z  	FROM public.data_8483c1d8f55845dc89987fd8394408d8 
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8192830Z  	WHERE metadata_->>'node_type' != 'document' ORDER BY distance asc 
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8193127Z  	 LIMIT $2::INTEGER
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8193339Z  This user must also own the server process.
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8193687Z  2025-11-09 14:48:26.812 UTC [552] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8194198Z  2025-11-09 14:48:29.847 UTC [564] ERROR:  relation "public.data_97ca1dc018fd40cb9fb7e14ebec5fbf2" does not exist at character 331
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8195624Z  2025-11-09 14:48:29.847 UTC [564] STATEMENT:  SELECT public.data_97ca1dc018fd40cb9fb7e14ebec5fbf2.id, public.data_97ca1dc018fd40cb9fb7e14ebec5fbf2.node_id, public.data_97ca1dc018fd40cb9fb7e14ebec5fbf2.text, public.data_97ca1dc018fd40cb9fb7e14ebec5fbf2.metadata_, ts_rank(public.data_97ca1dc018fd40cb9fb7e14ebec5fbf2.text_search_tsv, to_tsquery($1, $2::VARCHAR)) AS rank 
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8197119Z  	FROM public.data_97ca1dc018fd40cb9fb7e14ebec5fbf2 
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8197748Z  	WHERE (public.data_97ca1dc018fd40cb9fb7e14ebec5fbf2.text_search_tsv @@ to_tsquery($1, $2::VARCHAR)) AND metadata_->>'node_type' != 'document' ORDER BY rank desc 
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8198315Z  	 LIMIT $3::INTEGER
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8198565Z  2025-11-09 14:48:36.877 UTC [602] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8198906Z  2025-11-09 14:48:46.944 UTC [645] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8199226Z  2025-11-09 14:48:57.016 UTC [690] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8199545Z  2025-11-09 14:49:07.079 UTC [734] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8199867Z  2025-11-09 14:49:17.149 UTC [779] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8200179Z  2025-11-09 14:49:27.215 UTC [823] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8200690Z  2025-11-09 14:49:37.287 UTC [868] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8201009Z  2025-11-09 14:49:47.354 UTC [913] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8201322Z  2025-11-09 14:49:57.436 UTC [957] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8201649Z  2025-11-09 14:50:07.501 UTC [1002] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8202112Z  2025-11-09 14:50:16.621 UTC [62] LOG:  checkpoint starting: time
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8202447Z  2025-11-09 14:50:17.573 UTC [1050] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8202780Z  2025-11-09 14:50:27.638 UTC [1088] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8203105Z  2025-11-09 14:50:37.702 UTC [1124] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8203427Z  2025-11-09 14:50:47.770 UTC [1160] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8203743Z  2025-11-09 14:50:57.837 UTC [1198] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8204066Z  2025-11-09 14:51:07.899 UTC [1235] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8204394Z  2025-11-09 14:51:17.964 UTC [1274] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8204711Z  2025-11-09 14:51:28.033 UTC [1313] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8205032Z  2025-11-09 14:51:38.099 UTC [1352] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8205360Z  2025-11-09 14:51:48.164 UTC [1392] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8205684Z  2025-11-09 14:51:58.234 UTC [1426] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8206219Z  2025-11-09 14:52:08.296 UTC [1463] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8206556Z  2025-11-09 14:52:18.361 UTC [1503] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8206881Z  2025-11-09 14:52:28.426 UTC [1533] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8207197Z  2025-11-09 14:52:38.488 UTC [1548] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8207524Z  2025-11-09 14:52:48.552 UTC [1557] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8207853Z  2025-11-09 14:52:58.617 UTC [1598] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8208170Z  2025-11-09 14:53:08.688 UTC [1628] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8208493Z  2025-11-09 14:53:18.763 UTC [1673] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8208822Z  2025-11-09 14:53:28.833 UTC [1711] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8209144Z  2025-11-09 14:53:38.905 UTC [1756] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8209460Z  2025-11-09 14:53:48.976 UTC [1807] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8209788Z  2025-11-09 14:53:59.040 UTC [1850] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8210111Z  2025-11-09 14:54:09.103 UTC [1876] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8210432Z  2025-11-09 14:54:19.168 UTC [1913] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8210761Z  2025-11-09 14:54:29.241 UTC [1957] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8211090Z  2025-11-09 14:54:39.312 UTC [2001] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8211985Z  2025-11-09 14:54:46.069 UTC [62] LOG:  checkpoint complete: wrote 9240 buffers (56.4%); 0 WAL file(s) added, 0 removed, 6 recycled; write=269.429 s, sync=0.010 s, total=269.449 s; sync files=1634, longest=0.002 s, average=0.001 s; distance=102548 kB, estimate=102548 kB; lsn=0/D70DB38, redo lsn=0/7D372D8
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8212856Z  2025-11-09 14:54:49.375 UTC [2041] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8213184Z  2025-11-09 14:54:59.445 UTC [2085] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8213510Z  2025-11-09 14:55:09.514 UTC [2129] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8213832Z  2025-11-09 14:55:16.101 UTC [62] LOG:  checkpoint starting: time
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8214158Z  2025-11-09 14:55:19.578 UTC [2171] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8214480Z  2025-11-09 14:55:29.654 UTC [2219] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8214935Z  2025-11-09 14:55:39.719 UTC [2270] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8215254Z  2025-11-09 14:55:49.785 UTC [2319] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8215575Z  2025-11-09 14:55:59.853 UTC [2371] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8216233Z  2025-11-09 14:56:09.923 UTC [2428] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8216594Z  2025-11-09 14:56:19.996 UTC [2484] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8216923Z  2025-11-09 14:56:30.066 UTC [2533] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8217243Z  2025-11-09 14:56:40.135 UTC [2590] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8217560Z  2025-11-09 14:56:50.200 UTC [2640] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8217992Z  2025-11-09 14:56:50.584 UTC [2642] ERROR:  relation "public.data_laws_lois__" does not exist at character 226
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8218937Z  2025-11-09 14:56:50.584 UTC [2642] STATEMENT:  SELECT public.data_laws_lois__.id, public.data_laws_lois__.node_id, public.data_laws_lois__.text, public.data_laws_lois__.metadata_, ts_rank(public.data_laws_lois__.text_search_tsv, to_tsquery($1, $2::VARCHAR)) AS rank 
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8219738Z  	FROM public.data_laws_lois__ 
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8220195Z  	WHERE (public.data_laws_lois__.text_search_tsv @@ to_tsquery($1, $2::VARCHAR)) AND metadata_->>'node_type' = 'chunk' ORDER BY rank desc 
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8220658Z  	 LIMIT $3::INTEGER
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8221001Z  2025-11-09 14:56:50.855 UTC [2643] ERROR:  relation "public.data_laws_lois__" does not exist at character 226
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8221942Z  2025-11-09 14:56:50.855 UTC [2643] STATEMENT:  SELECT public.data_laws_lois__.id, public.data_laws_lois__.node_id, public.data_laws_lois__.text, public.data_laws_lois__.metadata_, ts_rank(public.data_laws_lois__.text_search_tsv, to_tsquery($1, $2::VARCHAR)) AS rank 
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8222721Z  	FROM public.data_laws_lois__ 
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8223166Z  	WHERE (public.data_laws_lois__.text_search_tsv @@ to_tsquery($1, $2::VARCHAR)) AND metadata_->>'node_type' = 'chunk' ORDER BY rank desc 
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8223620Z  	 LIMIT $3::INTEGER
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8223945Z  2025-11-09 14:56:50.859 UTC [2644] ERROR:  relation "public.data_laws_lois__" does not exist at character 193
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8224809Z  2025-11-09 14:56:50.859 UTC [2644] STATEMENT:  SELECT public.data_laws_lois__.id, public.data_laws_lois__.node_id, public.data_laws_lois__.text, public.data_laws_lois__.metadata_, public.data_laws_lois__.embedding <=> $1 AS distance 
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8225520Z  	FROM public.data_laws_lois__ 
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8225797Z  	WHERE metadata_->>'node_type' = 'chunk' ORDER BY distance asc 
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8226302Z  	 LIMIT $2::INTEGER
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8226538Z  2025-11-09 14:57:00.263 UTC [2676] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8226872Z  2025-11-09 14:57:10.326 UTC [2711] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8227200Z  2025-11-09 14:57:20.398 UTC [2750] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8227527Z  2025-11-09 14:57:30.468 UTC [2798] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8227849Z  2025-11-09 14:57:40.532 UTC [2841] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8228169Z  2025-11-09 14:57:50.606 UTC [2890] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8228489Z  2025-11-09 14:58:00.673 UTC [2936] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8228811Z  2025-11-09 14:58:10.745 UTC [2983] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8229133Z  2025-11-09 14:58:20.812 UTC [3032] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8229450Z  2025-11-09 14:58:30.875 UTC [3079] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8229771Z  2025-11-09 14:58:40.946 UTC [3128] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8230092Z  2025-11-09 14:58:51.014 UTC [3175] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8230409Z  2025-11-09 14:59:01.079 UTC [3222] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8230932Z  2025-11-09 14:59:11.147 UTC [3269] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8231256Z  2025-11-09 14:59:21.213 UTC [3320] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8231573Z  2025-11-09 14:59:31.285 UTC [3362] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8232000Z  2025-11-09 14:59:41.351 UTC [3405] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8232880Z  2025-11-09 14:59:46.100 UTC [62] LOG:  checkpoint complete: wrote 6612 buffers (40.4%); 0 WAL file(s) added, 0 removed, 7 recycled; write=269.983 s, sync=0.005 s, total=270.000 s; sync files=222, longest=0.002 s, average=0.001 s; distance=106810 kB, estimate=106810 kB; lsn=0/15B7B258, redo lsn=0/E585B50
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8233743Z  2025-11-09 14:59:51.419 UTC [3452] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8234061Z  2025-11-09 15:00:01.485 UTC [3496] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8234383Z  2025-11-09 15:00:11.559 UTC [3542] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8234717Z  2025-11-09 15:00:16.130 UTC [62] LOG:  checkpoint starting: time
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8235046Z  2025-11-09 15:00:21.631 UTC [3592] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8235363Z  2025-11-09 15:00:31.697 UTC [3644] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8235689Z  2025-11-09 15:00:41.768 UTC [3694] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8236212Z  2025-11-09 15:00:51.836 UTC [3746] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8236548Z  2025-11-09 15:01:01.902 UTC [3797] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8236874Z  2025-11-09 15:01:11.974 UTC [3845] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8237196Z  2025-11-09 15:01:22.044 UTC [3896] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8237514Z  2025-11-09 15:01:32.112 UTC [3945] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8237944Z  2025-11-09 15:01:38.098 UTC [3967] ERROR:  duplicate key value violates unique constraint "otto_user_upn_key"
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8238443Z  2025-11-09 15:01:38.098 UTC [3967] DETAIL:  Key (upn)=(test@justice.gc.ca) already exists.
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8240093Z  2025-11-09 15:01:38.098 UTC [3967] STATEMENT:  INSERT INTO "otto_user" ("password", "last_login", "is_superuser", "upn", "email", "oid", "first_name", "last_name", "is_active", "is_staff", "date_joined", "accepted_terms_date", "pilot_id", "default_preset_id", "monthly_max", "monthly_bonus", "homepage_tour_completed", "ai_assistant_tour_completed", "laws_search_tour_completed") VALUES ('', NULL, false, 'test@justice.gc.ca', 'test@justice.gc.ca', NULL, '', '', true, false, '2025-11-09T15:01:38.098337+00:00'::timestamptz, NULL, NULL, NULL, 32, 0, false, false, false) RETURNING "otto_user"."id"
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8241656Z  2025-11-09 15:01:42.180 UTC [3993] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8241996Z  2025-11-09 15:01:52.246 UTC [4042] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8242421Z  2025-11-09 15:01:56.563 UTC [4058] ERROR:  duplicate key value violates unique constraint "otto_user_upn_key"
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8242906Z  2025-11-09 15:01:56.563 UTC [4058] DETAIL:  Key (upn)=(race@justice.gc.ca) already exists.
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8244521Z  2025-11-09 15:01:56.563 UTC [4058] STATEMENT:  INSERT INTO "otto_user" ("password", "last_login", "is_superuser", "upn", "email", "oid", "first_name", "last_name", "is_active", "is_staff", "date_joined", "accepted_terms_date", "pilot_id", "default_preset_id", "monthly_max", "monthly_bonus", "homepage_tour_completed", "ai_assistant_tour_completed", "laws_search_tour_completed") VALUES ('', NULL, false, 'race@justice.gc.ca', 'race2@justice.gc.ca', NULL, '', '', true, false, '2025-11-09T15:01:56.563242+00:00'::timestamptz, NULL, NULL, NULL, 32, 0, false, false, false) RETURNING "otto_user"."id"
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8246273Z  2025-11-09 15:02:02.318 UTC [4091] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8246599Z  2025-11-09 15:02:12.389 UTC [4143] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8247048Z  2025-11-09 15:02:22.454 UTC [4197] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8247367Z  2025-11-09 15:02:32.538 UTC [4245] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8247687Z  2025-11-09 15:02:42.607 UTC [4289] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8248103Z  2025-11-09 15:02:52.673 UTC [4324] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8248428Z  2025-11-09 15:03:02.748 UTC [4371] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8248748Z  2025-11-09 15:03:12.813 UTC [4415] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8249062Z  2025-11-09 15:03:22.888 UTC [4460] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8249382Z  2025-11-09 15:03:32.965 UTC [4501] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8249702Z  2025-11-09 15:03:43.038 UTC [4558] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8250019Z  2025-11-09 15:03:53.113 UTC [4627] FATAL:  role "root" does not exist
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8250458Z  2025-11-09 15:03:55.290 UTC [4632] ERROR:  relation "public.data_laws_lois__" does not exist at character 3266
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8254229Z  2025-11-09 15:03:55.290 UTC [4632] STATEMENT:  SELECT public.data_laws_lois__.id, public.data_laws_lois__.node_id, public.data_laws_lois__.text, public.data_laws_lois__.metadata_, public.data_laws_lois__.embedding <=> '[0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5]' AS distance 
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8258235Z  	FROM public.data_laws_lois__ 
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8258581Z  	WHERE metadata_->>'lang' = 'eng' AND metadata_->>'node_type' = 'chunk' ORDER BY distance asc 
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8258938Z  	 LIMIT 10
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8259092Z  
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8259330Z  The database cluster will be initialized with locale "en_US.utf8".
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8259730Z  The default database encoding has accordingly been set to "UTF8".
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8260110Z  The default text search configuration will be set to "english".
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8260398Z  
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8260564Z  Data page checksums are disabled.
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8260791Z  
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8261042Z  fixing permissions on existing directory /var/lib/postgresql/data ... ok
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8261383Z  creating subdirectories ... ok
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8261667Z  selecting dynamic shared memory implementation ... posix
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8261973Z  selecting default max_connections ... 100
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8262234Z  selecting default shared_buffers ... 128MB
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8262486Z  selecting default time zone ... Etc/UTC
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8262732Z  creating configuration files ... ok
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8262966Z  running bootstrap script ... ok
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8263224Z  performing post-bootstrap initialization ... ok
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8263490Z  syncing data to disk ... ok
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8263679Z  
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8263819Z  
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8264015Z  Success. You can now start the database server using:
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8264273Z  
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8264482Z      pg_ctl -D /var/lib/postgresql/data -l logfile start
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8264747Z  
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8265300Z  waiting for server to start....2025-11-09 14:45:16.254 UTC [48] LOG:  starting PostgreSQL 16.10 (Debian 16.10-1.pgdg12+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8266273Z  2025-11-09 14:45:16.255 UTC [48] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8266751Z  2025-11-09 14:45:16.258 UTC [51] LOG:  database system was shut down at 2025-11-09 14:45:16 UTC
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8267177Z  2025-11-09 14:45:16.263 UTC [48] LOG:  database system is ready to accept connections
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8267486Z   done
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8267640Z  server started
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8267805Z  CREATE DATABASE
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8267972Z  
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8268108Z  
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8268384Z  /usr/local/bin/docker-entrypoint.sh: ignoring /docker-entrypoint-initdb.d/*
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8268734Z  
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8269031Z  waiting for server to shut down....2025-11-09 14:45:16.464 UTC [48] LOG:  received fast shutdown request
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8269471Z  2025-11-09 14:45:16.465 UTC [48] LOG:  aborting any active transactions
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8269954Z  2025-11-09 14:45:16.468 UTC [48] LOG:  background worker "logical replication launcher" (PID 54) exited with exit code 1
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8270408Z  2025-11-09 14:45:16.468 UTC [49] LOG:  shutting down
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8270736Z  2025-11-09 14:45:16.469 UTC [49] LOG:  checkpoint starting: shutdown immediate
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8271613Z  2025-11-09 14:45:16.488 UTC [49] LOG:  checkpoint complete: wrote 922 buffers (5.6%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.016 s, sync=0.002 s, total=0.021 s; sync files=301, longest=0.001 s, average=0.001 s; distance=4255 kB, estimate=4255 kB; lsn=0/1912100, redo lsn=0/1912100
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8272463Z  2025-11-09 14:45:16.496 UTC [48] LOG:  database system is shut down
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8272877Z   done
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8273026Z  server stopped
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8273183Z  
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8273385Z  PostgreSQL init process complete; ready for start up.
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8273647Z  
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8279258Z Stop and remove container: 955491303c8a48f9a0023274c8738314_pgvectorpgvectorpg16_bd1a4a
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.8280740Z ##[command]/usr/bin/docker rm --force e2809ce41d1f443b6105cf50308cb4798f19fb895bb3fd8e912ecc4c8d3abb6a
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.9974420Z e2809ce41d1f443b6105cf50308cb4798f19fb895bb3fd8e912ecc4c8d3abb6a
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.9989992Z Print service container logs: 64b0c272a9a4423a90f289ca9c6c9b9c_redis7015alpine320_d6196f
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:01.9990945Z ##[command]/usr/bin/docker logs --details c7fed57f7420bf1c1ad52390a7b31a62558bcd4459225374533baa01eb812b62
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:02.0126578Z  1:C 09 Nov 2025 14:45:16.589 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:02.0127404Z  1:C 09 Nov 2025 14:45:16.589 # Redis version=7.0.15, bits=64, commit=00000000, modified=0, pid=1, just started
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:02.0128603Z  1:C 09 Nov 2025 14:45:16.589 # Warning: no config file specified, using the default config. In order to specify a config file use redis-server /path/to/redis.conf
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:02.0129504Z  1:M 09 Nov 2025 14:45:16.590 * monotonic clock: POSIX clock_gettime
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:02.0130093Z  1:M 09 Nov 2025 14:45:16.590 * Running mode=standalone, port=6379.
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:02.0130640Z  1:M 09 Nov 2025 14:45:16.590 # Server initialized
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:02.0132680Z  1:M 09 Nov 2025 14:45:16.590 # WARNING Memory overcommit must be enabled! Without it, a background save or replication may fail under low memory condition. Being disabled, it can can also cause failures without low memory condition, see https://github.com/jemalloc/jemalloc/issues/1328. To fix this issue add 'vm.overcommit_memory = 1' to /etc/sysctl.conf and then reboot or run the command 'sysctl vm.overcommit_memory=1' for this to take effect.
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:02.0134507Z  1:M 09 Nov 2025 14:45:16.591 * Ready to accept connections
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:02.0134846Z  1:M 09 Nov 2025 14:50:17.094 * 100 changes in 300 seconds. Saving...
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:02.0135189Z  1:M 09 Nov 2025 14:50:17.094 * Background saving started by pid 19
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:02.0135499Z  19:C 09 Nov 2025 14:50:17.096 * DB saved on disk
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:02.0135843Z  19:C 09 Nov 2025 14:50:17.097 * Fork CoW for RDB: current 0 MB, peak 0 MB, average 0 MB
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:02.0136521Z  1:M 09 Nov 2025 14:50:17.194 * Background saving terminated with success
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:02.0137103Z  1:M 09 Nov 2025 14:55:18.082 * 100 changes in 300 seconds. Saving...
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:02.0137434Z  1:M 09 Nov 2025 14:55:18.082 * Background saving started by pid 20
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:02.0137955Z  20:C 09 Nov 2025 14:55:18.086 * DB saved on disk
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:02.0138800Z  20:C 09 Nov 2025 14:55:18.086 * Fork CoW for RDB: current 0 MB, peak 0 MB, average 0 MB
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:02.0139650Z  1:M 09 Nov 2025 14:55:18.183 * Background saving terminated with success
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:02.0140360Z  1:M 09 Nov 2025 15:00:19.079 * 100 changes in 300 seconds. Saving...
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:02.0141006Z  1:M 09 Nov 2025 15:00:19.079 * Background saving started by pid 21
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:02.0141305Z  21:C 09 Nov 2025 15:00:19.081 * DB saved on disk
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:02.0141634Z  21:C 09 Nov 2025 15:00:19.082 * Fork CoW for RDB: current 0 MB, peak 0 MB, average 0 MB
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:02.0142467Z  1:M 09 Nov 2025 15:00:19.179 * Background saving terminated with success
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:02.0144120Z Stop and remove container: 64b0c272a9a4423a90f289ca9c6c9b9c_redis7015alpine320_d6196f
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:02.0145207Z ##[command]/usr/bin/docker rm --force c7fed57f7420bf1c1ad52390a7b31a62558bcd4459225374533baa01eb812b62
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:02.1540509Z c7fed57f7420bf1c1ad52390a7b31a62558bcd4459225374533baa01eb812b62
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:02.1565305Z Remove container network: github_network_28f4ff4593124e3ab1988305359e7dc3
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:02.1570817Z ##[command]/usr/bin/docker network rm github_network_28f4ff4593124e3ab1988305359e7dc3
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:02.2842242Z github_network_28f4ff4593124e3ab1988305359e7dc3
+test-coverage	UNKNOWN STEP	2025-11-09T15:04:02.2903961Z Cleaning up orphan processes

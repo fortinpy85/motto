@@ -271,6 +271,9 @@ def can_manage_library_users(user, library):
         if is_admin(user):
             return True
         return can_manage_public_libraries(user) and is_library_admin(user, library)
+    # Private libraries - Otto admins can manage users
+    if is_admin(user):
+        return True
     return is_library_admin(user, library)
 
 

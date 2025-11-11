@@ -94,7 +94,12 @@
       "Bash(..venvScriptspython.exe -m pytest tests/otto/test_secure_models.py -v --tb=short)",
       "Bash(set:*)",
       "Bash(Select-String -Pattern \"psql|Database|error|Cost types\")",
-      "Bash(Select-Object -First 10)"
+      "Bash(Select-Object -First 10)",
+      "Bash(git log:*)",
+      "Bash(gh repo view:*)",
+      "Bash(git remote:*)",
+      "Bash(unzip:*)",
+      "Bash(NUL)"
     ],
     "deny": [],
     "ask": []
