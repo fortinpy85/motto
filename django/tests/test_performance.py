@@ -118,6 +118,7 @@ class TestLLMPerformance:
         # Simple responses should be fast (< 5 seconds with mocking)
         bench.assert_performance(max_time=5.0)
 
+    @pytest.mark.django_db(transaction=True)
     @patch('chat.llm.genai.GenerativeModel')
     def test_concurrent_llm_requests(self, mock_genai, basic_user):
         """Test LLM throughput with concurrent requests"""
@@ -127,13 +128,19 @@ class TestLLMPerformance:
         mock_response.text = "Concurrent response"
         mock_genai.return_value.generate_content.return_value = mock_response
 
-        def create_chat_and_respond():
+        def create_chat_and_respond(user_id):
             """Create a chat and get a response"""
+            # Re-fetch user in thread context to avoid transaction issues
+            from django.contrib.auth import get_user_model
+            User = get_user_model()
+            thread_user = User.objects.get(id=user_id)
+
+            # Chat.objects.create() automatically creates ChatOptions
             chat = Chat.objects.create(
                 title=f"Concurrent Test {threading.get_ident()}",
-                user=user
+                user=thread_user,
+                mode="chat"
             )
-            ChatOptions.objects.create(mode="chat", chat=chat)
 
             Message.objects.create(chat=chat,
                 text="Test message", is_bot=False
@@ -145,7 +152,7 @@ class TestLLMPerformance:
         # Test with 10 concurrent requests
         with PerformanceBenchmark("10 concurrent LLM requests") as bench:
             with ThreadPoolExecutor(max_workers=10) as executor:
-                futures = [executor.submit(create_chat_and_respond) for _ in range(10)]
+                futures = [executor.submit(create_chat_and_respond, user.id) for _ in range(10)]
                 results = [f.result() for f in as_completed(futures)]
 
         assert all(results)
