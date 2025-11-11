@@ -367,7 +367,7 @@ class TestFileUploadValidation:
 
         # Make user admin
         user.make_otto_admin()
-        user.refresh_from_db()  # Refresh to get updated group membership
+        # No need to refresh_from_db() - groups are already updated
 
         assert user.has_perm('chat.upload_large_files')
 
