@@ -70,3 +70,16 @@ test_failures*.txt
 test_output*.log
 error_tests.txt
 failed_tests.txt
+test-summary.txt
+test-coverage.txt
+test_fix_report.md
+*_analysis.md
+ci_*.txt
+flush.sql
+test_msg_output/
+
+# Test and tool caches
+.pytest_cache/
+.serena/
+.playwright-mcp/
+nul
