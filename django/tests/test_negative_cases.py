@@ -357,9 +357,11 @@ class TestFileUploadValidation:
         # Attempt to create document with blocked URL should fail
         # (This depends on view-level validation)
 
-    def test_file_size_limits(self, basic_user):
+    def test_file_size_limits(self):
         """Test file size validation"""
-        user = basic_user()
+        # Create user directly instead of using fixture
+        from otto.models import User
+        user = User.objects.create(upn='test_file_size@example.com', email='test_file_size@example.com')
 
         # Regular users should have file size limits
         # Admins and data stewards can upload large files
@@ -367,7 +369,7 @@ class TestFileUploadValidation:
 
         # Make user admin
         user.make_otto_admin()
-        # No need to refresh_from_db() - groups are already updated
+        user = User.objects.get(pk=user.pk)  # Get fresh instance to clear permission caches
 
         assert user.has_perm('chat.upload_large_files')
 
