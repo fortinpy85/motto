@@ -10,7 +10,7 @@ from django.forms import ModelForm
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
-from autocomplete import Autocomplete, widgets
+from autocomplete import Autocomplete, register, widgets
 from autocomplete.widgets import AutocompleteWidget
 from data_fetcher.util import get_request
 from django_file_form.forms import FileFormMixin, MultipleUploadedFileField
@@ -40,6 +40,59 @@ TEMPERATURES = [
     (1.0, _("Creative")),
 ]
 LANGUAGES = [("en", _("English")), ("fr", _("French"))]
+
+
+# ============================================================================
+# AUTOCOMPLETE CONTEXT HANDLING
+# ============================================================================
+# The django-htmx-autocomplete library changed its context structure.
+# Context is now passed as ContextArg(request=request, client_kwargs=request.GET)
+# instead of a direct Django request object.
+#
+# The extract_context_params() helper provides backward compatibility by:
+# 1. Detecting which structure is being used (hasattr checks)
+# 2. Extracting request and GET parameters appropriately
+# 3. Returning a consistent (request, params) tuple for all autocomplete classes
+#
+# This fix resolves the bug where library_id filtering wasn't working because
+# the code attempted context.GET instead of context.client_kwargs.
+# ============================================================================
+
+
+def extract_context_params(context):
+    """
+    Extract request and GET parameters from autocomplete context.
+
+    The django-htmx-autocomplete library passes context as a ContextArg object
+    with structure: ContextArg(request=Django_Request, client_kwargs=GET_params_dict)
+
+    This helper provides backward compatibility by handling both:
+    - ContextArg objects (new structure)
+    - Direct Django request objects (legacy structure)
+
+    Args:
+        context: Either a ContextArg object or Django request object, or None
+
+    Returns:
+        tuple: (request_object, params_dict) where params_dict contains GET parameters
+
+    Example:
+        request, params = extract_context_params(context)
+        library_id = params.get("library_id", None)
+    """
+    if context is None:
+        return None, {}
+
+    # Extract request object
+    request = context.request if hasattr(context, 'request') else context
+
+    # Extract GET parameters dict
+    client_kwargs = (
+        context.client_kwargs if hasattr(context, 'client_kwargs')
+        else (request.GET if hasattr(request, 'GET') else {})
+    )
+
+    return request, client_kwargs
 
 
 class GroupedLibraryChoiceField(forms.ModelChoiceField):
@@ -130,14 +183,16 @@ class DataSourcesAutocomplete(Autocomplete):
     def _get_data_queryset(cls, context):
         """Helper to get the base queryset with library/chat filtering"""
         this_chat_string = _("This chat")
-        request = context
 
-        # Handle case where context/request is None (when rendering initial widget)
-        if request is None:
+        # Handle case where context is None (when rendering initial widget)
+        if context is None:
             return DataSource.objects.none(), None
 
-        library_id = request.GET.get("library_id", None)
-        chat_id = request.GET.get(
+        # Extract context parameters using shared helper
+        request, params = extract_context_params(context)
+
+        library_id = params.get("library_id", None)
+        chat_id = params.get(
             "chat_id",
             urlparse(
                 request.META.get(
@@ -231,13 +286,15 @@ class DocumentsAutocomplete(Autocomplete):
             "filename",
             "url",
         ]
-        request = context
 
-        # Handle case where context/request is None (when rendering initial widget)
-        if request is None:
+        # Handle case where context is None (when rendering initial widget)
+        if context is None:
             return Document.objects.none().values(*vals)
 
-        library_id = request.GET.get("library_id", None)
+        # Extract context parameters using shared helper
+        request, params = extract_context_params(context)
+
+        library_id = params.get("library_id", None)
         data = (
             Document.objects.filter(data_source__library_id=library_id).values(*vals)
             if library_id
@@ -287,6 +344,11 @@ class DocumentsAutocomplete(Autocomplete):
         filtered_data = [x for x in data if str(x["id"]) in keys]
 
         return [cls._format_item(x) for x in filtered_data]
+
+
+# Register autocomplete classes with django-htmx-autocomplete
+register(DataSourcesAutocomplete, route_name="qa_data_sources")
+register(DocumentsAutocomplete, route_name="qa_documents")
 
 
 class GroupedModelChoiceField(forms.ChoiceField):

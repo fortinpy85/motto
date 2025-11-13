@@ -41,13 +41,44 @@ function updateTranslateForms() {
 
 // TODO: abstract this into a JS helper class for Autocomplete widgets
 // and contribute upstream to django-htmx-autocomplete repo
+
+/**
+ * Updates the hx-vals attribute on autocomplete input elements to include
+ * the currently selected library_id and chat_id parameters.
+ *
+ * This ensures that when users type in the autocomplete field, the HTMX
+ * request to the backend includes the library context, allowing proper
+ * filtering of documents and data sources.
+ *
+ * CRITICAL: Must be called both:
+ * 1. On page load (DOMContentLoaded) - for initial autocomplete requests
+ * 2. On library change (htmx:afterSettle) - when user switches libraries
+ *
+ * Bug Fix: This solves the issue where documents/datasources weren't selectable
+ * in Q&A mode because the library_id wasn't being sent with the first autocomplete
+ * request on page load.
+ *
+ * @param {string} element_id - ID of the autocomplete input element (e.g., 'id_qa_documents__textinput')
+ * @returns {void}
+ */
 function updateAutocompleteLibraryid(element_id) {
   // Add hx-vals to the autocomplete elements
   const input_element = document.getElementById(element_id);
 
+  // Return early if element doesn't exist
+  if (!input_element) {
+    return;
+  }
+
   // hx-vals attribute already has a value, e.g.
   // js:{name: 'qa_data_sources', component_id: 'id_qa_data_sources', search: document.getElementById('id_qa_data_sources__textinput').value}
   let hx_vals = input_element.getAttribute('hx-vals');
+
+  // Return early if attribute doesn't exist
+  if (!hx_vals) {
+    return;
+  }
+
   // Remove the last character, which is a closing brace
   hx_vals = hx_vals.slice(0, -1);
   // Now add the library_id key to the hx-vals string
@@ -141,4 +172,8 @@ document.addEventListener('DOMContentLoaded', function () {
   if (qaModelSelect) {
     qaModelSelect.addEventListener('change', toggleQaReasoningEffort);
   }
+
+  // Initialize autocomplete library IDs on page load
+  updateAutocompleteLibraryid('id_qa_data_sources__textinput');
+  updateAutocompleteLibraryid('id_qa_documents__textinput');
 });
