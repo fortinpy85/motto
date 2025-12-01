@@ -1,5 +1,5 @@
 # Only needed for local development, not in production ---------------------------------
-pytest-django==4.8.0
+pytest-django==4.11.1
 coverage==7.11.0
 python-gettext==5.0
 pytest-asyncio==1.2.0
