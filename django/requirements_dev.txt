@@ -9,7 +9,7 @@ watchdog==6.0.0
 rich==14.2.0
 django-livereload-server==0.5.1
 django_structlog==10.0.0
-django_file_form==3.9.0
+django_file_form==3.9.1
 pytest-mock==3.14.0
 django-extensions
 matplotlib==3.10.7
